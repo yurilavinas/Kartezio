@@ -1,0 +1,23 @@
+framework:
+ DATASET_ssi: "../datasets/cellpose"
+ filename: dataset.csv
+ filename_test: dataset_test.csv
+ filename_train: dataset_train.csv
+ meta_filename: META_rgb.json
+ OUTPUT: results
+ save_results: results
+
+variables:
+ endpoint: EndpointThreshold
+ threshold: 128
+ fitness_fun: IOU
+ generations: 500
+ _lambda: 5
+ frequency: 100000
+ n_models: 10
+ user_t: 0.00
+ img_t: 0.00
+ ask_user: False
+ verbose: True
+ al_iter: 10
+ method: disagreement

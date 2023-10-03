@@ -5,7 +5,7 @@ from kartezio.callback import Event
 from kartezio.export import GenomeToPython
 from kartezio.model.helpers import Observable
 from kartezio.utils.io import JsonSaver
-
+import csv
 
 class ModelML(ABC):
     @abstractmethod
@@ -66,12 +66,24 @@ class ModelCGP(ModelML, Observable):
         self,
         x,
         y,
+        test_x,
+        test_y,
+        file,
+        run,
+        elite=None
     ):
         genetic_algorithm = ModelGA(self.strategy, self.generations)
+        if elite == None:
+            genetic_algorithm.initialization()
+        else:
+            self.strategy.population.set_elite(elite)
+            genetic_algorithm.reproduction()
+            
         genetic_algorithm.initialization()
         y_pred = self.parser.parse_population(self.strategy.population, x)
         genetic_algorithm.evaluation(y, y_pred)
         self._notify(0, Event.START_LOOP, force=True)
+        gen = 1
         while not genetic_algorithm.is_satisfying():
             self._notify(genetic_algorithm.current_generation, Event.START_STEP)
             genetic_algorithm.selection()
@@ -81,10 +93,22 @@ class ModelCGP(ModelML, Observable):
             genetic_algorithm.evaluation(y, y_pred)
             genetic_algorithm.next()
             self._notify(genetic_algorithm.current_generation, Event.END_STEP)
+            
+            if elite == None:
+                y_hats, _ = self.parser.parse(self.strategy.population.get_elite(), test_x)
+                fitness = self.strategy.fitness.compute_one(test_y, y_hats)
+                eval_cost = gen * len(x) * (len(self.strategy.population.individuals)-1)
+                data = [run, gen-1, fitness, eval_cost]
+                with open(file, 'a') as f:
+                    writer = csv.writer(f, delimiter = '\t')
+                    writer.writerow(data) 
+            gen += 1
+            
         self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
         history = self.strategy.population.history()
         elite = self.strategy.elite
-        return elite, history
+        # return elite, history
+        return self.strategy, elite
 
     def _notify(self, n, name, force=False):
         event = {
