@@ -1,3 +1,6 @@
+import pkg_resources
+pkg_resources.require("Kartezio==1.0.0a1")
+
 from kartezio.dataset import read_dataset
 from kartezio.plot import save_prediction
 from kartezio.activeLearning import active_learning
