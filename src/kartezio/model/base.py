@@ -94,7 +94,7 @@ class ModelCGP(ModelML, Observable):
             genetic_algorithm.next()
             self._notify(genetic_algorithm.current_generation, Event.END_STEP)
             
-            if file == None:
+            if file != None:
                 y_hats, _ = self.parser.parse(self.strategy.population.get_elite(), test_x)
                 fitness = self.strategy.fitness.compute_one(test_y, y_hats)
                 eval_cost = gen * len(x) * (len(self.strategy.population.individuals)-1)
