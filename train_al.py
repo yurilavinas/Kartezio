@@ -67,7 +67,7 @@ if __name__ == '__main__':
         for i, model in enumerate(al.models):
             file = save_results + "_/internal_model_"+str(i)+"_data.txt"
             # al.strategies[i], al.elites[i], _ = model.fit(train_x, train_y, al.status[i], al.elites[i])
-            al.strategies[i], al.elites[i] = model.fit(train_x, train_y, al.elites[i])
+            al.strategies[i], al.elites[i] = model.fit(train_x, train_y, elite = al.elites[i])
 
         if al.method == "disagreement":
             al.disagreement = al.calc_disagreement(al.indices) 

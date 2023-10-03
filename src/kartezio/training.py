@@ -108,7 +108,7 @@ def train_model(
         train_x = preprocessing.call(train_x)
         test_x = preprocessing.call(test_x)
 
-    res = model.fit(train_x, train_y, test_x, test_y, file, run)
+    res = model.fit(train_x, train_y, test_x, test_y, file, run; elite = None)
     if pack:
         pack_one_directory(workdir)
 

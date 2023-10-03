@@ -66,10 +66,10 @@ class ModelCGP(ModelML, Observable):
         self,
         x,
         y,
-        test_x,
-        test_y,
-        file,
-        run,
+        test_x=None,
+        test_y=None,
+        file=None,
+        run=None,
         elite=None
     ):
         genetic_algorithm = ModelGA(self.strategy, self.generations)
@@ -94,7 +94,7 @@ class ModelCGP(ModelML, Observable):
             genetic_algorithm.next()
             self._notify(genetic_algorithm.current_generation, Event.END_STEP)
             
-            if elite == None:
+            if file == None:
                 y_hats, _ = self.parser.parse(self.strategy.population.get_elite(), test_x)
                 fitness = self.strategy.fitness.compute_one(test_y, y_hats)
                 eval_cost = gen * len(x) * (len(self.strategy.population.individuals)-1)
