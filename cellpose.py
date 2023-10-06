@@ -8,8 +8,8 @@ from kartezio.training import train_model
 from kartezio.preprocessing import SelectChannels
 import sys
 
-DATASET = "../datasets/cellpose"
-MODELS = "./models"
+DATASET = "/tmpdir/lavinas/cellpose"
+MODELS = "/tmpdir/lavinas/results_cellpose_cgp"
 CHANNELS = [1, 2]
 preprocessing = SelectChannels(CHANNELS)
 run = sys.argv[1] 
@@ -17,7 +17,7 @@ run = sys.argv[1]
 if __name__ == "__main__":
     generations = 20000
     _lambda = 5
-    frequency = 5
+    frequency = 10
     indices = [2, 52, 29, 1, 40, 28, 19, 79]
     model = create_instance_segmentation_model(
         generations, _lambda, inputs=2, outputs=2,
