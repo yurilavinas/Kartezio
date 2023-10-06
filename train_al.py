@@ -21,7 +21,6 @@ if __name__ == '__main__':
 
         framework = cfg["framework"]
         config = cfg["variables"]
-        # data = cfg["data"]
 
     # framework
     DATASET = framework["DATASET_ssi"]
@@ -41,10 +40,6 @@ if __name__ == '__main__':
 
     al = active_learning(cfg)
     al.run = int(sys.argv[2])
-
-    # dataset_wsi = read_dataset(DATASET_wsi, indices=None, filename=al.filename, meta_filename=al.meta_filename, preview=True)
-    # test_x_wsi, test_y_wsi, test_v_wsi = dataset_wsi.train_xyv
-
     
     for cycle in range(al.iter):
         print("cycle #",cycle,"of AL. Running",al.n_models,"cgp models.") 
@@ -129,9 +124,6 @@ if __name__ == '__main__':
         imgs_name = save_results+"/gen_"+str(cycle)+"_model_"+str(i)+ "_run_" + str(al.run) + "_.png"
         save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
 
-        # insight = KartezioInsight(model.parser)
-        # insight.create_node_images(al.elites[i], test_x[0], prefix="./results/cgp/images/model_" + str(i) + "_cgp")
-        
         viewer = KartezioViewer(
             model.parser.shape, model.parser.function_bundle, model.parser.endpoint
         )

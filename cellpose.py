@@ -18,7 +18,7 @@ if __name__ == "__main__":
     generations = 20000
     _lambda = 5
     frequency = 5
-    indices = [12, 26, 76, 59, 58, 37, 11, 79, 34, 35, 36, 81, 67, 17, 13]
+    indices = [2, 52, 29, 1, 40, 28, 19, 79]
     model = create_instance_segmentation_model(
         generations, _lambda, inputs=2, outputs=2,
     )

@@ -15,4 +15,3 @@ cd sources
 
 python3 -m pip install .
 
-pip install -r requirements.txt

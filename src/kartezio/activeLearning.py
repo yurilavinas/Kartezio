@@ -14,13 +14,6 @@ class   active_learning():
 
         framework = cfg["framework"]
         config = cfg["variables"]
-
-        # if config["endpoint"] == "EndpointThreshold":
-        #     endpoint = EndpointThreshold(config["threshold"])
-        # inputs = config["inputs"]
-        # nodes = config["nodes"]
-        # outputs = config["outputs"]
-        # fitness_fun = config["fitness_fun"]
         self.generations = config["generations"]
         self._lambda = config["_lambda"]
         
@@ -36,17 +29,14 @@ class   active_learning():
         # based on data
         DATASET_ssi = framework["DATASET_ssi"]        
         self.filename = framework["filename"]
-        # self.filename_test = framework["filename_test"]
-        # self.filename_train = framework["filename_train"]
-        # self.meta_filename = framework["meta_filename"]
         CHANNELS = [1, 2]
         self.preprocessing = SelectChannels(CHANNELS)
         self.OUTPUT = framework["OUTPUT"]
         # dataset = read_dataset(DATASET_ssi, indices=None, filename=self.filename_train, meta_filename=self.meta_filename, preview=False)
         # x, _ = dataset.train_xy
-        # 
+        
+        self.indices_c = config["indices"]
         # self.indices_c = list(range(0, len(x))) 
-        self.indices_c = [12, 26, 76, 59, 58, 37, 11, 79, 34, 35, 36, 81, 67, 17, 13]
         self.indices_nc = []#list(range(int(imgs_c), 2*int(imgs_nc)))
         self.run = -1
         # framework

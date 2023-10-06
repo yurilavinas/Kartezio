@@ -10,7 +10,6 @@ framework:
 variables:
  endpoint: EndpointThreshold
  threshold: 128
- fitness_fun: IOU
  generations: 500
  _lambda: 5
  frequency: 100000
@@ -19,5 +18,6 @@ variables:
  img_t: 0.00
  ask_user: False
  verbose: True
- al_iter: 10
+ al_iter: 8
  method: disagreement
+ indices: [2, 52, 29, 1, 40, 28, 19, 79]
