@@ -36,8 +36,8 @@ class   active_learning():
         dataset = read_dataset(DATASET_ssi, indices=None)
         x, _ = dataset.train_xy
         
-        self.indices_c = config["indices"]
-        # self.indices_c = list(range(0, len(x))) 
+        # self.indices_c = config["indices"]
+        self.indices_c = list(range(0, len(x))) 
         self.indices_nc = []#list(range(int(imgs_c), 2*int(imgs_nc)))
         self.run = -1
         # framework
