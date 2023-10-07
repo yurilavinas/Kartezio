@@ -32,8 +32,8 @@ class   active_learning():
         CHANNELS = [1, 2]
         self.preprocessing = SelectChannels(CHANNELS)
         self.OUTPUT = framework["OUTPUT"]
-        # dataset = read_dataset(DATASET_ssi, indices=None, filename=self.filename_train, meta_filename=self.meta_filename, preview=False)
-        # x, _ = dataset.train_xy
+        dataset = read_dataset(DATASET_ssi, indices=None, filename=self.filename_train, meta_filename=self.meta_filename, preview=False)
+        x, _ = dataset.train_xy
         
         self.indices_c = config["indices"]
         # self.indices_c = list(range(0, len(x))) 
