@@ -126,7 +126,7 @@ class   active_learning():
                     ##################################################################
                     v1 = self.strategies[0].fitness.compute_one(train_y_active, y1)
                     v2 = self.strategies[0].fitness.compute_one(train_y_active, y2)
-                    model_res.append(np.abs(v1-v2)à
+                    model_res.append(np.abs(v1-v2))
                     # model_res.append(v1)
             # get the mean of the abs(diff)
             disagreement.append(np.mean(model_res))
