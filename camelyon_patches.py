@@ -11,10 +11,10 @@ from kartezio.plot import save_prediction
 from kartezio.utils.viewer import KartezioViewer
 
 DATASET = "/tmpdir/lavinas/cellpose"
-MODELS = "/tmpdir/lavinas/results_cellpose_cgp"
-CHANNELS = [1, 2]
-preprocessing = SelectChannels(CHANNELS)
-filename = f"dataset.csv"
+MODELS = "/tmpdir/lavinas/results_cellpose_patches"
+# CHANNELS = [1, 2]
+# preprocessing = SelectChannels(CHANNELS)
+filename = f"dataset_patches.csv"
 
 run = sys.argv[1] 
 

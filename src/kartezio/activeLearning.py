@@ -36,7 +36,6 @@ class   active_learning():
         dataset = read_dataset(DATASET_ssi, indices=None)
         x, _ = dataset.train_xy
         
-        # self.indices_c = config["indices"]
         self.indices_c = list(range(0, len(x))) 
         self.indices_nc = []#list(range(int(imgs_c), 2*int(imgs_nc)))
         self.run = -1
@@ -119,14 +118,16 @@ class   active_learning():
             model_res = list()
             for j in range(self.n_models):
                 for k in range(j+1, self.n_models):
-                    y1, _ = self.models[j].parser.parse(self.elites[j], train_x_active)
-                    y2, _ = self.models[k].parser.parse(self.elites[k], train_x_active)
-                    y = ([{"labels": np.append(y1[0]["labels"], y2[0]["labels"], axis=0)}])
-                    train_y = [np.append(train_y_active[0][0], train_y_active[0][0], axis=0)]
-                    v1 = self.strategies[0].fitness.compute_one(train_y, y)
-                    # v2 = self.strategies[0].fitness.compute_one(train_y_active, y2)
-                    # model_res.append(v1-v2)
-                    model_res.append(v1)
+                    y1, _ = self.models[0].parser.parse(self.elites[j], train_x_active)
+                    y2, _ = self.models[0].parser.parse(self.elites[k], train_x_active)
+                    ##################################################################
+                    # y = ([{"labels": np.append(y1[0]["labels"], y2[0]["labels"], axis=0)}])
+                    # train_y = [np.append(train_y_active[0][0], train_y_active[0][0], axis=0)]
+                    ##################################################################
+                    v1 = self.strategies[0].fitness.compute_one(train_y_active, y1)
+                    v2 = self.strategies[0].fitness.compute_one(train_y_active, y2)
+                    model_res.append(np.abs(v1-v2)à
+                    # model_res.append(v1)
             # get the mean of the abs(diff)
             disagreement.append(np.mean(model_res))
         

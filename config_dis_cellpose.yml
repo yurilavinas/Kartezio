@@ -1,15 +1,13 @@
 framework:
- DATASET_ssi: "../datasets/cellpose"
- filename: dataset.csv
+ DATASET_ssi: "/tmpdir/lavinas/cellpose"
+ filename: dataset_patches.csv
  filename_test: dataset_test.csv
  filename_train: dataset_train.csv
  meta_filename: META_rgb.json
- OUTPUT: results
- save_results: results
+ OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_dis
+ save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_dis
 
 variables:
- endpoint: EndpointThreshold
- threshold: 128
  generations: 500
  _lambda: 5
  frequency: 100000
@@ -18,6 +16,5 @@ variables:
  img_t: 0.00
  ask_user: False
  verbose: True
- al_iter: 8
+ al_iter: 10
  method: disagreement
- indices: [2, 52, 29, 1, 40, 28, 19, 79]
