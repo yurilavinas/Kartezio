@@ -56,7 +56,8 @@ if __name__ == '__main__':
             al.init_model()
         
         train_x, train_y = dataset.train_xy
-        train_x = al.preprocessing.call(train_x)
+        if al.DATASET == "/tmpdir/lavinas/cellpose":
+            train_x = al.preprocessing.call(train_x)
         # train with the images available so far - small imgs 
         # either the img is from an annotated area
         # or it's randomly selected - right now i picked the most interesting imgs            
