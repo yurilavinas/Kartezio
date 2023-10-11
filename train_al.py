@@ -23,7 +23,7 @@ if __name__ == '__main__':
         config = cfg["variables"]
 
     # framework
-    DATASET = framework["DATASET_ssi"]
+    DATASET = framework["DATASET"]
     save_results = framework["save_results"]
     filename = framework["filename"]
     meta_filename = framework["meta_filename"]
