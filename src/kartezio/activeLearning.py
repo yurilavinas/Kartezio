@@ -226,7 +226,8 @@ class   active_learning():
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
             
         test_x, test_y = dataset.test_xy
-        test_x = self.preprocessing.call(test_x)
+        if self.DATASET == "/tmpdir/lavinas/cellpose":
+            test_x = self.preprocessing.call(test_x)
         
         idx = self.fitness.index(min(self.fitness))
         
