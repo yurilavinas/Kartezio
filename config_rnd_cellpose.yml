@@ -17,5 +17,6 @@ variables:
  ask_user: False
  verbose: True
  al_iter: 10
-
  method: random
+ inputs: 2
+ outputs: 2

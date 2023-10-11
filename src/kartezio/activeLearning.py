@@ -67,8 +67,8 @@ class   active_learning():
             self.models[i] = create_instance_segmentation_model(
                 self.generations,
                 self._lambda,
-                inputs=2,
-                outputs=2,
+                inputs=config["input"],
+                outputs=config["output"],
             )
 
         

@@ -16,3 +16,6 @@ variables:
  verbose: True
  al_iter: 10
  method: random
+ inputs: 3
+ outputs: 2
+

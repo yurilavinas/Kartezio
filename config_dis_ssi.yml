@@ -16,3 +16,5 @@ variables:
  verbose: True
  al_iter: 10
  method: disagreement
+ inputs: 3
+ outputs: 2
