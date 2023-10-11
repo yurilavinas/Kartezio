@@ -10,7 +10,11 @@ from kartezio.utils.viewer import KartezioViewer
 
 DATASET = "/tmpdir/lavinas/ssi/"
 MODELS = "/tmpdir/lavinas/results_ssi_cgp"
-filename = f"dataset_patches.csv"
+filename = f"dataset.csv"
+DATASET = "../datasets/ssi/"
+MODELS = "../results_ssi_cgp"
+filename = f"dataset.csv"
+meta_filename = "META_rgb.json"
 
 run = sys.argv[1] 
 
@@ -22,7 +26,7 @@ if __name__ == "__main__":
     model = create_instance_segmentation_model(
         generations, _lambda, inputs=3, outputs=2,
     )
-    dataset = read_dataset(DATASET, indices=indices, filename=filename)
+    dataset = read_dataset(DATASET, indices=indices, filename=filename, meta_filename=meta_filename)
     
     file = MODELS + "/raw_test_data_" + run + ".txt"
     _, elite = train_model(model, dataset, MODELS, file, run, callback_frequency=frequency)
