@@ -1,7 +1,7 @@
 import pkg_resources
 pkg_resources.require("Kartezio==1.0.0a1")
 
-from kartezio.apps.instance_segmentation import create_instance_segmentation_model
+from kartezio.apps.segmentation import create_segmentation_model
 from kartezio.dataset import read_dataset
 from kartezio.training import train_model
 import sys
@@ -23,8 +23,8 @@ if __name__ == "__main__":
     _lambda = 5
     frequency = 10000
     indices = None
-    model = create_instance_segmentation_model(
-        generations, _lambda, inputs=3, outputs=2,
+    model = create_segmentation_model(
+        generations, _lambda,
     )
     dataset = read_dataset(DATASET, indices=indices, filename=filename, meta_filename=meta_filename)
     
