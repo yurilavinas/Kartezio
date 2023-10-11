@@ -43,7 +43,6 @@ class   active_learning():
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
             x, ys = dataset.train_xy
             for i, y in enumerate(ys):
-                print(i, np.sum(y))
                 if np.sum(y) != 0:
                     self.idx = i 
                     break
@@ -51,7 +50,7 @@ class   active_learning():
 
         self.lvls = list()
         self.indices_c = list(range(0, len(x)))
-        self.indices_nc = [] #list(range(int(imgs_c), 2*int(imgs_nc)))
+        self.indices_nc = [] 
         
         random.shuffle(self.indices_c)
         if self.DATASET == "/tmpdir/lavinas/cellpose":
