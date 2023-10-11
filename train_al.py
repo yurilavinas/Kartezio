@@ -48,7 +48,10 @@ if __name__ == '__main__':
 
         # loading data for training
         # dataset = read_dataset(DATASET, indices=al.lvls, filename=filename_train, meta_filename=meta_filename, preview=False)
-        dataset = read_dataset(DATASET, indices=al.lvls)
+        if al.DATASET == "/tmpdir/lavinas/cellpose":
+            dataset = read_dataset(DATASET, indices=al.lvls)
+        elif al.DATASET == "/tmpdir/lavinas/ssi":
+            dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
             
         # create the output folder for each model - saving elite and population history
         if cycle == 0:
@@ -61,7 +64,6 @@ if __name__ == '__main__':
         # or it's randomly selected - right now i picked the most interesting imgs            
         for i, model in enumerate(al.models):
             file = save_results + "_/internal_model_"+str(i)+"_data.txt"
-            # al.strategies[i], al.elites[i], _ = model.fit(train_x, train_y, al.status[i], al.elites[i])
             al.strategies[i], al.elites[i] = model.fit(train_x, train_y, elite = al.elites[i])
 
         if al.method == "disagreement":
@@ -111,8 +113,11 @@ if __name__ == '__main__':
         al.status = ['continue']*al.n_models
 
 
-
-    dataset_ssi = read_dataset(DATASET, indices=None)
+    if al.DATASET == "/tmpdir/lavinas/cellpose":
+        dataset_ssi = read_dataset(DATASET, indices=None)
+    elif al.DATASET == "/tmpdir/lavinas/ssi":
+        dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
+        
     test_x, test_y, test_v = dataset_ssi.test_xyv
     test_x = al.preprocessing.call(test_x)
 

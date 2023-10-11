@@ -27,13 +27,18 @@ class   active_learning():
         self.eval_cost = 0
         self.method = config["method"]
         # based on data
-        DATASET_ssi = framework["DATASET_ssi"]        
+        self.DATASET = framework["DATASET"]        
         self.filename = framework["filename"]
-        CHANNELS = [1, 2]
-        self.preprocessing = SelectChannels(CHANNELS)
+        if self.DATASET == "/tmpdir/lavinas/cellpose":
+            CHANNELS = [1, 2]
+            self.preprocessing = SelectChannels(CHANNELS)
+            dataset = read_dataset(self.DATASET, indices=None)
+        elif self.DATASET == "/tmpdir/lavinas/ssi":
+            self.meta_filename = f"META_rgb.json"
+            dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
         self.OUTPUT = framework["OUTPUT"]
-        # dataset = read_dataset(DATASET_ssi, indices=None, filename=self.filename_train, meta_filename=self.meta_filename, preview=False)
-        dataset = read_dataset(DATASET_ssi, indices=None)
+
+        
         x, _ = dataset.train_xy
         
         self.indices_c = list(range(0, len(x))) 
@@ -48,7 +53,6 @@ class   active_learning():
         self.history = []
         self.select_id = None
         self.lvls = list()
-        self.DATASET_ssi = DATASET_ssi
         
         for i in range(self.n_models):
             # self.models[i] = create_instance_segmentation_model(
@@ -110,8 +114,12 @@ class   active_learning():
         # and select the img that lead to more diverse values
         disagreement = list()
         for i, index in enumerate(dis_idxs):
-            # dataset_active = read_dataset(self.DATASET_ssi, indices=[index], filename=self.filename_train, meta_filename=self.meta_filename, preview=False)
-            dataset_active = read_dataset(self.DATASET_ssi, indices=[index])
+            # 
+            if self.DATASET == "/tmpdir/lavinas/cellpose":
+                dataset_active = read_dataset(self.DATASET, indices=[index])
+            elif self.DATASET == "/tmpdir/lavinas/ssi":
+                dataset_active = read_dataset(self.DATASET, indices=[index], filename=self.filename, meta_filename=self.meta_filename, preview=False)
+                
             train_x_active, train_y_active = dataset_active.train_xy
             train_x_active = self.preprocessing.call(train_x_active)
                         
@@ -144,9 +152,7 @@ class   active_learning():
 
         # get the idx of the img that leads to a higher mean of the abs(diff) 
         if self.method == "disagreement":
-            id_ = self.disagreement.index(max(self.disagreement))                
-        elif self.method == "inv":
-            id_ = self.disagreement.index(min(self.disagreement))                
+            id_ = self.disagreement.index(max(self.disagreement))                 
         elif self.method == "random":
             id_ = np.random.randint(0, len(self.indices))
         if self.verbose:
@@ -192,8 +198,8 @@ class   active_learning():
             print("new indices in use: ",self.lvls, "\n")
 
     # def saving_test(self, file, run, cycle):
-    #     dataset_ssi = read_dataset(self.DATASET_ssi, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
-    #     test_x, test_y = dataset_ssi.test_xy
+    #     DATASET = read_dataset(self.DATASET, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
+    #     test_x, test_y = DATASET.test_xy
 
     #     idx = self.fitness.index(min(self.fitness))
         
@@ -213,9 +219,13 @@ class   active_learning():
     #     del test_x, test_y
     
     def saving_test(self, file, cycle):
-        # dataset_ssi = read_dataset(self.DATASET_ssi, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
-        dataset_ssi = read_dataset(self.DATASET_ssi, indices=None)
-        test_x, test_y = dataset_ssi.test_xy
+        # DATASET = read_dataset(self.DATASET, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
+        if self.DATASET == "/tmpdir/lavinas/cellpose":
+            dataset = read_dataset(self.DATASET, indices=None)
+        elif self.DATASET == "/tmpdir/lavinas/ssi":
+            dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
+            
+        test_x, test_y = dataset.test_xy
         test_x = self.preprocessing.call(test_x)
         
         idx = self.fitness.index(min(self.fitness))
