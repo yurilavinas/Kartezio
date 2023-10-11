@@ -6,10 +6,10 @@ framework:
  save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_rnd
 
 variables:
- generations: 500
+ generations: 50
  _lambda: 5
  frequency: 100000
- n_models: 10
+ n_models: 2
  user_t: 0.00
  img_t: 0.00
  ask_user: False

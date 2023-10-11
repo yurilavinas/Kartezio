@@ -26,8 +26,6 @@ if __name__ == '__main__':
     DATASET = framework["DATASET_ssi"]
     save_results = framework["save_results"]
     filename = framework["filename"]
-    filename_test = framework["filename_test"]
-    filename_train = framework["filename_train"]
     meta_filename = framework["meta_filename"]
     
 

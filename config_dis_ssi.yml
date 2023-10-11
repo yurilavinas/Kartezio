@@ -1,5 +1,5 @@
 framework:
- DATASET_ssi: "/tmpdir/lavinas/ssi"
+ DATASET: "/tmpdir/lavinas/ssi"
  filename: dataset.csv
  meta_filename: META_rgb.json
  OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_ssi_dis
