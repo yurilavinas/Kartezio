@@ -11,9 +11,6 @@ from kartezio.utils.viewer import KartezioViewer
 DATASET = "/tmpdir/lavinas/ssi/"
 MODELS = "/tmpdir/lavinas/results_ssi_cgp"
 filename = f"dataset.csv"
-DATASET = "../datasets/ssi/"
-MODELS = "../results_ssi_cgp"
-filename = f"dataset.csv"
 meta_filename = "META_rgb.json"
 
 run = sys.argv[1] 
