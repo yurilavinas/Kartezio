@@ -8,9 +8,9 @@ import sys
 from kartezio.plot import save_prediction
 from kartezio.utils.viewer import KartezioViewer
 
-DATASET = "/tmpdir/lavinas/ssi"
+DATASET = "/tmpdir/lavinas/ssi/dataset_patches.csv"
 MODELS = "/tmpdir/lavinas/results_ssi_cgp"
-filename = f"dataset_patches.csv"
+filename = f""
 
 run = sys.argv[1] 
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     model = create_instance_segmentation_model(
         generations, _lambda, inputs=3, outputs=1,
     )
-    dataset = read_dataset(DATASET, indices=indices)
+    dataset = read_dataset(DATASET, indices=indices, filename=filename,)
     
     file = MODELS + "/raw_test_data_" + run + ".txt"
     _, elite = train_model(model, dataset, MODELS, file, run, callback_frequency=frequency)

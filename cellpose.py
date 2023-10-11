@@ -14,8 +14,6 @@ DATASET = "/tmpdir/lavinas/cellpose"
 MODELS = "/tmpdir/lavinas/results_cellpose_cgp"
 CHANNELS = [1, 2]
 preprocessing = SelectChannels(CHANNELS)
-filename = f"dataset.csv"
-
 run = sys.argv[1] 
 
 
