@@ -36,7 +36,7 @@ class ModelGA(ABC):
     def is_satisfying(self):
         end_of_generations = self.current_generation >= self.generations
         best_fitness_reached = self.strategy.population.fitness[0] == 0.0
-        return end_of_generations or best_fitness_reached
+        return end_of_generations #or best_fitness_reached
 
     def selection(self):
         self.strategy.selection()
