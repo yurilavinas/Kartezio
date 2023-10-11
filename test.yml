@@ -1,9 +1,9 @@
 framework:
- DATASET: "/tmpdir/lavinas/ssi"
+ DATASET: "../datasets/ssi"
  filename: dataset.csv
  meta_filename: META_rgb.json
- OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_ssi_rnd
- save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_rnd
+ OUTPUT: ../30nodes_500gen_5lambda_10model_ssi_rnd
+ save_results: ../30nodes_500gen_5lambda_10model_rnd
 
 variables:
  generations: 50

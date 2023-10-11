@@ -121,7 +121,8 @@ class   active_learning():
                 dataset_active = read_dataset(self.DATASET, indices=[index], filename=self.filename, meta_filename=self.meta_filename, preview=False)
                 
             train_x_active, train_y_active = dataset_active.train_xy
-            train_x_active = self.preprocessing.call(train_x_active)
+            if self.DATASET == "/tmpdir/lavinas/cellpose":
+                train_x_active = self.preprocessing.call(train_x_active)
                         
             model_res = list()
             for j in range(self.n_models):
