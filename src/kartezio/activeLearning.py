@@ -30,20 +30,36 @@ class   active_learning():
         # based on data
         self.DATASET = framework["DATASET"]        
         self.filename = framework["filename"]
+        
+        
+        
         if self.DATASET == "/tmpdir/lavinas/cellpose":
             CHANNELS = [1, 2]
             self.preprocessing = SelectChannels(CHANNELS)
             dataset = read_dataset(self.DATASET, indices=None)
+            x, _ = dataset.train_xy
         elif self.DATASET == "/tmpdir/lavinas/ssi":
             self.meta_filename = f"META_rgb.json"
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
+            x, ys = dataset.train_xy
+            for i, y in enumerate(ys):
+                print(i, np.sum(y))
+                if np.sum(y) != 0:
+                    self.idx = i 
+                    break
         self.OUTPUT = framework["OUTPUT"]
 
+        self.lvls = list()
+        self.indices_c = list(range(0, len(x)))
+        self.indices_nc = [] #list(range(int(imgs_c), 2*int(imgs_nc)))
         
-        x, _ = dataset.train_xy
+        random.shuffle(self.indices_c)
+        if self.DATASET == "/tmpdir/lavinas/cellpose":
+            self.idx = self.indices_c.pop()
+        elif self.DATASET == "/tmpdir/lavinas/ssi":
+            self.indices_c.pop(self.idx )
         
-        self.indices_c = list(range(0, len(x))) 
-        self.indices_nc = []#list(range(int(imgs_c), 2*int(imgs_nc)))
+        self.lvls.append(self.idx)        
         self.run = -1
         # framework
         self.elites = [None]*self.n_models
@@ -53,7 +69,7 @@ class   active_learning():
         self.models = [None]*self.n_models
         self.history = []
         self.select_id = None
-        self.lvls = list()
+        
         
         for i in range(self.n_models):
             if self.DATASET == "/tmpdir/lavinas/cellpose":
@@ -69,9 +85,7 @@ class   active_learning():
             
 
         
-        random.shuffle(self.indices_c)
-        self.idx = self.indices_c.pop()
-        self.lvls.append(self.idx)
+        
         
         
         if len(self.indices_nc) > 0:
