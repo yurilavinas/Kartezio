@@ -1,6 +1,7 @@
 # from kartezio.endpoint import EndpointThreshold
 # from kartezio.apps.segmentation_interactive import create_segmentation_model_interactive
 from kartezio.apps.instance_segmentation import create_instance_segmentation_model
+from kartezio.apps.segmentation import create_segmentation_model
 from kartezio.dataset import read_dataset
 from kartezio.callback import CallbackVerbose
 import random
@@ -55,21 +56,17 @@ class   active_learning():
         self.lvls = list()
         
         for i in range(self.n_models):
-            # self.models[i] = create_instance_segmentation_model(
-            #     self.generations,
-            #     self._lambda,
-            #     inputs=inputs,
-            #     nodes=nodes,
-            #     outputs=outputs,
-            #     fitness=fitness_fun,
-            #     endpoint=endpoint
-            # )
-            self.models[i] = create_instance_segmentation_model(
-                self.generations,
-                self._lambda,
-                inputs=config["inputs"],
-                outputs=config["outputs"],
-            )
+            if self.DATASET == "/tmpdir/lavinas/cellpose":
+                self.models[i] = create_instance_segmentation_model(
+                    self.generations,
+                    self._lambda
+                )
+            elif self.DATASET == "/tmpdir/lavinas/ssi":
+                self.models[i] = create_segmentation_model(
+                    self.generations,
+                    self._lambda
+                )
+            
 
         
         random.shuffle(self.indices_c)
