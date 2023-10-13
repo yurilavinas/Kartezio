@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
         # loading data for training
         if al.DATASET == "/tmpdir/lavinas/cellpose":
+            CHANNELS = [1, 2]
             dataset = read_dataset(DATASET, indices=al.lvls)
         elif al.DATASET == "/tmpdir/lavinas/ssi":
             dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
