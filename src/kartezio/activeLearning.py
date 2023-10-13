@@ -81,11 +81,7 @@ class   active_learning():
                     self.generations,
                     self._lambda
                 )
-            
-
-        
-        
-        
+              
         
         if len(self.indices_nc) > 0:
             self.indices = self.indices_c + self.indices_nc

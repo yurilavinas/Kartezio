@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     model.save_elite(MODELS + "/elite.json", dataset)  
     y_hat, _ = model.predict(test_x)
-    imgs_name = MODELS+"/gen_model_run_" + str(run) + "_.png"
+    imgs_name = MODELS + "/gen_model_run_" + str(run) + "_.png"
     save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
 
     # insight = KartezioInsight(model.parser)

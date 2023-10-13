@@ -46,7 +46,6 @@ if __name__ == '__main__':
 
         # loading data for training
         if al.DATASET == "/tmpdir/lavinas/cellpose":
-            CHANNELS = [1, 2]
             dataset = read_dataset(DATASET, indices=al.lvls)
         elif al.DATASET == "/tmpdir/lavinas/ssi":
             dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
@@ -58,6 +57,8 @@ if __name__ == '__main__':
         train_x, train_y = dataset.train_xy
         if al.DATASET == "/tmpdir/lavinas/cellpose":
             train_x = al.preprocessing.call(train_x)
+            train_y = al.preprocessing.call(train_y)
+        
         # train with the images available so far - small imgs 
         # either the img is from an annotated area
         # or it's randomly selected - right now i picked the most interesting imgs            
