@@ -1,5 +1,5 @@
-import pkg_resources
-pkg_resources.require("Kartezio==1.0.0a1")
+# import pkg_resources
+# pkg_resources.require("Kartezio==1.0.0a1")
 
 from kartezio.dataset import read_dataset
 from kartezio.plot import save_prediction
@@ -45,10 +45,9 @@ if __name__ == '__main__':
             print("using data from", al.lvls)
 
         # loading data for training
-        if al.DATASET == "/tmpdir/lavinas/cellpose":
-            CHANNELS = [1, 2]
-            dataset = read_dataset(DATASET, indices=al.lvls)
-        elif al.DATASET == "/tmpdir/lavinas/ssi":
+        if al.name == "cellpose":
+            dataset = read_dataset(DATASET, indices=al.lvls, preview=False)
+        elif al.name == "ssi":
             dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
             
         # create the output folder for each model - saving elite and population history
@@ -56,9 +55,8 @@ if __name__ == '__main__':
             al.init_model()
         
         train_x, train_y = dataset.train_xy
-        if al.DATASET == "/tmpdir/lavinas/cellpose":
+        if al.name == "cellpose":
             train_x = al.preprocessing.call(train_x)
-            train_y = al.preprocessing.call(train_y)
         
         # train with the images available so far - small imgs 
         # either the img is from an annotated area
@@ -114,9 +112,9 @@ if __name__ == '__main__':
         al.status = ['continue']*al.n_models
 
 
-    if al.DATASET == "/tmpdir/lavinas/cellpose":
+    if al.name == "cellpose":
         dataset_ssi = read_dataset(DATASET, indices=None)
-    elif al.DATASET == "/tmpdir/lavinas/ssi":
+    elif al.name == "ssi":
         dataset = read_dataset(DATASET, indices=al.lvls, filename=filename, meta_filename=meta_filename, preview=False)
         
     test_x, test_y, test_v = dataset.test_xyv

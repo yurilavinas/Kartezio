@@ -30,15 +30,16 @@ class   active_learning():
         # based on data
         self.DATASET = framework["DATASET"]        
         self.filename = framework["filename"]
+        self.name = self.DATASET.split("/")[3]
+
         
-        
-        
-        if self.DATASET == "/tmpdir/lavinas/cellpose":
+        # if self.DATASET == "/tmpdir/lavinas/cellpose":
+        if self.name == "cellpose":
             CHANNELS = [1, 2]
             self.preprocessing = SelectChannels(CHANNELS)
             dataset = read_dataset(self.DATASET, indices=None)
             x, _ = dataset.train_xy
-        elif self.DATASET == "/tmpdir/lavinas/ssi":
+        elif self.name == "ssi":
             self.meta_filename = f"META_rgb.json"
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
             x, ys = dataset.train_xy
@@ -46,16 +47,16 @@ class   active_learning():
                 if np.sum(y) != 0:
                     self.idx = i 
                     break
+        
         self.OUTPUT = framework["OUTPUT"]
-
         self.lvls = list()
         self.indices_c = list(range(0, len(x)))
         self.indices_nc = [] 
         
         random.shuffle(self.indices_c)
-        if self.DATASET == "/tmpdir/lavinas/cellpose":
+        if self.name == "cellpose":
             self.idx = self.indices_c.pop()
-        elif self.DATASET == "/tmpdir/lavinas/ssi":
+        elif self.name== "ssi":
             self.indices_c.pop(self.idx )
         
         self.lvls.append(self.idx)        
@@ -71,12 +72,12 @@ class   active_learning():
         
         
         for i in range(self.n_models):
-            if self.DATASET == "/tmpdir/lavinas/cellpose":
+            if self.name == "cellpose":
                 self.models[i] = create_instance_segmentation_model(
                     self.generations,
-                    self._lambda
+                    self._lambda, inputs=2, outputs=2,
                 )
-            elif self.DATASET == "/tmpdir/lavinas/ssi":
+            elif self.name == "ssi":
                 self.models[i] = create_segmentation_model(
                     self.generations,
                     self._lambda
@@ -121,15 +122,14 @@ class   active_learning():
         disagreement = list()
         for i, index in enumerate(dis_idxs):
             # 
-            if self.DATASET == "/tmpdir/lavinas/cellpose":
+            if self.name == "cellpose":
                 dataset_active = read_dataset(self.DATASET, indices=[index])
-            elif self.DATASET == "/tmpdir/lavinas/ssi":
+            elif self.name == "ssi":
                 dataset_active = read_dataset(self.DATASET, indices=[index], filename=self.filename, meta_filename=self.meta_filename, preview=False)
-                
-            train_x_active, train_y_active = dataset_active.train_xy
-            if self.DATASET == "/tmpdir/lavinas/cellpose":
-                train_x_active = self.preprocessing.call(train_x_active)
+            train_x_active, train_y_active = dataset_active.train_xy               
                         
+            if self.name == "cellpose":
+                train_x_active = self.preprocessing.call(train_x_active)
             model_res = list()
             for j in range(self.n_models):
                 for k in range(j+1, self.n_models):
@@ -227,13 +227,13 @@ class   active_learning():
     
     def saving_test(self, file, cycle):
         # DATASET = read_dataset(self.DATASET, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
-        if self.DATASET == "/tmpdir/lavinas/cellpose":
+        if self.name == "cellpose":
             dataset = read_dataset(self.DATASET, indices=None)
-        elif self.DATASET == "/tmpdir/lavinas/ssi":
+        elif self.name == "ssi":
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
             
         test_x, test_y = dataset.test_xy
-        if self.DATASET == "/tmpdir/lavinas/cellpose":
+        if self.name == "cellpose":
             test_x = self.preprocessing.call(test_x)
         
         idx = self.fitness.index(min(self.fitness))

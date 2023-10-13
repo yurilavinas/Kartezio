@@ -1,5 +1,5 @@
 framework:
- DATASET: "../datasets/ssi"
+ DATASET: "./../datasets/ssi"
  filename: dataset.csv
  meta_filename: META_rgb.json
  OUTPUT: ../30nodes_500gen_5lambda_10model_ssi_rnd
@@ -16,6 +16,4 @@ variables:
  verbose: True
  al_iter: 10
  method: random
- inputs: 3
- outputs: 2
 
