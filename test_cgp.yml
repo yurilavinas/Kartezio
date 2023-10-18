@@ -11,4 +11,4 @@ variables:
  frequency: 1
  n_models: 3
  iter: 10
- indices: [1,2]
+ indices: None

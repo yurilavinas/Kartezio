@@ -53,6 +53,10 @@ if __name__ == "__main__":
     frequency = config["frequency"]
     indices = config["indices"]
     
+    if indices == "None":
+        indices = None
+    
+    
     for i in range(n_models):
         models[i] = create_instance_segmentation_model(
             generations, _lambda, inputs=2, outputs=2,
