@@ -34,11 +34,7 @@ if __name__ == "__main__":
     cycles = config["iter"]
     generations = config["generations"]
 
-    try:
-        os.makedirs(RESULTS)
-    except:
-        print('folder already exists, continuing...')
-
+   
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
     run = sys.argv[2] 
@@ -68,16 +64,20 @@ if __name__ == "__main__":
             for callback in callbacks:
                 callback.set_parser(models[i].parser)
                 models[i].attach(callback)
-            
+    try:
+        os.makedirs(RESULTS)
+        file_ensemble = f"{RESULTS}/raw_test_data.txt"
+        test = str([f"test_{i}" for i in range(n_models)],).translate({ord('['): '', ord(']'): '', ord('\''): ''})
+        train = str([f"train_{i}" for i in range(n_models)]).translate({ord('['): '', ord(']'): '', ord('\''): ''})
+        data = ["run", "gen", "eval_cost", "best_test", *test.split(","), *train.split(",")]
+        with open(file_ensemble, 'w') as f:
+            writer = csv.writer(f, delimiter = '\t')
+            writer.writerow(data)
+    except:
+        print('folder already exists, continuing...')
+
     dataset = read_dataset(DATASET, indices=indices)
-    file_ensemble = f"{RESULTS}/raw_test_data_{run}.txt"
-    test = str([f"test_{i}" for i in range(n_models)],).translate({ord('['): '', ord(']'): '', ord('\''): ''})
-    train = str([f"train_{i}" for i in range(n_models)]).translate({ord('['): '', ord(']'): '', ord('\''): ''})
-    data = ["run", "gen", "eval_cost", "best_test", *test.split(","), *train.split(",")]
     
-    with open(file_ensemble, 'w') as f:
-        writer = csv.writer(f, delimiter = '\t')
-        writer.writerow(data)
     
     train_x, train_y = dataset.train_xy
     test_x, test_y, test_v = dataset.test_xyv
