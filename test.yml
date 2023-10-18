@@ -1,5 +1,5 @@
 framework:
- DATASET: "./../datasets/ssi"
+ DATASET: "./../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
  OUTPUT: ../30nodes_500gen_5lambda_10model_ssi_rnd
@@ -9,7 +9,7 @@ variables:
  generations: 50
  _lambda: 5
  frequency: 100000
- n_models: 2
+ n_models: 3
  user_t: 0.00
  img_t: 0.00
  ask_user: False

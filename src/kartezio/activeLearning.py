@@ -33,7 +33,6 @@ class   active_learning():
         self.name = self.DATASET.split("/")[3]
 
         
-        # if self.DATASET == "/tmpdir/lavinas/cellpose":
         if self.name == "cellpose":
             CHANNELS = [1, 2]
             self.preprocessing = SelectChannels(CHANNELS)
@@ -69,7 +68,8 @@ class   active_learning():
         self.models = [None]*self.n_models
         self.history = []
         self.select_id = None
-        
+        self.save_results = framework["save_results"]
+        self.filename = f"{self.save_results}/raw_test_data.txt"
         
         for i in range(self.n_models):
             if self.name == "cellpose":
@@ -104,10 +104,7 @@ class   active_learning():
         for n, model in enumerate(self.models):
             model.clear()
             verbose = CallbackVerbose(frequency=self.frequency)
-            # save = CallbackSave_interactive(self.OUTPUT, dataset, gen, n, run, frequency=self.frequency)
-            # callbacks = [verbose, save]
             callbacks = [verbose]
-            # self.workdir = save.workdir
             if callbacks:
                 for callback in callbacks:
                         callback.set_parser(model.parser)
@@ -135,20 +132,14 @@ class   active_learning():
                 for k in range(j+1, self.n_models):
                     y1, _ = self.models[0].parser.parse(self.elites[j], train_x_active)
                     y2, _ = self.models[0].parser.parse(self.elites[k], train_x_active)
-                    ##################################################################
-                    # y = ([{"labels": np.append(y1[0]["labels"], y2[0]["labels"], axis=0)}])
-                    # train_y = [np.append(train_y_active[0][0], train_y_active[0][0], axis=0)]
-                    ##################################################################
                     v1 = self.strategies[0].fitness.compute_one(train_y_active, y1)
                     v2 = self.strategies[0].fitness.compute_one(train_y_active, y2)
                     model_res.append(np.abs(v1-v2))
-                    # model_res.append(v1)
-            # get the mean of the abs(diff)
+            
             disagreement.append(np.mean(model_res))
         
         return disagreement
     
-
     def add_img(self):  
 
         if self.verbose:
@@ -204,28 +195,7 @@ class   active_learning():
         if self.verbose:
             print("new indices in use: ",self.lvls, "\n")
 
-    # def saving_test(self, file, run, cycle):
-    #     DATASET = read_dataset(self.DATASET, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
-    #     test_x, test_y = DATASET.test_xy
-
-    #     idx = self.fitness.index(min(self.fitness))
-        
-    #     sep='_'
-    #     fitness=[None]*self.n_models
-    #     for i, model in enumerate(self.models):  
-    #         y_hats, _ = model.parser.parse(self.elites[i], test_x)
-    #         res = self.strategies[0].fitness.compute_one(test_y, y_hats)
-    #         fitness[i] = res
-        
-    #     self.eval_cost += (self.generations * len(self.lvls) * self._lambda  + len(self.indices)) * self.n_models
-    #     data = [run, cycle, self.eval_cost, *fitness, fitness[idx], *self.fitness, np.sum(self.disagreement), sep.join(map(str,self.lvls)), self.method]]
-    #     with open(file, 'a') as f:
-    #         writer = csv.writer(f, delimiter = '\t')
-    #         writer.writerow(data)
-
-    #     del test_x, test_y
-    
-    def saving_test(self, file, cycle):
+    def saving_test(self, cycle):
         # DATASET = read_dataset(self.DATASET, indices=None, filename=self.filename_test, meta_filename=self.meta_filename, preview=False)
         if self.name == "cellpose":
             dataset = read_dataset(self.DATASET, indices=None)
@@ -236,25 +206,21 @@ class   active_learning():
         if self.name == "cellpose":
             test_x = self.preprocessing.call(test_x)
         
-        idx = self.fitness.index(min(self.fitness))
-        
-        sep='_'
-        
+        idx = self.fitness.index(min(self.fitness))        
         fitness=[None]*self.n_models
+        
         for i, model in enumerate(self.models):  
-            y_hats, _ = model.parser.parse(self.elites[i], test_x)
-            res = self.strategies[0].fitness.compute_one(test_y, y_hats)
-            fitness[i] = res
+            y_hats, _ = model.predict(test_x)
+            fitness[i]  = self.strategies[i].fitness.compute_one(test_y, y_hats)
+
         if self.method == "disagreement":            
             self.eval_cost += self.generations * len(self.lvls) * self._lambda * self.n_models + len(self.indices) * self.n_models
         elif self.method == "random":
             self.eval_cost += self.generations * len(self.lvls) * self._lambda * self.n_models 
-            self.disagreement = 0
-        elif self.method == "inv":            
-            self.eval_cost += self.generations * len(self.lvls) * self._lambda * self.n_models + len(self.indices) * self.n_models
-           
-        data = [self.run, cycle, self.eval_cost, fitness[idx], np.sum(self.disagreement), sep.join(map(str,self.lvls)), self.method, *fitness, *self.fitness, ]
-        with open(file, 'a') as f:
+            self.disagreement = 0   
+        data = [self.run, cycle+1, self.eval_cost, fitness[idx], np.sum(self.disagreement), '_'.join(map(str,self.lvls)), *fitness, *self.fitness]
+    
+        with open(self.filename, 'a') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
 
@@ -311,3 +277,14 @@ class   active_learning():
             if 1 <= self.select_id <= self.n_models:
                 self.select_id -= 1
                 break
+
+    def create_file(self):
+        
+        test = str([f"test_{i}" for i in range(self.n_models)],).translate({ord('['): '', ord(']'): '', ord('\''): ''})
+        train = str([f"train_{i}" for i in range(self.n_models)]).translate({ord('['): '', ord(']'): '', ord('\''): ''})
+        data = ["run", "gen", "eval_cost", "best_test", "disagreement", "imgs_used", *test.split(","), *train.split(",")]
+        
+        with open(self.filename, 'w') as f:
+            writer = csv.writer(f, delimiter = '\t')
+            writer.writerow(data)
+        

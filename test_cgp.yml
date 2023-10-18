@@ -1,0 +1,14 @@
+framework:
+ DATASET: "./../datasets/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ OUTPUT: ../results_cgp
+ save_results: ../results_cgp
+
+variables:
+ generations: 1
+ _lambda: 5
+ frequency: 1
+ n_models: 3
+ iter: 10
+ indices: [1,2]
