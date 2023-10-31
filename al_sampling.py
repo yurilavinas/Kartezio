@@ -207,3 +207,12 @@ if __name__ == "__main__":
     y_hat, _ = model.predict(test_x)
     imgs_name = f"{RESULTS}/final_model_run_{run}_gen_{gen}_.png"
     save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
+    
+    viewer = KartezioViewer(
+        model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+    )
+    model_graph = viewer.get_graph(
+        elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+    )
+    path = f"{RESULTS}/final_graph_model_run_{run}_gen_{gen}.png"
+    model_graph.draw(path=path)

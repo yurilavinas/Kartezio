@@ -73,7 +73,8 @@ if __name__ == "__main__":
     
     
     for gen in range(cycles):
-        if gen == 0 or (restart == True and eval_cost > val): 
+        if gen == 0 or (restart == True and eval_cost > val):
+            print("init") 
             if gen > 0:
                 viewer = KartezioViewer(
                     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
