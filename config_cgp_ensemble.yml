@@ -1,0 +1,14 @@
+framework:
+ DATASET: "/tmpdir/lavinas/cellpose"
+ filename: dataset_patches.csv
+ meta_filename: META_rgb.json
+ OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_ensemble
+ save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_ensemble
+
+variables:
+ generations: 1
+ _lambda: 5
+ frequency: 100000
+ n_models: 10
+ iter: 1000
+ indices: None 

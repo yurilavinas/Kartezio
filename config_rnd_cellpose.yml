@@ -1,8 +1,6 @@
 framework:
- DATASET_ssi: "/tmpdir/lavinas/cellpose"
+ DATASET: "/tmpdir/lavinas/cellpose"
  filename: dataset_patches.csv
- filename_test: dataset_test.csv
- filename_train: dataset_train.csv
  meta_filename: META_rgb.json
  OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_random
  save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_cellpose_random

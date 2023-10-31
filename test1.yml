@@ -1,0 +1,21 @@
+framework:
+ DATASET: "/tmpdir/lavinas/ssi"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_ssi_rnd
+ save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_rnd
+
+variables:
+ generations: 100
+ _lambda: 5
+ frequency: 100000
+ n_models: 2
+ user_t: 0.00
+ img_t: 0.00
+ ask_user: False
+ verbose: True
+ al_iter: 10
+ method: disagreement
+ inputs: 3
+ outputs: 2
+

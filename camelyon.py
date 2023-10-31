@@ -18,7 +18,7 @@ run = sys.argv[1]
 if __name__ == "__main__":
     generations = 20000
     _lambda = 5
-    frequency = 10000
+    frequency = 10
     indices = None
     model = create_segmentation_model(
         generations, _lambda,

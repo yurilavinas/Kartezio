@@ -1,0 +1,22 @@
+framework:
+ DATASET: "/tmpdir/lavinas/ssi"
+ filename: dataset.csv
+ filename_test: dataset_test.csv
+ filename_train: dataset_train.csv
+ meta_filename: META_rgb.json
+ OUTPUT: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_camelyon_random
+ save_results: /tmpdir/lavinas/30nodes_500gen_5lambda_10model_camelyon_random
+
+variables:
+ generations: 500
+ _lambda: 5
+ frequency: 100000
+ n_models: 1
+ user_t: 0.00
+ img_t: 0.00
+ ask_user: False
+ verbose: True
+ al_iter: 10
+ method: random
+ inputs: 2
+ outputs: 2
