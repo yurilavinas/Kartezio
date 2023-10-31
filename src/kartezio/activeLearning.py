@@ -31,32 +31,32 @@ class   active_learning():
         self.DATASET = framework["DATASET"]        
         self.filename = framework["filename"]
         self.name = self.DATASET.split("/")[3]
-
+        self.n = config["n_calc"]
         
         if self.name == "cellpose":
             CHANNELS = [1, 2]
             self.preprocessing = SelectChannels(CHANNELS)
             dataset = read_dataset(self.DATASET, indices=None)
-            x, _ = dataset.train_xy
+            # x, ys = dataset.train_xy
         elif self.name == "ssi":
             self.meta_filename = f"META_rgb.json"
             dataset = read_dataset(self.DATASET, indices=None, filename=self.filename, meta_filename=self.meta_filename, preview=False)
-            x, ys = dataset.train_xy
-            for i, y in enumerate(ys):
-                if np.sum(y) != 0:
-                    self.idx = i 
-                    break
+        
+        x, ys = dataset.train_xy
+        for i, y in enumerate(ys):
+            if np.sum(y) != 0:
+                self.idx = i 
+                break
         
         self.OUTPUT = framework["OUTPUT"]
         self.lvls = list()
         self.indices_c = list(range(0, len(x)))
-        self.indices_nc = [] 
         
-        random.shuffle(self.indices_c)
-        if self.name == "cellpose":
-            self.idx = self.indices_c.pop()
-        elif self.name== "ssi":
-            self.indices_c.pop(self.idx )
+        # random.shuffle(self.indices_c)
+        # if self.name == "cellpose":
+        #     self.idx = self.indices_c.pop()
+        # elif self.name== "ssi":
+        #     self.indices_c.pop(self.idx)
         
         self.lvls.append(self.idx)        
         self.run = -1
@@ -84,10 +84,11 @@ class   active_learning():
                 )
               
         
-        if len(self.indices_nc) > 0:
-            self.indices = self.indices_c + self.indices_nc
-        else:
-            self.indices = self.indices_c
+        # if len(self.indices_nc) > 0:
+        #     self.indices = self.indices_c + self.indices_nc
+        # else:
+        #     self.indices = self.indices_c
+        self.indices = self.indices_c
         
         if self.verbose:
             print("Starting with data from index: ", self.lvls)
@@ -118,7 +119,8 @@ class   active_learning():
         # and select the img that lead to more diverse values
         disagreement = list()
         for i, index in enumerate(dis_idxs):
-            # 
+            if i >= self.n_calc:
+                break
             if self.name == "cellpose":
                 dataset_active = read_dataset(self.DATASET, indices=[index])
             elif self.name == "ssi":
@@ -128,13 +130,17 @@ class   active_learning():
             if self.name == "cellpose":
                 train_x_active = self.preprocessing.call(train_x_active)
             model_res = list()
+            res = np.zeros(self.n_models)-1
             for j in range(self.n_models):
                 for k in range(j+1, self.n_models):
-                    y1, _ = self.models[0].parser.parse(self.elites[j], train_x_active)
-                    y2, _ = self.models[0].parser.parse(self.elites[k], train_x_active)
-                    v1 = self.strategies[0].fitness.compute_one(train_y_active, y1)
-                    v2 = self.strategies[0].fitness.compute_one(train_y_active, y2)
-                    model_res.append(np.abs(v1-v2))
+                    if res[j] == -1:
+                        y1, _ = self.models[0].parser.parse(self.elites[j], train_x_active)
+                        res[j] = self.strategies[0].fitness.compute_one(train_y_active, y1)
+                    if res|k] == -1:
+                        y2, _ = self.models[0].parser.parse(self.elites[k], train_x_active)
+                        res[k] = self.strategies[0].fitness.compute_one(train_y_active, y2)                   
+                    
+                    model_res.append(np.abs(res[j]-res[k]))
             
             disagreement.append(np.mean(model_res))
         
@@ -160,12 +166,15 @@ class   active_learning():
                 
         # adding the img selected by the active learning approach 
         # to lvls so that we can repeat the train with the old img + this selected
-        idx = self.indices.pop(id_)
-        self.lvls.append(idx)
+        # idx = self.indices.pop(id_)
+        self.lvls.append(id_)
 
     def rm_img(self):
         # random.shuffle(self.lvls) 
-        disagreement = self.calc_disagreement(self.lvls) 
+        tmp = self.n_calc
+        self.n_calc = len(self.lvls)
+        disagreement = self.calc_disagreement(self.lvls)
+        self.n_calc = tmp 
         disagreement = disagreement / max(disagreement)    
         for i, l in enumerate(self.lvls):       
             if disagreement[i] < self.img_t:
@@ -178,18 +187,19 @@ class   active_learning():
         
                 # adding the img selected by the active learning approach 
                 # to lvls so that we can repeat the train with the old img + this selected 
-                self.indices.append(l)
+                # self.indices.append(l)
                 self.lvls.remove(l)
                 break
 
         if len(self.lvls) == 0:
             random.shuffle(self.indices_c)
-            self.idx = self.indices_c.pop()
+            self.idx = self.indices_c[0]
             self.lvls.append(self.idx)
-            if len(self.indices_nc) > 0:
-                self.indices = self.indices_c + self.indices_nc
-            else:
-                self.indices = self.indices_c
+            # if len(self.indices_nc) > 0:
+            #     self.indices = self.indices_c + self.indices_nc
+            # else:
+            #     self.indices = self.indices_c
+            self.indices = self.indices_c
             
 
         if self.verbose:
@@ -219,7 +229,8 @@ class   active_learning():
             self.eval_cost += self.generations * len(self.lvls) * self._lambda * self.n_models 
             self.disagreement = 0   
         data = [self.run, cycle+1, self.eval_cost, fitness[idx], np.sum(self.disagreement), '_'.join(map(str,self.lvls)), *fitness, *self.fitness]
-    
+        if self.verbose:
+            print("saving data: ",fitness)
         with open(self.filename, 'a') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)

@@ -1,0 +1,15 @@
+framework:
+ DATASET: "./../datasets/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ OUTPUT: ../results_bw_f_inc_resample
+ save_results: ../results_bw_f_inc_resample
+
+variables:
+ generations: 1
+ _lambda: 5
+ frequency: 100
+ n_models: 1
+ iter: 2500
+ indices: None
+ method: bw_f_inc_resample

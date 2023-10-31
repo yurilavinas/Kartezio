@@ -13,7 +13,7 @@ import csv
 import os
 from kartezio.callback import CallbackVerbose
 import yaml
-
+import numpy as np
 
 
 if __name__ == "__main__":
@@ -50,8 +50,9 @@ if __name__ == "__main__":
     indices = config["indices"]
     
     if indices == "None":
-        indices = None
-    
+        indices = np.random.choice(89, 10).tolist()
+    print(indices)
+
     
     for i in range(n_models):
         models[i] = create_instance_segmentation_model(
@@ -64,17 +65,21 @@ if __name__ == "__main__":
             for callback in callbacks:
                 callback.set_parser(models[i].parser)
                 models[i].attach(callback)
+    
+    
+    file_ensemble = f"{RESULTS}/raw_test_data.txt"
     try:
         os.makedirs(RESULTS)
-        file_ensemble = f"{RESULTS}/raw_test_data.txt"
         test = str([f"test_{i}" for i in range(n_models)],).translate({ord('['): '', ord(']'): '', ord('\''): ''})
         train = str([f"train_{i}" for i in range(n_models)]).translate({ord('['): '', ord(']'): '', ord('\''): ''})
-        data = ["run", "gen", "eval_cost", "best_test", *test.split(","), *train.split(",")]
+        data = ["run", "gen", "eval_cost", "best_test", *test.split(","), *train.split(","),"n_active"]
         with open(file_ensemble, 'w') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
     except:
-        print('folder already exists, continuing...')
+        print('')
+
+    
 
     dataset = read_dataset(DATASET, indices=indices)
     
@@ -86,7 +91,6 @@ if __name__ == "__main__":
     test_x = preprocessing.call(test_x)
 
     for gen in range(cycles):
-        print("cycle", gen)
         for i in range(n_models):
             strategies[i], elites[i] = models[i].fit(train_x, train_y, elite = elites[i])
             y_hats, _ = models[i].predict(train_x)
@@ -99,26 +103,29 @@ if __name__ == "__main__":
             y_hats, _ = model.predict(test_x)
             test_fits[i]  = strategies[i].fitness.compute_one(test_y, y_hats)
 
-        eval_cost = n_models * (gen+1) * len(test_x) * (len(strategies[i].population.individuals)-1)
-        data = [run, (gen+1), eval_cost, test_fits[idx], *test_fits, *fitness]
+        eval_cost = n_models * (gen+1) * len(train_x) * (len(strategies[i].population.individuals))
+        active_nodes = models[0].parser.parse_to_graphs(elites[0])
+        data = [run, (gen+1), eval_cost, test_fits[idx], *test_fits, *fitness, len(active_nodes[0]+active_nodes[1])]
         with open(file_ensemble, 'a') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
             
 
-    for i in range(n_models):
-        elite_name = f"{RESULTS}/elite_{i}.json"
+        for i in range(n_models):        
+
+            viewer = KartezioViewer(
+                models[i].parser.shape, models[i].parser.function_bundle, models[i].parser.endpoint
+            )
+            model_graph = viewer.get_graph(
+                elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+            )
+            # path = MODELS+"/graph_model_run_" + str(run) + "_.png"
+            path = f"{RESULTS}/graph_model_{i}_run_{run}_gen_{gen}.png"
+            model_graph.draw(path=path)
+    
+    for i in range(n_models):        
+        elite_name = f"{RESULTS}/final_elite_{i}_gen_{gen}.json"
         models[i].save_elite(elite_name, dataset)  
         y_hat, _ = models[i].predict(test_x)
-        imgs_name = f"{RESULTS}/gen_model_{i}_run_{run}_.png"
+        imgs_name = f"{RESULTS}/final_model_{i}_run_{run}.png"
         save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
-
-        viewer = KartezioViewer(
-            models[i].parser.shape, models[i].parser.function_bundle, models[i].parser.endpoint
-        )
-        model_graph = viewer.get_graph(
-            elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-        )
-        # path = MODELS+"/graph_model_run_" + str(run) + "_.png"
-        path = f"{RESULTS}/graph_model_{i}_run_{run}_.png"
-        model_graph.draw(path=path)

@@ -6,14 +6,14 @@ framework:
  save_results: ../30nodes_500gen_5lambda_10model_rnd
 
 variables:
- generations: 50
+ generations: 1
  _lambda: 5
  frequency: 100000
- n_models: 3
+ n_models: 2
  user_t: 0.00
- img_t: 0.00
+ img_t: 0.1
  ask_user: False
  verbose: True
- al_iter: 10
- method: random
+ al_iter: 200
+ method: disagreement
 

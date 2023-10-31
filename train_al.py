@@ -55,11 +55,10 @@ if __name__ == '__main__':
         # either the img is from an annotated area
         # or it's randomly selected - right now i picked the most interesting imgs            
         for i, model in enumerate(AL.models):
-            # file = save_results + "_/internal_model_"+str(i)+"_data.txt"
             AL.strategies[i], AL.elites[i] = model.fit(train_x, train_y, elite = AL.elites[i])
 
         if AL.method == "disagreement":
-            AL.disagreement = AL.calc_disagreement(AL.indices) 
+            AL.disagreement = AL.calc_disagreement(AL.indices, 10) 
         # get the elite from each model
         for i, model in enumerate(AL.models):
             y_hats, _ = model.predict(train_x)
@@ -70,8 +69,10 @@ if __name__ == '__main__':
         
         # active learning
         # rm img if more than 1 img is in use
+        print("AL.img_t",AL.img_t)
         if len(AL.lvls) > 1:
-            if AL.img_t > .0:
+            
+            if AL.img_t > 0.0:
                 AL.rm_img()
 
         # active learning
@@ -117,10 +118,6 @@ if __name__ == '__main__':
         y_hat, _ = model.predict(test_x)
         imgs_name = f"{AL.save_results}/gen_{cycle}_model_{i}_run_{AL.run}_mask.png"
         save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
-        # imgs_name = f"{save_results}/gen_{cycle}_model_{i}_run_{AL.run}_markers.png"
-        # save_prediction(imgs_name, test_v[0], y_hat[0]["markers"])
-        # imgs_name = f"{save_results}/gen_{cycle}_model_{i}_run_{AL.run}_labels.png"
-        # save_prediction(imgs_name, test_v[0], np.astype(y_hat[0]["labels"],np.uint8))
 
         viewer = KartezioViewer(
             model.parser.shape, model.parser.function_bundle, model.parser.endpoint

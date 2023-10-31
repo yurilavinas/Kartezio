@@ -16,6 +16,7 @@ class GoldmanWrapper(KartezioMutation):
     def mutate(self, genome):
         changed = False
         active_nodes = self.parser.parse_to_graphs(genome)
+        # original = genome.clone()
         while not changed:
             genome = self.mutation.mutate(genome)
             new_active_nodes = self.parser.parse_to_graphs(genome)
