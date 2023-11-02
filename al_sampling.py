@@ -152,7 +152,7 @@ if __name__ == "__main__":
                     idx.append(tmp1[0])
                     idx.append(tmp2[0])
             elif method == "roulette_inc_del":
-                if gen == size:
+                if count == size:
                     tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                     idx = [tmp1[0], tmp2[0]]
