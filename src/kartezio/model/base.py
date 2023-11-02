@@ -5,7 +5,7 @@ from kartezio.callback import Event
 from kartezio.export import GenomeToPython
 from kartezio.model.helpers import Observable
 from kartezio.utils.io import JsonSaver
-import csv
+
 
 class ModelML(ABC):
     @abstractmethod
@@ -68,14 +68,15 @@ class ModelCGP(ModelML, Observable):
         y,
         elite=None
     ):
-        genetic_algorithm = ModelGA(self.strategy, self.generations)
-        
-        if elite == None:
+       
+       if elite == None:
             genetic_algorithm.initialization()
         else:
             self.strategy.population.set_elite(elite) 
-            genetic_algorithm.current_generation = 0
-            
+            genetic_algorithm.current_generation = 0 
+        
+        genetic_algorithm = ModelGA(self.strategy, self.generations)
+        genetic_algorithm.initialization()
         y_pred = self.parser.parse_population(self.strategy.population, x)
         genetic_algorithm.evaluation(y, y_pred)
         self._notify(0, Event.START_LOOP, force=True)
@@ -88,11 +89,10 @@ class ModelCGP(ModelML, Observable):
             genetic_algorithm.evaluation(y, y_pred)
             genetic_algorithm.next()
             self._notify(genetic_algorithm.current_generation, Event.END_STEP)
-            
-        self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=False)
+        self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
         history = self.strategy.population.history()
         elite = self.strategy.elite
-        return self.strategy, elite
+        return elite, history
 
     def _notify(self, n, name, force=False):
         event = {

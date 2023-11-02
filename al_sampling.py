@@ -203,12 +203,12 @@ if __name__ == "__main__":
             
         
     
-    elite_name = f"{RESULTS}/final_elite.json"
+    elite_name = f"{RESULTS}/final_elite_run_{run}_gen_{gen}.json"
     model.save_elite(elite_name, dataset) 
     
 
     y_hat, _ = model.predict(test_x)
-    imgs_name = f"{RESULTS}/final_model_run_{run}_gen_{gen}_.png"
+    imgs_name = f"{RESULTS}/final_model_run_{run}_gen_{gen}.png"
     save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
     
     viewer = KartezioViewer(

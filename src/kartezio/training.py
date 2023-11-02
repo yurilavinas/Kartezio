@@ -84,8 +84,6 @@ def train_model(
     model,
     dataset,
     output_directory,
-    file, 
-    run,
     preprocessing=None,
     callbacks="default",
     callback_frequency=1,
@@ -103,12 +101,10 @@ def train_model(
             model.attach(callback)
 
     train_x, train_y = dataset.train_xy
-    test_x, test_y = dataset.test_xy
     if preprocessing:
         train_x = preprocessing.call(train_x)
-        test_x = preprocessing.call(test_x)
 
-    res = model.fit(train_x, train_y, test_x, test_y, file, run, elite = None)
+    res = model.fit(train_x, train_y)
     if pack:
         pack_one_directory(workdir)
 

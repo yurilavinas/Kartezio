@@ -124,7 +124,7 @@ if __name__ == "__main__":
         model_graph.draw(path=path)
     
     for i in range(n_models):        
-        elite_name = f"{RESULTS}/final_elite_{i}_gen_{gen}.json"
+        elite_name = f"{RESULTS}/final_elite_{i}_gen_{gen}_run_{run}.json"
         models[i].save_elite(elite_name, dataset)  
         y_hat, _ = models[i].predict(test_x)
         imgs_name = f"{RESULTS}/final_model_{i}_run_{run}.png"
