@@ -74,15 +74,15 @@ if __name__ == "__main__":
     
     for gen in range(cycles):
         if gen == 0 or (restart == True and eval_cost > val): 
-            if gen > 0:
-                viewer = KartezioViewer(
-                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-                )
-                model_graph = viewer.get_graph(
-                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-                )
-                path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
-                model_graph.draw(path=path)
+            # if gen > 0:
+                # viewer = KartezioViewer(
+                #     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+                # )
+                # model_graph = viewer.get_graph(
+                #     elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+                # )
+                # path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
+                # model_graph.draw(path=path)
                 
             # print("init!!!")
             model = create_instance_segmentation_model(
@@ -154,9 +154,9 @@ if __name__ == "__main__":
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                     idx = [tmp1[0], tmp2[0]]
                 f = int((c  *gen+1)**a)   
-                for i, cand in enumerate(probs_uniq[idx]):
-                    if cand < thres:
-                        idx.pop(i)
+                # for i, cand in enumerate(probs_uniq[idx]):
+                #     if cand < thres:
+                #         idx.pop(i)
                 if gen % f == 0 or len(idx) == 0: 
                     tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()

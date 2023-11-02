@@ -111,17 +111,17 @@ if __name__ == "__main__":
             writer.writerow(data)
             
 
-        for i in range(n_models):        
+    for i in range(n_models):        
 
-            viewer = KartezioViewer(
-                models[i].parser.shape, models[i].parser.function_bundle, models[i].parser.endpoint
-            )
-            model_graph = viewer.get_graph(
-                elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-            )
-            # path = MODELS+"/graph_model_run_" + str(run) + "_.png"
-            path = f"{RESULTS}/graph_model_{i}_run_{run}_gen_{gen}.png"
-            model_graph.draw(path=path)
+        viewer = KartezioViewer(
+            models[i].parser.shape, models[i].parser.function_bundle, models[i].parser.endpoint
+        )
+        model_graph = viewer.get_graph(
+            elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+        )
+        # path = MODELS+"/graph_model_run_" + str(run) + "_.png"
+        path = f"{RESULTS}/graph_model_{i}_run_{run}_gen_{gen}.png"
+        model_graph.draw(path=path)
     
     for i in range(n_models):        
         elite_name = f"{RESULTS}/final_elite_{i}_gen_{gen}.json"
