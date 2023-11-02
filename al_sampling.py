@@ -50,6 +50,7 @@ if __name__ == "__main__":
     thres = config["t"]
     restart = config["restart"]
     val = config["val"]
+    checkpoint = 0
     eval_cost = 0
     train_best_ever = 1
     
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     
     
     for gen in range(cycles):
-        if gen == 0 or (restart == True and eval_cost > val): 
+        if gen == 0 or (restart == True and eval_cost > checkpoint): 
             if gen > 0:
                 viewer = KartezioViewer(
                     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
@@ -86,8 +87,7 @@ if __name__ == "__main__":
                 )
                 path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
                 model_graph.draw(path=path)
-                
-            # print("init!!!")  
+
             model = create_instance_segmentation_model(
                 generations, _lambda, inputs=2, outputs=2,
             )
@@ -105,12 +105,13 @@ if __name__ == "__main__":
             probs_inv = np.ones(size)
             count = 0
             elites = None
+            checkpoint = checkpoint + val
         
-        if count < size:
-            idx = [count]
-            count += 1
-        else:
+            if count < size:
+                idx = [count]
+                count += 1
             
+        else:
             if method == "ranking":
                 tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
                 tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
