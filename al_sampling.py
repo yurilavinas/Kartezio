@@ -50,6 +50,9 @@ if __name__ == "__main__":
     thres = config["t"]
     restart = config["restart"]
     val = config["val"]
+    eval_cost = 0
+    train_best_ever = 1
+    
     try:
         os.makedirs(RESULTS)
         
@@ -100,8 +103,6 @@ if __name__ == "__main__":
             probs = np.ones(size)
             probs_uniq = np.ones(size)
             probs_inv = np.ones(size)
-            eval_cost = 0
-            train_best_ever = 1
             count = 0
             elites = None
         
