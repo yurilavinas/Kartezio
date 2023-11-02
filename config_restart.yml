@@ -10,7 +10,7 @@ variables:
  _lambda: 5
  frequency: 100
  n_models: 1
- iter: 2192
+ iter: 5022
  indices: None
  method: roulette_inc_del
  c: 2

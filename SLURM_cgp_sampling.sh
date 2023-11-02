@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J disagreement
+#SBATCH -J cgp
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31
