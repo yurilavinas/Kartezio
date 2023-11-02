@@ -78,6 +78,7 @@ if __name__ == "__main__":
     
     for gen in range(cycles):
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
+            print('ini')
             if gen > 0:
                 viewer = KartezioViewer(
                     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
@@ -107,9 +108,9 @@ if __name__ == "__main__":
             elites = None
             checkpoint = checkpoint + val
         
-            if count < size:
-                idx = [count]
-                count += 1
+        if count < size:
+            idx = [count]
+            count += 1
             
         else:
             if method == "ranking":
@@ -168,7 +169,7 @@ if __name__ == "__main__":
                     idx.pop(np.random.choice(len(idx), 1)[0])
                     idx.pop(np.random.choice(len(idx), 1)[0]) 
                     
-        # print(count, idx)
+        print(gen, count, idx)
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
         if preprocessing != None:
