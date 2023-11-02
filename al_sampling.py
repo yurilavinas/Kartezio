@@ -155,9 +155,10 @@ if __name__ == "__main__":
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                     idx = [tmp1[0], tmp2[0]]
                 f = int((c  *gen+1)**a)   
-                # for i, cand in enumerate(probs_uniq[idx]):
-                #     if cand < thres:
-                #         idx.pop(i)
+                for i, cand in enumerate(probs_uniq[idx]):
+                    if cand < thres:
+                        idx.pop(i)
+                        break
                 if gen % f == 0 or len(idx) == 0: 
                     tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
