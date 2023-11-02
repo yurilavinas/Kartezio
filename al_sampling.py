@@ -77,17 +77,17 @@ if __name__ == "__main__":
     
     for gen in range(cycles):
         if gen == 0 or (restart == True and eval_cost > val): 
-            # if gen > 0:
-                # viewer = KartezioViewer(
-                #     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-                # )
-                # model_graph = viewer.get_graph(
-                #     elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-                # )
-                # path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
-                # model_graph.draw(path=path)
+            if gen > 0:
+                viewer = KartezioViewer(
+                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+                )
+                model_graph = viewer.get_graph(
+                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+                )
+                path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
+                model_graph.draw(path=path)
                 
-            # print("init!!!")
+            # print("init!!!")  
             model = create_instance_segmentation_model(
                 generations, _lambda, inputs=2, outputs=2,
             )
