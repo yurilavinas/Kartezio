@@ -75,7 +75,7 @@ if __name__ == "__main__":
         test_x = preprocessing.call(test_x)
     size = len(train_x)
     
-    
+
     for gen in range(cycles):
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
             if gen > 0:
@@ -111,61 +111,66 @@ if __name__ == "__main__":
         if count < size:
             idx = [count]
             count += 1
-            
-        else:
-            if method == "ranking":
+        
+        if method == "ranking":
+            tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
+            tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+            idx = [tmp1[0], tmp2[0]]
+        elif method == "roulette_only_worse":
+            tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+            idx = [tmp1[0]]
+        elif method == "roulette":
+            tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+            tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+            idx = [tmp1[0], tmp2[0]]
+        elif method == "ranking_inc":
+            if gen == size:
                 tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
                 tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
                 idx = [tmp1[0], tmp2[0]]
-            elif method == "roulette_only_worse":
-                tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                idx = [tmp1[0]]
-            elif method == "roulette":
+            f = int((c*gen+1)**a)   
+            if len(idx) >= 10:
+                tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
+                tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+                idx = [tmp1[0], tmp2[0]]
+            elif gen % f == 0: 
+                tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()    
+                idx.append(tmp1[0])
+        elif method == "roullet_inc":
+            if gen == size:
                 tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                 idx = [tmp1[0], tmp2[0]]
-            elif method == "ranking_inc":
-                if gen == size:
-                    tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
-                    tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
-                    idx = [tmp1[0], tmp2[0]]
-                f = int((c*gen+1)**a)   
-                if len(idx) >= 10:
-                    tmp1 = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
-                    tmp2 = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
-                    idx = [tmp1[0], tmp2[0]]
-                elif gen % f == 0: 
-                    tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()    
-                    idx.append(tmp1[0])
-            elif method == "roullet_inc":
-                if gen == size:
-                    tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                    tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
-                    idx = [tmp1[0], tmp2[0]]
-                f = int((c*gen+1)**a)   
-                for i, cand in enumerate(probs_uniq[idx]):
-                    if cand < 0.1:
-                        idx.pop(i)
-                if gen % f == 0 or len(idx)==0: 
-                    tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()  
-                    tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()  
-                    idx.append(tmp1[0])
-                    idx.append(tmp2[0])
-            elif method == "roulette_inc_del":
-                if count == size:
-                    tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                    tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
-                    idx = [tmp1[0], tmp2[0]]
+            f = int((c*gen+1)**a)   
+            for i, cand in enumerate(probs_uniq[idx]):
+                if cand < 0.1:
+                    idx.pop(i)
+            if gen % f == 0 or len(idx)==0: 
+                tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()  
+                tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()  
+                idx.append(tmp1[0])
+                idx.append(tmp2[0])
+        elif method == "roulette_inc_del":
+            if count == size:
+                print("count == size")
+                tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                idx = [tmp1[0], tmp2[0]]
+                count += 1
+            elif count > size:
                 f = int((c  *gen+1)**a)   
                 for i, cand in enumerate(probs_uniq[idx]):
                     if cand < thres:
+                        print('entrou no descarte por perf...')
                         idx.pop(i)
                 if gen % f == 0 or len(idx) == 0: 
+                    print("gen % f == 0 or len(idx) == 0: ")
                     tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                     tmp2 = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                     idx.append(tmp1[0])
                     idx.append(tmp2[0])
                 if len(idx) > 10:
+                    print('entrou no descarte tamanho...')
                     idx.pop(np.random.choice(len(idx), 1)[0])
                     idx.pop(np.random.choice(len(idx), 1)[0]) 
                     
