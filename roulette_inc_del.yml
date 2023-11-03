@@ -2,8 +2,8 @@ framework:
  DATASET: "./../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- OUTPUT: ../results_roulette_inc_del_02_mutkartezio_t01_restart
- save_results: ../results_roulette_inc_del_02_mutkartezio_t01_restart
+ OUTPUT: ../results_roulette_inc_del_02_mutkartezio_t01
+ save_results: ../results_roulette_inc_del_02_mutkartezio_t01
 
 variables:
  generations: 1
@@ -15,7 +15,7 @@ variables:
  method: roulette_inc_del
  c: 2
  a: 0.5 
- t: 0.1
- restart: True
+ t: 0
+ restart: False
  val: 5000
 

@@ -51,8 +51,6 @@ if __name__ == "__main__":
     
     if indices == "None":
         indices = np.random.choice(89, 10).tolist()
-    print(indices)
-
     
     for i in range(n_models):
         models[i] = create_instance_segmentation_model(
