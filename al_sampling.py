@@ -153,16 +153,16 @@ if __name__ == "__main__":
                 bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
                 # count += 1
-            # elif count > size:
-            f = int((c*gen+1)**a)   
-            if gen % f == 0 or len(idx) == 0: 
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
-                idx.append(well_perf[0])
-                idx.append(bad_perf[0])
-            if len(idx) > 10:
-                idx.pop(np.random.choice(len(idx),1)[0])
-                idx.pop(np.random.choice(len(idx),1)[0])
+            elif count > size:
+                f = int((c*gen+1)**a)   
+                if gen % f == 0 or len(idx) == 0: 
+                    well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                    bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                    idx.append(well_perf[0])
+                    idx.append(bad_perf[0])
+                if len(idx) > 10:
+                    idx.pop(np.random.choice(len(idx),1)[0])
+                    idx.pop(np.random.choice(len(idx),1)[0])
         
         for i, cand in enumerate(probs_uniq[idx]):
             if cand < thres:
