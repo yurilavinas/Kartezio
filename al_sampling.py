@@ -181,7 +181,7 @@ if __name__ == "__main__":
             __idx = _idx
             probs[__idx] = fitness
             probs_inv[__idx] = 1-fitness
-        probs_uniq[idx[0]] = fitness
+        probs_uniq[idx[0]] = 1-fitness
         
         # if gen % 300 == 0: very -interesting, for later
         #     count = 0
