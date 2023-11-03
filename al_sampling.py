@@ -189,7 +189,7 @@ if __name__ == "__main__":
         for _idx in idx:
             __idx = _idx
             probs[__idx] = fitness
-            probs_inv[__idx] = fitness
+            probs_inv[__idx] = 1-fitness
         probs_uniq[idx[0]] = fitness
         
         y_hats, _ = model.predict(test_x)
