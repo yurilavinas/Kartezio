@@ -159,10 +159,7 @@ if __name__ == "__main__":
                 count += 1
             elif count > size:
                 f = int((c  *gen+1)**a)   
-                for i, cand in enumerate(probs_uniq[idx]):
-                    if cand < thres:
-                        print('entrou no descarte por perf...')
-                        idx.pop(i)
+                # f = int(2*(cycles-gen)**a)
                 if gen % f == 0 or len(idx) == 0: 
                     print("gen % f == 0 or len(idx) == 0: ")
                     tmp1 = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
@@ -172,7 +169,12 @@ if __name__ == "__main__":
                 if len(idx) > 10:
                     print('entrou no descarte tamanho...')
                     idx.pop(np.random.choice(len(idx), 1)[0])
-                    idx.pop(np.random.choice(len(idx), 1)[0]) 
+                    idx.pop(np.random.choice(len(idx), 1)[0])
+        
+        for i, cand in enumerate(probs_uniq[idx]):
+            if cand < thres:
+                print('entrou no descarte por perf...')
+                idx.pop(i) 
                     
         print(gen, count, idx)
         dataset = read_dataset(DATASET, indices=idx)
