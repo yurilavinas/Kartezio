@@ -164,9 +164,9 @@ if __name__ == "__main__":
                     idx.pop(np.random.choice(len(idx),1)[0])
                     idx.pop(np.random.choice(len(idx),1)[0])
         
-            for i, cand in enumerate(probs_uniq[idx]):
-                if cand < thres:
-                    idx.pop(i) 
+                for i, cand in enumerate(probs_uniq[idx]):
+                    if cand < thres:
+                        idx.pop(i) 
                     
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
