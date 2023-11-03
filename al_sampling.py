@@ -152,8 +152,8 @@ if __name__ == "__main__":
                 well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
-                count += 1
-            elif count > size:
+                # count += 1
+            # elif count > size:
             f = int((c*gen+1)**a)   
             if gen % f == 0 or len(idx) == 0: 
                 well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
