@@ -15,7 +15,8 @@ variables:
  method: roulette_inc_del
  c: 2
  a: 0.5 
- t: 0
+ t_easy: 0
+ t_hard: 1
  restart: True
  val: 5000
 

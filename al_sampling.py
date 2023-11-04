@@ -47,7 +47,8 @@ if __name__ == "__main__":
     file_ensemble = f"{RESULTS}/raw_test_data.txt"
     c = config["c"]
     a = config["a"] 
-    thres = config["t"]
+    thres_hard = config["t_hard"]
+    thres_easy = config["t_easy"]
     restart = config["restart"]
     val = config["val"]
     checkpoint = 0
@@ -152,7 +153,7 @@ if __name__ == "__main__":
                 well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
-                # count += 1
+                count += 1
             elif count > size:
                 f = int((c*gen+1)**a)   
                 if gen % f == 0 or len(idx) == 0: 
@@ -164,8 +165,8 @@ if __name__ == "__main__":
                     idx.pop(np.random.choice(len(idx),1)[0])
                     idx.pop(np.random.choice(len(idx),1)[0])
         
-                for i, cand in enumerate(probs_uniq[idx]):
-                    if cand < thres:
+                for i, cand in enumerate(probs_uniq[idx]): # removing too easy
+                    if cand < thres_easy:
                         idx.pop(i) 
                     
         dataset = read_dataset(DATASET, indices=idx)
