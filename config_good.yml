@@ -12,7 +12,7 @@ variables:
  n_models: 1
  iter: 2192
  indices: None
- method: roulette_inc_del
+ method: roulette_inc_del_good
  c: 2
  a: 0.5 
  t_easy: 0
