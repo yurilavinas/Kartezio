@@ -111,7 +111,6 @@ if __name__ == "__main__":
         
         if count < size:
             idx = [count]
-            count += 1
         
         if method == "ranking":
             well_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
@@ -153,7 +152,6 @@ if __name__ == "__main__":
                 well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
-                count += 1
             elif count > size:
                 f = int((c*gen+1)**a)   
                 if gen % f == 0 or len(idx) == 0: 
@@ -165,9 +163,25 @@ if __name__ == "__main__":
                     idx.pop(np.random.choice(len(idx),1)[0])
                     idx.pop(np.random.choice(len(idx),1)[0])
         
-                for i, cand in enumerate(probs_uniq[idx]): # removing too easy
+                for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
                     if cand < thres_easy:
                         idx.pop(i) 
+
+            elif method == "roulette_inc_del_good":
+                if count == size:
+                    well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                    idx = [well_perf[0]]
+                elif count > size:
+                    f = int((c*gen+1)**a)   
+                    if gen % f == 0 or len(idx) == 0: 
+                        well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                        idx.append(well_perf[0])
+                    if len(idx) > 10:
+                        idx.pop(np.random.choice(len(idx),1)[0])
+            
+                    for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
+                        if cand < thres_easy:
+                            idx.pop(i) 
                     
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
@@ -184,8 +198,10 @@ if __name__ == "__main__":
             probs_inv[__idx] = 1-fitness
         probs_uniq[idx[0]] = 1-fitness
         
-        # if gen % 300 == 0: very -interesting, for later
+        # if gen % 300 == 0: very -interesting, for later, restarting dataset but keep model
         #     count = 0
+        
+        count += 1
         
         y_hats, _ = model.predict(test_x)
         test_fits  = strategy.fitness.compute_one(test_y, y_hats)
@@ -205,6 +221,7 @@ if __name__ == "__main__":
             
         
     
+        
     elite_name = f"{RESULTS}/final_elite_run_{run}_gen_{gen}.json"
     model.save_elite(elite_name, dataset) 
     
