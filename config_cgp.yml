@@ -10,5 +10,5 @@ variables:
  _lambda: 5
  frequency: 100
  n_models: 1
- iter: 2000
+ iter: 1000
  indices: None

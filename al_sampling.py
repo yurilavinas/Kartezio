@@ -50,6 +50,7 @@ if __name__ == "__main__":
     thres_hard = config["t_hard"]
     thres_easy = config["t_easy"]
     restart = config["restart"]
+    maxeval = config["maxeval"]
     val = config["val"]
     checkpoint = 0
     eval_cost = 0
@@ -77,19 +78,11 @@ if __name__ == "__main__":
     size = len(train_x)
     
 
-    for gen in range(cycles):
+    # for gen in range(cycles):
+    gen = 0
+    while eval_cost < maxeval:
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
-            if gen > 0:
-                print("restarting...")
-                viewer = KartezioViewer(
-                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-                )
-                model_graph = viewer.get_graph(
-                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-                )
-                path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}.png"
-                model_graph.draw(path=path)
-
+            
             model = create_instance_segmentation_model(
                 generations, _lambda, inputs=2, outputs=2,
             )
@@ -99,8 +92,7 @@ if __name__ == "__main__":
             if callbacks:
                 for callback in callbacks:
                     callback.set_parser(model.parser)
-                    model.attach(callback)
-                    
+                    model.attach(callback)                   
             
             probs = np.ones(size)
             probs_uniq = np.ones(size)
@@ -201,6 +193,7 @@ if __name__ == "__main__":
         #     count = 0
         
         count += 1
+        gen += 1
         
         y_hats, _ = model.predict(test_x)
         test_fits  = strategy.fitness.compute_one(test_y, y_hats)
@@ -218,6 +211,22 @@ if __name__ == "__main__":
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
             
+        elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}.json"
+        model.save_elite(elite_name, dataset) 
+        
+    if eval_cost % 1000 == 0:
+        y_hat, _ = model.predict(test_x)
+        imgs_name = f"{RESULTS}/model_run_{run}_gen_{gen}.png"
+        save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
+        
+        viewer = KartezioViewer(
+            model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+        )
+        model_graph = viewer.get_graph(
+            elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+        )
+        path = f"{RESULTS}/GRAPH_run_{run}_gen_{gen}.png"
+        model_graph.draw(path=path)
         
     
         
