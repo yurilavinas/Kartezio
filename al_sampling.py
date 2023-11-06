@@ -184,8 +184,8 @@ if __name__ == "__main__":
         for _idx in idx:
             __idx = _idx
             probs[__idx] = fitness
-            probs_inv[__idx] = 1-fitness
-        probs_uniq[idx[0]] = 1-fitness
+            probs_inv[__idx] = 1 - fitness
+        probs_uniq[idx[0]] = 1 - fitness
         
         # if gen % 300 == 0: very -interesting, for later, restarting dataset but keep model
         #     count = 0
@@ -205,26 +205,29 @@ if __name__ == "__main__":
         active_nodes = model.parser.parse_to_graphs(elites)
         data = [run, (gen+1), eval_cost, test_fits, fitness, test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
 
-        with open(file_ensemble, 'a') as f:
-            writer = csv.writer(f, delimiter = '\t')
-            writer.writerow(data)
+        
+        
+        if eval_cost % 1000 == 0:
             
-        elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}.json"
-        model.save_elite(elite_name, dataset) 
-        
-    if eval_cost % 1000 == 0:
-        y_hat, _ = model.predict(test_x)
-        imgs_name = f"{RESULTS}/model_run_{run}_gen_{gen}.png"
-        save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
-        
-        viewer = KartezioViewer(
-            model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-        )
-        model_graph = viewer.get_graph(
-            elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-        )
-        path = f"{RESULTS}/GRAPH_run_{run}_gen_{gen}.png"
-        model_graph.draw(path=path)
+            with open(file_ensemble, 'a') as f:
+                writer = csv.writer(f, delimiter = '\t')
+                writer.writerow(data)
+                
+            elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}.json"
+            model.save_elite(elite_name, dataset) 
+            
+            y_hat, _ = model.predict(test_x)
+            imgs_name = f"{RESULTS}/model_run_{run}_gen_{gen}.png"
+            save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
+            
+            viewer = KartezioViewer(
+                model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+            )
+            model_graph = viewer.get_graph(
+                elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+            )
+            path = f"{RESULTS}/GRAPH_run_{run}_gen_{gen}.png"
+            model_graph.draw(path=path)
         
     
         
