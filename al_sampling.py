@@ -166,7 +166,6 @@ if __name__ == "__main__":
                 for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
                     if cand < thres_easy:
                         idx.pop(i) 
-
             elif method == "roulette_inc_del_good":
                 if count == size:
                     well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()

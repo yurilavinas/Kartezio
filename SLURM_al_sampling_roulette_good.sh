@@ -19,5 +19,5 @@ conda activate cgp_AL
 module load intelmpi chdb/1.0
 
 # RUN CHDB
-srun chdb --in-type "1 30" --command-line "./al_sampling_roulette.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
+srun chdb --in-type "1 30" --command-line "./al_sampling_roulette_good.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
 
