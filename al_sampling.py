@@ -78,6 +78,8 @@ if __name__ == "__main__":
     size = len(train_x)
     
     gen = 0
+    count = 0
+    
     while eval_cost < maxeval:
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
             
@@ -95,7 +97,7 @@ if __name__ == "__main__":
             probs = np.ones(size)
             probs_uniq = np.ones(size)
             probs_inv = np.ones(size)
-            count = 0
+            
             elites = None
             checkpoint = checkpoint + val
         
@@ -190,9 +192,6 @@ if __name__ == "__main__":
         # if gen % 300 == 0: very -interesting, for later, restarting dataset but keep model
         #     count = 0
         
-        count += 1
-        gen += 1
-        
         y_hats, _ = model.predict(test_x)
         test_fits  = strategy.fitness.compute_one(test_y, y_hats)
         
@@ -204,8 +203,9 @@ if __name__ == "__main__":
         eval_cost += n_models * len(idx) * (len(strategy.population.individuals))
         active_nodes = model.parser.parse_to_graphs(elites)
         data = [run, (gen+1), eval_cost, test_fits, fitness, test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
-
         
+        gen += 1
+        count += 1
         
         if eval_cost % 1000 == 0:
             
