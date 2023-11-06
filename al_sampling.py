@@ -31,7 +31,7 @@ if __name__ == "__main__":
     DATASET = framework["DATASET"]  
     RESULTS = framework["save_results"]
     
-    cycles = config["iter"]
+
     generations = config["generations"]
 
    
@@ -77,8 +77,6 @@ if __name__ == "__main__":
         test_x = preprocessing.call(test_x)
     size = len(train_x)
     
-
-    # for gen in range(cycles):
     gen = 0
     while eval_cost < maxeval:
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
