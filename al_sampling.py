@@ -203,16 +203,15 @@ if __name__ == "__main__":
         eval_cost += n_models * len(idx) * (len(strategy.population.individuals))
         active_nodes = model.parser.parse_to_graphs(elites)
         data = [run, (gen+1), eval_cost, test_fits, fitness, test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
-        
+        with open(file_ensemble, 'a') as f:
+                writer = csv.writer(f, delimiter = '\t')
+                writer.writerow(data)
+                
         gen += 1
         count += 1
         
         if eval_cost % 1000 == 0:
-            
-            with open(file_ensemble, 'a') as f:
-                writer = csv.writer(f, delimiter = '\t')
-                writer.writerow(data)
-                
+              
             elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}.json"
             model.save_elite(elite_name, dataset) 
             
