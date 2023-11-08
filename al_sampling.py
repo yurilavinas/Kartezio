@@ -104,7 +104,7 @@ if __name__ == "__main__":
         if count < size:
             idx = [count]
         
-        if method == "ranking":
+        elif method == "ranking":
             well_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
             bad_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
             idx = [well_perf[0], bad_perf[0]]
@@ -158,21 +158,21 @@ if __name__ == "__main__":
                 for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
                     if cand < thres_easy:
                         idx.pop(i) 
-            elif method == "roulette_inc_del_good":
-                if count == size:
+        elif method == "roulette_inc_del_good":
+            if count == size:
+                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                idx = [well_perf[0]]
+            elif count > size:
+                f = int((c*gen+1)**a)   
+                if gen % f == 0 or len(idx) == 0: 
                     well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                    idx = [well_perf[0]]
-                elif count > size:
-                    f = int((c*gen+1)**a)   
-                    if gen % f == 0 or len(idx) == 0: 
-                        well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                        idx.append(well_perf[0])
-                    if len(idx) > 10:
-                        idx.pop(np.random.choice(len(idx),1)[0])
-            
-                    for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
-                        if cand < thres_easy:
-                            idx.pop(i) 
+                    idx.append(well_perf[0])
+                if len(idx) > 10:
+                    idx.pop(np.random.choice(len(idx),1)[0])
+        
+                for i, cand in enumerate(probs_uniq[idx]): # removing images that don't pose a challenge
+                    if cand < thres_easy:
+                        idx.pop(i) 
                     
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
