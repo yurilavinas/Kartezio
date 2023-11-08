@@ -78,7 +78,6 @@ if __name__ == "__main__":
     size = len(train_x)
     
     gen = 0
-    count = 0
     
     while eval_cost < maxeval:
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
@@ -100,6 +99,7 @@ if __name__ == "__main__":
             
             elites = None
             checkpoint = checkpoint + val
+            count = 0
         
         if count < size:
             idx = [count]
