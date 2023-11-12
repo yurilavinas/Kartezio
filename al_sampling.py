@@ -100,18 +100,18 @@ if __name__ == "__main__":
             elites = None
             checkpoint = checkpoint + val
             count = 0
-            
-            elite_name = f"{RESULTS}/restart_elite_run_{run}_gen_{gen}.json"
-            model.save_elite(elite_name, dataset) 
-            
-            viewer = KartezioViewer(
-                model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-            )
-            model_graph = viewer.get_graph(
-                elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-            )
-            path = f"{RESULTS}/restart_graph_model_run_{run}_gen_{gen}.png"
-            model_graph.draw(path=path)
+            if gen > 0:
+                elite_name = f"{RESULTS}/restart_elite_run_{run}_gen_{gen}.json"
+                model.save_elite(elite_name, dataset) 
+                
+                viewer = KartezioViewer(
+                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+                )
+                model_graph = viewer.get_graph(
+                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+                )
+                path = f"{RESULTS}/restart_graph_model_run_{run}_gen_{gen}.png"
+                model_graph.draw(path=path)
         
         if count < size:
             idx = [count]
