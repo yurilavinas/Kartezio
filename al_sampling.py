@@ -81,7 +81,19 @@ if __name__ == "__main__":
     
     while eval_cost < maxeval:
         if gen == 0 or (restart == True and eval_cost > checkpoint): 
-            
+            if gen > 0:
+                elite_name = f"{RESULTS}/restart_elite_run_{run}_gen_{gen}.json"
+                model.save_elite(elite_name, dataset) 
+                
+                viewer = KartezioViewer(
+                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+                )
+                model_graph = viewer.get_graph(
+                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+                )
+                path = f"{RESULTS}/restart_graph_model_run_{run}_gen_{gen}.png"
+                model_graph.draw(path=path)
+                
             model = create_instance_segmentation_model(
                 generations, _lambda, inputs=2, outputs=2,
             )
@@ -100,18 +112,7 @@ if __name__ == "__main__":
             elites = None
             checkpoint = checkpoint + val
             count = 0
-            if gen > 0:
-                elite_name = f"{RESULTS}/restart_elite_run_{run}_gen_{gen}.json"
-                model.save_elite(elite_name, dataset) 
-                
-                viewer = KartezioViewer(
-                    model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-                )
-                model_graph = viewer.get_graph(
-                    elites, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-                )
-                path = f"{RESULTS}/restart_graph_model_run_{run}_gen_{gen}.png"
-                model_graph.draw(path=path)
+            
         
         if count < size:
             idx = [count]
