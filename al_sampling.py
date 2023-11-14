@@ -117,51 +117,54 @@ if __name__ == "__main__":
         if count < size:
             idx = [count]
         
+        elif method == "random":
+            rnd = [np.random.randint(0, size).tolist()]
+            idx = [rnd[0]]
         elif method == "ranking":
-            well_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
-            bad_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+            well_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+            bad_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
             idx = [well_perf[0], bad_perf[0]]
         elif method == "roulette_only_worse":
-            well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-            idx = [well_perf[0]]
+            bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+            idx = [bad_perf[0]]
         elif method == "roulette":
-            well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-            bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+            well_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+            bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
             idx = [well_perf[0], bad_perf[0]]
         elif method == "ranking_inc":
             if gen == size:
-                well_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
-                bad_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+                well_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+                bad_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
                 idx = [well_perf[0], bad_perf[0]]
             f = int((c*gen+1)**a)   
             if len(idx) >= 10:
-                well_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
-                bad_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+                well_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
+                bad_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]
                 idx = [well_perf[0], bad_perf[0]]
             elif gen % f == 0: 
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()    
-                idx.append(well_perf[0])
+                bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()    
+                idx.append(bad_perf[0])
         elif method == "roullet_inc":
             if gen == size:
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                well_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
             f = int((c*gen+1)**a)   
             if gen % f == 0 or len(idx)==0: 
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()  
-                bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()  
+                well_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()  
+                bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()  
                 idx.append(well_perf[0])
                 idx.append(bad_perf[0])
         elif method == "roulette_inc_del":
             if count == size:
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                well_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                 idx = [well_perf[0], bad_perf[0]]
             elif count > size:
                 f = int((c*gen+1)**a)   
                 if gen % f == 0 or len(idx) == 0: 
-                    well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                    bad_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                    well_perf = np.random.choice(size, 1, p=np.array(probs_inv)/sum(probs_inv)).tolist()
+                    bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
                     idx.append(well_perf[0])
                     idx.append(bad_perf[0])
                 if len(idx) > 10:
@@ -173,13 +176,13 @@ if __name__ == "__main__":
                         idx.pop(i) 
         elif method == "roulette_inc_del_good":
             if count == size:
-                well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                idx = [well_perf[0]]
+                bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                idx = [bad_perf[0]]
             elif count > size:
                 f = int((c*gen+1)**a)   
                 if gen % f == 0 or len(idx) == 0: 
-                    well_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
-                    idx.append(well_perf[0])
+                    bad_perf = np.random.choice(size, 1, p=np.array(probs)/sum(probs)).tolist()
+                    idx.append(bad_perf[0])
                 if len(idx) > 10:
                     idx.pop(np.random.choice(len(idx),1)[0])
         
