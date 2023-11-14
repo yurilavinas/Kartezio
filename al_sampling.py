@@ -118,8 +118,8 @@ if __name__ == "__main__":
             idx = [count]
         
         elif method == "random":
-            rnd = [np.random.randint(0, size).tolist()]
-            idx = [rnd[0]]
+            rnd = np.random.randint(0, size)
+            idx = [rnd]
         elif method == "ranking":
             well_perf = [np.random.choice(np.flatnonzero(probs == probs.min())).tolist()]
             bad_perf = [np.random.choice(np.flatnonzero(probs == probs.max())).tolist()]

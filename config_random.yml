@@ -2,8 +2,8 @@ framework:
  DATASET: "/tmpdir/lavinas/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- OUTPUT: /tmpdir/lavinas/results_roulette_inc_del_02_mutkartezio_t01_restart_6000
- save_results: /tmpdir/lavinas/results_roulette_inc_del_02_mutkartezio_t01_restart_6000
+ OUTPUT: /tmpdir/lavinas/results_roulette_inc_del_02_mutkartezio_t01_random
+ save_results: /tmpdir/lavinas/results_roulette_inc_del_02_mutkartezio_t01_random
 
 variables:
  generations: 1
