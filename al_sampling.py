@@ -118,8 +118,10 @@ if __name__ == "__main__":
             idx = [count]
         
         elif method == "random":
+            if count == size:
+                idx = [np.random.randint(0, size)]
             rnd = np.random.randint(0, size)
-            idx.append = [rnd]
+            idx.append(rnd)
             if len(idx) > 10:
                 idx.pop(np.random.choice(len(idx),1)[0])
         elif method == "ranking":
