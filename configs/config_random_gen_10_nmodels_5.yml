@@ -1,0 +1,22 @@
+
+framework:
+ DATASET: "/tmpdir/lavinas/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ save_results: /tmpdir/lavinas/al_random_gen_10_nmodels_5
+
+variables:
+ generations: 10
+ _lambda: 5
+ frequency: 100
+ n_models: 5
+ maxeval: 120000
+ indices: None
+ method: random
+ c: 2
+ a: 0.5 
+ t_easy: 0
+ t_hard: 1
+ restart: False
+ val: -1
+
