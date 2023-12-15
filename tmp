@@ -1,4 +1,0 @@
-In this work, we explore cartesian genetic programming for image analysis of biomedical data. Having access to high quantities of labelled
-biomedical data is a humanly expensive, and our idea is to introduce a way for CGP to sample and an use a small amount of data samples
-from the data set, for increaments in performance. For that, we direct
-our efforts to active learning, to provide a direction to find the best samples to use. We study how sampling a small set of data samples from the CELLPOSE dataset affects the performance of CGP. We found that active learning improves the convergence speed of CGP at early steps of the search progress.

@@ -17,7 +17,7 @@ variables:
  a: 0.5 
  t_easy: 0
  t_hard: 1
- restart: True
+ restart: False
  val: 6000
 
 

@@ -1,6 +1,6 @@
 from dataclasses import InitVar, dataclass, field
 
-from kartezio.model.base import ModelCGP
+from kartezio.model.base import ModelCGP, ModelCGP_mu
 from kartezio.model.components import (
     GenomeFactory,
     GenomeShape,
@@ -14,7 +14,7 @@ from kartezio.model.evolution import KartezioFitness, KartezioMutation
 from kartezio.model.registry import registry
 from kartezio.mutation import GoldmanWrapper, MutationAllRandom
 from kartezio.stacker import StackerMean
-from kartezio.strategy import OnePlusLambda
+from kartezio.strategy import OnePlusLambda, MuPlusLambda
 
 
 @dataclass
@@ -153,6 +153,96 @@ class ModelBuilder:
             _lambda, factory, instance_method, mutation_method, fitness
         )
         model = ModelCGP(generations, strategy, parser)
+        if callbacks:
+            for callback in callbacks:
+                callback.set_parser(parser)
+                model.attach(callback)
+        return model
+
+
+class ModelBuilder_mu:
+    def __init__(self):
+        self.__context = None
+
+    def create(
+        self,
+        endpoint,
+        bundle,
+        inputs=3,
+        nodes=10,
+        outputs=1,
+        arity=2,
+        parameters=2,
+        series_mode=False,
+        series_stacker=StackerMean(),
+    ):
+        self.__context = ModelContext(inputs, nodes, outputs, arity, parameters)
+        self.__context.set_endpoint(endpoint)
+        self.__context.set_bundle(bundle)
+        self.__context.compile_parser(series_mode, series_stacker)
+
+    def set_instance_method(self, instance_method):
+        if type(instance_method) == str:
+            if instance_method == "random":
+                shape = self.__context.genome_shape
+                n_nodes = self.__context.bundle.size
+                instance_method = MutationAllRandom(shape, n_nodes)
+        self.__context.set_instance_method(instance_method)
+
+    def set_mutation_method(
+        self, mutation, node_mutation_rate, output_mutation_rate, use_goldman=True
+    ):
+        if type(mutation) == str:
+            shape = self.__context.genome_shape
+            n_nodes = self.__context.bundle.size
+            mutation = registry.mutations.instantiate(
+                mutation, shape, n_nodes, node_mutation_rate, output_mutation_rate
+            )
+        if use_goldman:
+            parser = self.__context.parser
+            mutation = GoldmanWrapper(mutation, parser)
+        self.__context.set_mutation_method(mutation)
+
+    def set_fitness(self, fitness):
+        if type(fitness) == str:
+            fitness = registry.fitness.instantiate(fitness)
+        self.__context.set_fitness(fitness)
+
+    def compile(self, generations, _mu, _lambda, callbacks=None, dataset_inputs=None):
+        factory = self.__context.genome_factory
+        instance_method = self.__context.instance_method
+        mutation_method = self.__context.mutation_method
+        fitness = self.__context.fitness
+        parser = self.__context.parser
+
+        if parser.endpoint.arity != parser.shape.outputs:
+            raise ValueError(
+                f"Endpoint [{parser.endpoint.name}] requires {parser.endpoint.arity} output nodes. ({parser.shape.outputs} given)"
+            )
+
+        if self.__context.series_mode:
+            if not isinstance(parser.stacker, KartezioStacker):
+                raise ValueError(f"Stacker {parser.stacker} has not been properly set.")
+
+            if parser.stacker.arity != parser.shape.outputs:
+                raise ValueError(
+                    f"Stacker [{parser.stacker.name}] requires {parser.stacker.arity} output nodes. ({parser.shape.outputs} given)"
+                )
+
+        if not isinstance(fitness, KartezioFitness):
+            raise ValueError(f"Fitness {fitness} has not been properly set.")
+
+        if not isinstance(mutation_method, KartezioMutation):
+            raise ValueError(f"Mutation {mutation_method} has not been properly set.")
+
+        if dataset_inputs and (dataset_inputs != parser.shape.inputs):
+            raise ValueError(
+                f"Model has {parser.shape.inputs} input nodes. ({dataset_inputs} given by the dataset)"
+            )
+        strategy = MuPlusLambda(
+            _mu, _lambda, factory, instance_method, mutation_method, fitness
+        )
+        model = ModelCGP_mu(generations, strategy, parser)
         if callbacks:
             for callback in callbacks:
                 callback.set_parser(parser)

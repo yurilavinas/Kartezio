@@ -43,6 +43,13 @@ class ModelGA(ABC):
 
     def reproduction(self):
         self.strategy.reproduction()
+        # self.strategy.selection()
+
+    def tournament(self, k):
+        self.strategy.tournament(k)
+
+    def cloning(self):
+        self.strategy.cloning()
 
     def mutation(self):
         self.strategy.mutation()
@@ -68,31 +75,97 @@ class ModelCGP(ModelML, Observable):
         y,
         elite=None
     ):
-       
-       if elite == None:
+        
+        genetic_algorithm = ModelGA(self.strategy, self.generations)
+        if elite == None:
             genetic_algorithm.initialization()
-        else:
+        if elite != None:
             self.strategy.population.set_elite(elite) 
             genetic_algorithm.current_generation = 0 
         
-        genetic_algorithm = ModelGA(self.strategy, self.generations)
-        genetic_algorithm.initialization()
         y_pred = self.parser.parse_population(self.strategy.population, x)
         genetic_algorithm.evaluation(y, y_pred)
         self._notify(0, Event.START_LOOP, force=True)
         while not genetic_algorithm.is_satisfying():
             self._notify(genetic_algorithm.current_generation, Event.START_STEP)
-            genetic_algorithm.selection()
             genetic_algorithm.reproduction()
             genetic_algorithm.mutation()
             y_pred = self.parser.parse_population(self.strategy.population, x)
+            genetic_algorithm.evaluation(y, y_pred)            
+            genetic_algorithm.selection()
+            genetic_algorithm.next()            
+            self._notify(genetic_algorithm.current_generation, Event.END_STEP)
+        self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
+        history = self.strategy.population.history()
+        elite = self.strategy.elite
+        return self.strategy, elite
+
+    def _notify(self, n, name, force=False):
+        event = {
+            "n": n,
+            "name": name,
+            "content": self.strategy.population.history(),
+            "force": force,
+        }
+        self.notify(event)
+
+    def evaluate(self, x, y):
+        y_pred, t = self.predict(x)
+        return self.strategy.fitness.compute(y, [y_pred])
+
+    def predict(self, x):
+        return self.parser.parse(self.strategy.elite, x)
+
+    def save_elite(self, filepath, dataset):
+        JsonSaver(dataset, self.parser).save_individual(
+            filepath, self.strategy.population.history().individuals[0]
+        )
+
+    def print_python_class(self, class_name):
+        python_writer = GenomeToPython(self.parser)
+        python_writer.to_python_class(class_name, self.strategy.elite)
+
+class ModelCGP_mu(ModelML, Observable):
+    def __init__(self, generations, strategy, parser):
+        super().__init__()
+        self.generations = generations
+        self.strategy = strategy
+        self.parser = parser
+        self.callbacks = []
+
+    def fit(
+        self,
+        x,
+        y,
+        elite=None,
+        k = 2
+    ):
+        
+        genetic_algorithm = ModelGA(self.strategy, self.generations)
+        if elite == None:
+            genetic_algorithm.initialization()
+        if elite != None:
+            self.strategy.population.set_elite(elite) 
+            genetic_algorithm.current_generation = 0 
+            
+        y_pred = self.parser.parse_population(self.strategy.population, x)
+        genetic_algorithm.evaluation(y, y_pred)
+        self._notify(0, Event.START_LOOP, force=True)
+        while not genetic_algorithm.is_satisfying():
+            self._notify(genetic_algorithm.current_generation, Event.START_STEP)
+            # genetic_algorithm.reproduction()
+            # in this case reproduction involves tournament and cloning
+            genetic_algorithm.tournament(k)
+            genetic_algorithm.mutation()
+            y_pred = self.parser.parse_population(self.strategy.population, x)
             genetic_algorithm.evaluation(y, y_pred)
+            genetic_algorithm.selection()
             genetic_algorithm.next()
             self._notify(genetic_algorithm.current_generation, Event.END_STEP)
         self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
         history = self.strategy.population.history()
         elite = self.strategy.elite
-        return elite, history
+        return self.strategy, elite
 
     def _notify(self, n, name, force=False):
         event = {
