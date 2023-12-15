@@ -1,10 +1,10 @@
 #!/bin/bash
-#SBATCH -J restart
+#SBATCH -J 5_u
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31
 #SBATCH --ntasks-per-core=1
-#SBATCH --time=48:00:00
+#SBATCH --time=85:00:00
 #SBATCH --mail-user=yclavinas@gmail.com
 #SBATCH --mail-type=ALL
 

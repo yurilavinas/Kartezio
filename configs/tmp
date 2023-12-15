@@ -1,18 +1,18 @@
 
 framework:
- DATASET: "/tmpdir/lavinas/cellpose"
+ DATASET: "../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/lavinas/al_random_gen_10_nmodels_5
+ save_results: tmpdir
 
 variables:
  generations: 10
- _lambda: 10
+ _lambda: 5
  frequency: 100
- n_models: 5
+ n_models: 3
  maxeval: 120000
  indices: None
- method: random
+ method: uncertainty_weighted
  c: 2
  a: 0.5 
  t_easy: 0

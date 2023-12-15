@@ -38,7 +38,6 @@ def  count_different_pixels(array1, array2):
     return different_pixels/len(array1)/len(array1[0])
 # active learning - end
 
-
 if __name__ == "__main__":
     
     # load data from yml file
@@ -89,7 +88,7 @@ if __name__ == "__main__":
     # mkdir - done
     
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 89).tolist()
+    indices = np.arange(0, 9).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=[0])
     train_x, train_y = dataset.train_xy
@@ -184,13 +183,10 @@ if __name__ == "__main__":
                 writer.writerow(data)
         # saving information - end
                 
-        gen += 1
-        count += 1
-        # evolution - end
         
             
         # active learning methods
-        if method == "weighted_uncertainty":
+        if method == "uncertainty_weighted":
             uncertainties = []
             for img in indices:
                 # loading data
@@ -201,7 +197,7 @@ if __name__ == "__main__":
                 for i in range(n_models):
                     masks[i], _ = models[i].predict(x)
                 # masks - end
-                    
+                
                 val = 0
                 for i in range(n_models):
                     for j in range(i + 1, n_models):
@@ -220,14 +216,13 @@ if __name__ == "__main__":
                 for i in range(n_models):
                     masks[i], _ = models[i].predict(x)
                 # masks - end
-                
                 val = 0
                 for i in range(n_models):
                     for j in range(i + 1, n_models):
                         val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
                 uncertainties.append(val) 
-            id_ = uncertainties.index(max(uncertainties))    
-            idx.append(indices.pop(id_))
+            id_ = uncertainties.index(max(uncertainties)) 
+            idx.append(indices.pop(id_))   
         elif method == "random":
             if count < size:
                 idx = [count]
@@ -240,6 +235,11 @@ if __name__ == "__main__":
                     idx.pop(np.random.choice(len(idx),1)[0])
         # AL - end
         
+        
+        gen += 1
+        count += 1
+        # evolution - end
+    
         
     # for analysis during evolution
         if eval_cost % 1000 == 0:
