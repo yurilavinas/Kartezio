@@ -53,7 +53,6 @@ if __name__ == "__main__":
             framework = cfg["framework"]
             config = cfg["variables"]
             
-
     DATASET = framework["DATASET"]  
     RESULTS = framework["save_results"]
     generations = config["generations"]

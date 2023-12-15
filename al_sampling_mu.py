@@ -50,7 +50,6 @@ if __name__ == "__main__":
             cfg = yaml.safe_load(ymlfile)
             framework = cfg["framework"]
             config = cfg["variables"]
-            
 
     DATASET = framework["DATASET"]  
     RESULTS = framework["save_results"]
