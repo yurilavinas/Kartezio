@@ -51,14 +51,14 @@ if __name__ == "__main__":
             config = cfg["variables"]
             
     DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"]
+    RESULTS = framework["save_results"]+"_oneplus"
     generations = config["generations"]
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
     run = sys.argv[2] 
 
     n_models = config["n_models"]
-    _lambda = int(config["_lambda"]/2)
+    _lambda = config["_lambda"]
     frequency = config["frequency"]
     indices = config["indices"]
     method = config["method"]
@@ -183,56 +183,56 @@ if __name__ == "__main__":
                 writer.writerow(data)
         # saving information - end
                 
-        
-        # active learning methods
-        if method == "uncertainty_weighted":
-            uncertainties = []
-            for img in indices:
-                # loading data
-                dataset = read_dataset(DATASET, indices=[img])
-                x, y = dataset.train_xy
-                # getting masks
-                masks = [None]*n_models
-                for i in range(n_models):
-                    masks[i], _ = models[i].predict(x)
-                # masks - end
-                
-                val = 0
-                for i in range(n_models):
-                    for j in range(i + 1, n_models):
-                        val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
-                uncertainties.append(val) 
-            id_ = uncertainties.index(max(uncertainties))    
-            idx.append(indices.pop(id_))
-        elif method == "uncertainty":
-            uncertainties = []
-            for img in indices:
-                # loading data
-                dataset = read_dataset(DATASET, indices=[img])
-                x, y = dataset.train_xy
-                # getting masks
-                masks = [None]*n_models
-                for i in range(n_models):
-                    masks[i], _ = models[i].predict(x)
-                # masks - end
-                val = 0
-                for i in range(n_models):
-                    for j in range(i + 1, n_models):
-                        val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
-                uncertainties.append(val) 
-            id_ = uncertainties.index(max(uncertainties)) 
-            idx.append(indices.pop(id_))   
-        elif method == "random":
-            if count < size:
-                idx = [count]
-            else:
-                if count == size:
-                    idx = [np.random.randint(0, size)]
-                rnd = np.random.randint(0, size)
-                idx.append(rnd)
-                if len(idx) > 10:
-                    idx.pop(np.random.choice(len(idx),1)[0])
-        # AL - end
+        if indices: # if indices is not empty
+            # active learning methods
+            if method == "uncertainty_weighted":
+                uncertainties = []
+                for img in indices:
+                    # loading data
+                    dataset = read_dataset(DATASET, indices=[img])
+                    x, y = dataset.train_xy
+                    # getting masks
+                    masks = [None]*n_models
+                    for i in range(n_models):
+                        masks[i], _ = models[i].predict(x)
+                    # masks - end
+                    
+                    val = 0
+                    for i in range(n_models):
+                        for j in range(i + 1, n_models):
+                            val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
+                    uncertainties.append(val) 
+                id_ = uncertainties.index(max(uncertainties))    
+                idx.append(indices.pop(id_))
+            elif method == "uncertainty":
+                uncertainties = []
+                for img in indices:
+                    # loading data
+                    dataset = read_dataset(DATASET, indices=[img])
+                    x, y = dataset.train_xy
+                    # getting masks
+                    masks = [None]*n_models
+                    for i in range(n_models):
+                        masks[i], _ = models[i].predict(x)
+                    # masks - end
+                    val = 0
+                    for i in range(n_models):
+                        for j in range(i + 1, n_models):
+                            val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
+                    uncertainties.append(val) 
+                id_ = uncertainties.index(max(uncertainties)) 
+                idx.append(indices.pop(id_))   
+            elif method == "random":
+                if count < size:
+                    idx = [count]
+                else:
+                    if count == size:
+                        idx = [np.random.randint(0, size)]
+                    rnd = np.random.randint(0, size)
+                    idx.append(rnd)
+                    # if len(idx) > 10:
+                    #     idx.pop(np.random.choice(len(idx),1)[0])
+            # AL - end
         
         
         gen += 1

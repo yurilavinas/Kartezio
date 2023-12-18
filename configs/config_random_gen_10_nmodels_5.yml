@@ -6,7 +6,7 @@ framework:
  save_results: /tmpdir/lavinas/al_random_gen_10_nmodels_5
 
 variables:
- generations: 10
+ generations: 100
  _lambda: 10
  frequency: 100
  n_models: 5
