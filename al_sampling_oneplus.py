@@ -175,7 +175,7 @@ if __name__ == "__main__":
         # gathering - end
         
         # saving information for future analysis
-        eval_cost += n_models * len(idx) * (len(strategies[i].population.individuals))
+        eval_cost += n_models * len(idx) * (len(strategies[i].population.individuals))*generations
         active_nodes = models[i].parser.parse_to_graphs(elites[i])
         data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
         with open(file_ensemble, 'a') as f:
