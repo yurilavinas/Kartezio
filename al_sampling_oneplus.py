@@ -63,14 +63,7 @@ if __name__ == "__main__":
     indices = config["indices"]
     method = config["method"]
     file_ensemble = f"{RESULTS}/raw_test_data.txt"
-    c = config["c"]
-    a = config["a"] 
-    thres_hard = config["t_hard"]
-    thres_easy = config["t_easy"]
-    restart = config["restart"]
     maxeval = config["maxeval"]
-    val = config["val"]
-    checkpoint = 0
     eval_cost = 0
     train_best_ever = 1
     # load yml - end
@@ -90,7 +83,7 @@ if __name__ == "__main__":
     # getting info: test data and information from the dataset
     indices = np.arange(0, 89).tolist()
     random.shuffle(indices)
-    dataset = read_dataset(DATASET, indices=[0])
+    dataset = read_dataset(DATASET, indices=None)
     train_x, train_y = dataset.train_xy
     test_x, test_y, test_v = dataset.test_xyv
     if preprocessing != None:
@@ -106,7 +99,7 @@ if __name__ == "__main__":
     
     # evolution - start
     while eval_cost < maxeval:
-        if gen == 0 or (restart == True and eval_cost > checkpoint): 
+        if gen == 0: 
              
             # restarting - saving info for analysis
             if gen > 0:
@@ -144,7 +137,6 @@ if __name__ == "__main__":
             fitness = [None]*n_models
             test_fits = [None]*n_models
             elites = [None]*n_models
-            checkpoint = checkpoint + val
             count = 0
             # ensemble - end
     
@@ -170,7 +162,6 @@ if __name__ == "__main__":
         
             if fitness[i] <= train_best_ever:
                 train_best_ever = fitness[i]
-                idx_best_ever = idx[0]
                 test_best_ever = test_fits[i]
         # gathering - end
         

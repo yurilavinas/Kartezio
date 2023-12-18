@@ -6,17 +6,11 @@ framework:
  save_results: tmpdir
 
 variables:
- generations: 10
+ generations: 1
  _lambda: 5
  frequency: 100
- n_models: 3
+ n_models: 2
  maxeval: 120000
  indices: None
  method: uncertainty_weighted
- c: 2
- a: 0.5 
- t_easy: 0
- t_hard: 1
- restart: False
- val: -1
 
