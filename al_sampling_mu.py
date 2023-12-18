@@ -100,25 +100,10 @@ if __name__ == "__main__":
    # evolution - start
     while eval_cost < maxeval:
         if gen == 0: 
-             
-            # restarting - saving info for analysis
-            if gen > 0:
-                for i in range(n_models):
-                    elite_name = f"{RESULTS}/restart_elite_run_{run}_gen_{gen}.json"
-                    models[i].save_elite(elite_name, dataset) 
-                    
-                    viewer = KartezioViewer(
-                        models[i].parser.shape, models[i].parser.function_bundle, models[i].parser.endpoint
-                    )
-                    model_graph = viewer.get_graph(
-                        elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-                    )
-                    path = f"{RESULTS}/restart_graph_model_run_{run}_gen_{gen}.png"
-                    model_graph.draw(path=path)
-            # restarting - saving info for analysis
                     
             # init models
             models = [None]*n_models
+            gens = [None]*n_models
             for i in range(n_models):    
                 models[i] = create_instance_segmentation_model_mu(
                     generations, _mu, _lambda, inputs=2, outputs=2,
@@ -150,7 +135,7 @@ if __name__ == "__main__":
 
         # evolution
         for i in range(n_models):
-            strategies[i], elites[i] = models[i].fit(train_x, train_y, elite = elites[i])
+            strategies[i], elites[i], gens[i] = models[i].fit(train_x, train_y, elite = elites[i])
             y_hats, _ = models[i].predict(train_x)
             fitness[i] = strategies[i].fitness.compute_one(train_y, y_hats)
         # evolution - end
@@ -163,11 +148,14 @@ if __name__ == "__main__":
             if fitness[i] <= train_best_ever:
                 train_best_ever = fitness[i]
                 test_best_ever = test_fits[i]
+                _id = i
         # gathering - end
         
         # saving information for future analysis
-        eval_cost += n_models * len(idx) * (len(strategies[i].population.individuals))*generations
-        active_nodes = models[i].parser.parse_to_graphs(elites[i])
+        for i in range(n_models):
+            eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals))*gens[i]
+            
+        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
         data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
@@ -195,7 +183,7 @@ if __name__ == "__main__":
                             val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties))    
-                idx.append(indices[id_])
+                idx.append(indices.pop(id_))  
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:
@@ -213,7 +201,7 @@ if __name__ == "__main__":
                             val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties)) 
-                idx.append(indices[id_])  
+                idx.append(indices.pop(id_))  
             elif method == "random":
                 if count < size:
                     idx = [count]
@@ -233,7 +221,7 @@ if __name__ == "__main__":
     
         
     # for analysis during evolution
-        if eval_cost % 1000 == 0:
+        if eval_cost % 100 == 0:
              
             idx = np.argmin(fitness)
             elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}_model_{idx}.json"

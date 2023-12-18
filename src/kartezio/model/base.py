@@ -98,7 +98,7 @@ class ModelCGP(ModelML, Observable):
         self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
         history = self.strategy.population.history()
         elite = self.strategy.elite
-        return self.strategy, elite
+        return self.strategy, elite, genetic_algorithm.current_generation 
 
     def _notify(self, n, name, force=False):
         event = {
@@ -165,7 +165,7 @@ class ModelCGP_mu(ModelML, Observable):
         self._notify(genetic_algorithm.current_generation, Event.END_LOOP, force=True)
         history = self.strategy.population.history()
         elite = self.strategy.elite
-        return self.strategy, elite
+        return self.strategy, elite, genetic_algorithm.current_generation 
 
     def _notify(self, n, name, force=False):
         event = {

@@ -6,7 +6,7 @@ framework:
  save_results: tmpdir
 
 variables:
- generations: 1
+ generations: 100
  _lambda: 5
  frequency: 100
  n_models: 2
