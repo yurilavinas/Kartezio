@@ -88,7 +88,7 @@ if __name__ == "__main__":
     # mkdir - done
     
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 9).tolist()
+    indices = np.arange(0, 89).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=[0])
     train_x, train_y = dataset.train_xy
