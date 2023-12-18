@@ -153,8 +153,7 @@ if __name__ == "__main__":
         # gathering - end
         
         # saving information for future analysis
-        for i in range(n_models):
-            eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals))*gens[i]
+        eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals))*gens[i]
             
         active_nodes = models[0].parser.parse_to_graphs(elites[_id])
         data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
