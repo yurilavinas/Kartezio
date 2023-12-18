@@ -99,7 +99,7 @@ if __name__ == "__main__":
     
    # evolution - start
     while eval_cost < maxeval:
-        print("idx", idx)
+        print("idx")
         if gen == 0: 
                     
             # init models
@@ -184,7 +184,7 @@ if __name__ == "__main__":
                             val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties))    
-                idx.append(indices.pop([id_]))
+                idx.append(indices[id_])  
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                             val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties)) 
-                idx.append(indices.pop([id_]))  
+                idx.append(indices[id_])   
             elif method == "random":
                 if count < size:
                     idx = [count]
@@ -219,45 +219,23 @@ if __name__ == "__main__":
         gen += 1
         count += 1
         # evolution - end
-    
-        
-    # for analysis during evolution
-        if eval_cost % 100 == 0:
-             
-            idx = np.argmin(fitness)
-            elite_name = f"{RESULTS}/elite_run_{run}_gen_{gen}_model_{idx}.json"
-            models[idx].save_elite(elite_name, dataset) 
-            
-            y_hat, _ = models[idx].predict(test_x)
-            imgs_name = f"{RESULTS}/model_run_{run}_gen_{gen}_model_{idx}.png"
-            save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
-        
-            viewer = KartezioViewer(
-                models[idx].parser.shape, models[idx].parser.function_bundle, models[idx].parser.endpoint
-            )
-            model_graph = viewer.get_graph(
-                elites[i], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-            )
-            path = f"{RESULTS}/graph_model_run_{run}_gen_{gen}_model_{i}.png"
-            model_graph.draw(path=path)
-            # for analysis - end
             
     # for analysis of the final model
-    idx = np.argmin(fitness)   
-    elite_name = f"{RESULTS}/final_elite_run_{run}_gen_{gen}_model_{idx}.json"
-    models[idx].save_elite(elite_name, dataset) 
+    idx_ = np.argmin(fitness)   
+    elite_name = f"{RESULTS}/final_elite_run_{run}_gen_{gen}_model_{idx_}.json"
+    models[idx_].save_elite(elite_name, dataset) 
     
 
     y_hat, _ = models[i].predict(test_x)
-    imgs_name = f"{RESULTS}/final_model_run_{run}_gen_{gen}_model_{idx}.png"
+    imgs_name = f"{RESULTS}/final_model_run_{run}_gen_{gen}_model_{idx_}.png"
     save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
     
     viewer = KartezioViewer(
-        models[idx].parser.shape, models[i].parser.function_bundle, models[idx].parser.endpoint
+        models[idx_].parser.shape, models[i].parser.function_bundle, models[idx_].parser.endpoint
     )
     model_graph = viewer.get_graph(
-        elites[idx], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+        elites[idx_], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
     )
-    path = f"{RESULTS}/final_graph_model_run_{run}_gen_{gen}_model_{idx}.png"
+    path = f"{RESULTS}/final_graph_model_run_{run}_gen_{gen}_model_{idx_}.png"
     model_graph.draw(path=path)
     # for analysis - end
