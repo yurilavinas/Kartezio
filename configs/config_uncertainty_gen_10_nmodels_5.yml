@@ -13,10 +13,4 @@ variables:
  maxeval: 120000
  indices: None
  method: uncertainty
- c: 2
- a: 0.5 
- t_easy: 0
- t_hard: 1
- restart: False
- val: -1
-
+ 

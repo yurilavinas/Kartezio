@@ -98,7 +98,7 @@ if __name__ == "__main__":
     # AL - end
     
     # evolution - start
-    while eval_cost < maxeval:
+    while eval_cost <= maxeval:
         if gen == 0: 
                     
             # init models

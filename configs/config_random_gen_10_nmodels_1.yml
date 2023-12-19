@@ -10,13 +10,6 @@ variables:
  _lambda: 10
  frequency: 100
  n_models: 1
- maxeval: 120000
+ maxeval: 150000
  indices: None
  method: random
- c: 2
- a: 0.5 
- t_easy: 0
- t_hard: 1
- restart: False
- val: -1
-
