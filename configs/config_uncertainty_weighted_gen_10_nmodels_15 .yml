@@ -3,7 +3,7 @@ framework:
  DATASET: "/tmpdir/lavinas/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/lavinas/al_uncertainty_weighted_gen_10_nmodels_15_norep_norep
+ save_results: /tmpdir/lavinas/al_uncertainty_weighted_gen_10_nmodels_15_norep
 
 variables:
  generations: 10
