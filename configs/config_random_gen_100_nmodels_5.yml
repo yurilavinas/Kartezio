@@ -3,14 +3,13 @@ framework:
  DATASET: "/tmpdir/lavinas/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/lavinas/al_uncertainty_gen_10_nmodels_15
+ save_results: /tmpdir/lavinas/al_random_gen_100_nmodels_5
 
 variables:
  generations: 100
  _lambda: 10
  frequency: 100
- n_models: 15
+ n_models: 5
  maxeval: 150000
  indices: None
- method: uncertainty
-
+ method: random

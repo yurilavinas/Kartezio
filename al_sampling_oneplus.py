@@ -181,7 +181,8 @@ if __name__ == "__main__":
                             val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties))    
-                idx.append(indices[id_])  
+                idx.append(indices.pop(id_)) # without rep  
+                # idx.append(indices[id_])  # with rep
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:
@@ -199,7 +200,8 @@ if __name__ == "__main__":
                             val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties)) 
-                idx.append(indices[id_])   
+                idx.append(indices.pop(id_)) # without rep  
+                # idx.append(indices[id_])  # with rep
             elif method == "random":
                 if count < size:
                     idx = [count]
