@@ -210,13 +210,13 @@ if __name__ == "__main__":
                         idx = [np.random.randint(0, size)]
                     rnd = np.random.randint(0, size)
                     idx.append(rnd)
+                count += 1
                     # if len(idx) > 10:
                     #     idx.pop(np.random.choice(len(idx),1)[0])
             # AL - end
         
         
         gen += 1
-        count += 1
         # evolution - end
             
     # for analysis of the final model
