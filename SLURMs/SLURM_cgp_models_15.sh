@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 1_rnd
+#SBATCH -J 15_w
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31
@@ -9,13 +9,13 @@
 #SBATCH --mail-type=ALL
 
 export OMP_NUM_THREADS=1
-export PATH="/users/p16043/lavinas/miniconda3/bin:$PATH"
+export PATH="/users/p21049/p21049ly/miniconda3/bin:$PATH"
 
 # LOAD MODULES
 module purge
 module avail python
-module load python/3.8.18
+module load python/3.8.5
 module load intelmpi chdb/1.0
 
 # RUN CHDB
-srun chdb --in-type "1 30" --command-line "../scripts/al_random_nmodels_1.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
+srun chdb --in-type "1 30" --command-line "../scripts/al_cgp_nmodels_15.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
