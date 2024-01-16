@@ -1,0 +1,15 @@
+
+framework:
+ DATASET: "/tmpdir/lavinas/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ save_results: /tmpdir/lavinas/al_uncertainty_gen_10_nmodels_10_norep
+
+variables:
+ generations: 10
+ _lambda: 10
+ frequency: 100
+ n_models: 10
+ maxeval: 150000
+ indices: None
+ method: uncertainty
