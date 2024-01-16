@@ -1,0 +1,14 @@
+random drops performance sometimes, chooses bad points
+    more models the best
+the other convergence as soon, dont lose performance, 
+    small increments at the end
+    the other less models
+    converges sooner and with more consistency - show that with evolution of boxplots
+
+see if the model is converging before a new image is added
+
+analysis images selected
+
+
+#### future work
+dynamic metric for choosing on when to add new img

@@ -9,7 +9,7 @@
 #SBATCH --mail-type=ALL
 
 export OMP_NUM_THREADS=1
-export PATH="/users/p21049/p21049ly/miniconda3/bin:$PATH"
+export PATH="/users/p16043/lavinas/miniconda3/bin:$PATH"
 
 # LOAD MODULES
 module purge
