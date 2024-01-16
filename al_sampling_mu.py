@@ -95,11 +95,11 @@ if __name__ == "__main__":
     
     # AL
     idx = [indices.pop()]
+    # indices.append(idx[0]) # with rep
     # AL - end
     
    # evolution - start
     while eval_cost <= maxeval:
-        print("idx", idx)
         if gen == 0: 
                     
             # init models
@@ -183,8 +183,8 @@ if __name__ == "__main__":
                             val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
                     uncertainties.append(val) 
                 id_ = uncertainties.index(max(uncertainties))    
-                idx.append(indices.pop(id_)) # without rep  
-                # idx.append(indices[id_])  # with rep  
+                # idx.append(indices.pop(id_)) # without rep  
+                idx.append(indices[id_])  # with rep  
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:

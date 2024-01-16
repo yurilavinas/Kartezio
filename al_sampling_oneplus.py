@@ -95,6 +95,7 @@ if __name__ == "__main__":
     
     # AL
     idx = [indices.pop()]
+    # indices.append(idx[0]) # with rep
     # AL - end
     
     # evolution - start
@@ -148,13 +149,12 @@ if __name__ == "__main__":
             if fitness[i] <= train_best_ever:
                 train_best_ever = fitness[i]
                 test_best_ever = test_fits[i]
-                _id = i
         # gathering - end
         
         # saving information for future analysis
         eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals))*gens[i]
             
-        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
+        active_nodes = models[0].parser.parse_to_graphs(elites[np.argmin(fitness)])
         data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
