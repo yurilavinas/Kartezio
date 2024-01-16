@@ -3,13 +3,13 @@ framework:
  DATASET: "/tmpdir/p21049ly/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/p21049ly/al_uncertainty_weighted_gen_100_nmodels_15_norep
+ save_results: /tmpdir/p21049ly/al_cgp_gen_100_nmodels_10
 
 variables:
  generations: 100
  _lambda: 10
  frequency: 100
- n_models: 15
+ n_models: 10
  maxeval: 150000
  indices: None
- method: uncertainty_weighted
+ method: none
