@@ -1,9 +1,9 @@
 
 framework:
- DATASET: "/tmpdir/lavinas/cellpose"
+ DATASET: "/tmpdir/p21049ly/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/lavinas/al_random_gen_10_nmodels_15
+ save_results: /tmpdir/p21049ly/al_random_gen_10_nmodels_15
 
 variables:
  generations: 10
