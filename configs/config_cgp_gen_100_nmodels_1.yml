@@ -7,9 +7,9 @@ framework:
 
 variables:
  generations: 100
- _lambda: 10
+ _lambda: 5
  frequency: 100
  n_models: 1
- maxeval: 150000
+ maxeval: 200000
  indices: None
  method: none
