@@ -3,14 +3,13 @@ framework:
  DATASET: "../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: tmpdir_suggestions_10
+ save_results: tmpdir_5only
 
 variables:
- generations: 1
+ generations: 100
  _lambda: 10
  frequency: 100
  n_models: 1
- maxeval: 120000
- indices: None
- method: uncertainty_weighted
-
+ maxeval: 1200000
+ indices: [20,12,0]
+ method: random

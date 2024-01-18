@@ -123,7 +123,6 @@ if __name__ == "__main__":
             fitness = [None]*n_models
             test_fits = [None]*n_models
             elites = [None]*n_models
-            count = 0
             # ensemble - end
     
                 
@@ -205,16 +204,8 @@ if __name__ == "__main__":
                 idx.append(indices.pop(id_)) # without rep  
                 # idx.append(indices[id_])  # with rep   
             elif method == "random":
-                if count < size:
-                    idx = [count]
-                else:
-                    if count == size:
-                        idx = [np.random.randint(0, size)]
-                    rnd = np.random.randint(0, size)
-                    idx.append(rnd)
-                count += 1
-                    # if len(idx) > 10:
-                    #     idx.pop(np.random.choice(len(idx),1)[0])
+                rnd = indices.pop()
+                idx.append(rnd)
             # AL - end
         
         
