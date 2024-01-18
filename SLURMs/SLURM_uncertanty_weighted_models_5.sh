@@ -14,7 +14,7 @@ export PATH="/users/p16043/lavinas/miniconda3/bin:$PATH"
 # LOAD MODULES
 module purge
 module avail python
-module load python/3.8.5
+module load python/3.8.18
 conda activate cgp_AL
 module load intelmpi chdb/1.0
 
