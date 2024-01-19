@@ -10,6 +10,6 @@ variables:
  _lambda: 10
  frequency: 100
  n_models: 5
- maxeval: 150000
+ maxeval: 200000
  indices: None
  method: uncertainty_weighted
