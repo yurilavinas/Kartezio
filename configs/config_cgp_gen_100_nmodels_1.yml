@@ -3,10 +3,10 @@ framework:
  DATASET: "/tmpdir/p21049ly/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/p21049ly/al_cgp_gen_100_nmodels_1
+ save_results: /tmpdir/p21049ly/al_cgp_gen_1_nmodels_1
 
 variables:
- generations: 100
+ generations: 1
  _lambda: 5
  frequency: 100
  n_models: 1
