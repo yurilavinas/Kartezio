@@ -25,6 +25,7 @@ def selLexicase(values, images, k, maximizing = True):
     :param k: The number of individuals to select.
     :returns: A list of selected individuals.
     """
+    print(images)
     selected_images = []
     for _ in range(k):
         candidates = images
@@ -52,8 +53,10 @@ def selLexicase(values, images, k, maximizing = True):
             selected_images = random.choice(candidates)
         else:
             selected_images.append(random.choice(candidates))
-
-    return images[selected_images]
+    print("images, selected_images, images[selected_images]")
+    print(images, selected_images)
+    print( candidates.index(selected_images))
+    return candidates.index(selected_images)
 
 # active learning, uncertanty metrics
 def count_different_pixels_weighted(array1, array2):
@@ -162,7 +165,7 @@ if __name__ == "__main__":
     # mkdir - done
     
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 89).tolist()
+    indices = np.arange(0, 9).tolist()
     indices_all = np.arange(0, 89).tolist()
     random.shuffle(indices)
     random.shuffle(indices_all)
@@ -285,13 +288,14 @@ if __name__ == "__main__":
         # id_entropy = entropy.index(max(entropy))
         # id_disagremment = disagreement.index(max(disagreement))
         # id_ = [id_count, id_entropy, id_disagremment]
+        print(indices)
         id_ = selLexicase(values=[count, count_w, entropy, disagreement], images=indices, k=1)
-        
+        idx.append(indices.pop(i))
         print("--------------------------------------------------------------------------------------------------------------------")
-        id_ = np.unique(id_)
-        id_ = np.sort(id_)[::-1]
-        for i in id_:
-            idx.append(indices.pop(i))
+        # id_ = np.unique(id_)
+        # id_ = np.sort(id_)[::-1]
+        # for i in id_:
+        #     idx.append(indices.pop(i))
             # idx.append(indices[i])  # with rep   
         # if len(idx) > 10:
         #     indices = np.arange(0, 89).tolist()
@@ -299,46 +303,46 @@ if __name__ == "__main__":
         #     idx = [indices.pop()]
         # AL - end
         
-        count = []
-        entropy = []
-        disagreement = []
-        for img in indices_all:
-            # loading data
-            dataset = read_dataset(DATASET, indices=[img])
-            x, y = dataset.train_xy
-            # getting masks
-            masks = [None]*n_models
-            for i in range(n_models):
-                masks[i], _ = models[i].predict(x)
-            # masks - end
+        # count = []
+        # entropy = []
+        # disagreement = []
+        # for img in indices_all:
+        #     # loading data
+        #     dataset = read_dataset(DATASET, indices=[img])
+        #     x, y = dataset.train_xy
+        #     # getting masks
+        #     masks = [None]*n_models
+        #     for i in range(n_models):
+        #         masks[i], _ = models[i].predict(x)
+        #     # masks - end
             
-            val_count = 0
-            val_entropy = 0
-            val_disagreement = 0
-            for i in range(n_models):
-                for j in range(i + 1, n_models):
-                    val_count += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
-                    val_entropy += models_entropy(masks[i][0]["mask"], masks[j][0]["mask"])
-                    val_disagreement += variance_disagreement(masks[i][0]["mask"], masks[j][0]["mask"])
-            count.append(val_count) 
-            entropy.append(val_entropy) 
-            disagreement.append(val_disagreement) 
-        # print('count, entropy, disagreement')
-        # print(indices[count.index(max(count))], indices[entropy.index(max(entropy))], indices[disagreement.index(max(disagreement))])
-        id_count = count.index(max(count))
-        id_entropy = entropy.index(max(entropy))
-        id_disagremment = disagreement.index(max(disagreement))
-        id_ = [id_count, id_entropy, id_disagremment]
-        # print([indices[item] for item, count in collections.Counter(id_all).items() if count > 1])
+        #     val_count = 0
+        #     val_entropy = 0
+        #     val_disagreement = 0
+        #     for i in range(n_models):
+        #         for j in range(i + 1, n_models):
+        #             val_count += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
+        #             val_entropy += models_entropy(masks[i][0]["mask"], masks[j][0]["mask"])
+        #             val_disagreement += variance_disagreement(masks[i][0]["mask"], masks[j][0]["mask"])
+        #     count.append(val_count) 
+        #     entropy.append(val_entropy) 
+        #     disagreement.append(val_disagreement) 
+        # # print('count, entropy, disagreement')
+        # # print(indices[count.index(max(count))], indices[entropy.index(max(entropy))], indices[disagreement.index(max(disagreement))])
+        # id_count = count.index(max(count))
+        # id_entropy = entropy.index(max(entropy))
+        # id_disagremment = disagreement.index(max(disagreement))
+        # id_ = [id_count, id_entropy, id_disagremment]
+        # # print([indices[item] for item, count in collections.Counter(id_all).items() if count > 1])
+        # # print("--------------------------------------------------------------------------------------------------------------------")
+        # id_ = np.unique(id_)
+        # id_ = np.sort(id_)[::-1]
+        # for i in id_:
+        #     idx_all.append(indices_all[i])
+        # # recommendation - end
+        # print("recommending id")
+        # print(idx_all)
         # print("--------------------------------------------------------------------------------------------------------------------")
-        id_ = np.unique(id_)
-        id_ = np.sort(id_)[::-1]
-        for i in id_:
-            idx_all.append(indices_all[i])
-        # recommendation - end
-        print("recommending id")
-        print(idx_all)
-        print("--------------------------------------------------------------------------------------------------------------------")
         
         gen += 1
         # evolution - end
