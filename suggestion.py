@@ -25,8 +25,9 @@ def selLexicase(values, images, k, maximizing = True):
     :param k: The number of individuals to select.
     :returns: A list of selected individuals.
     """
+    print("images")
     print(images)
-    selected_images = []
+    selected_images_id = []
     for _ in range(k):
         candidates = images
         cases = list(range(len(values)))
@@ -50,13 +51,13 @@ def selLexicase(values, images, k, maximizing = True):
             cases.pop(0)
 
         if k == 1:
-            selected_images = random.choice(candidates)
+            selected_images_id = random.choice(candidates)
         else:
-            selected_images.append(random.choice(candidates))
+            selected_images_id.append(random.choice(candidates))
     print("images, selected_images, images[selected_images]")
-    print(images, selected_images)
-    print( candidates.index(selected_images))
-    return candidates.index(selected_images)
+    print("selected_images_id, images[selected_images_id]")
+    print(selected_images_id, images[selected_images_id])
+    return images[selected_images_id]
 
 # active learning, uncertanty metrics
 def count_different_pixels_weighted(array1, array2):
@@ -288,9 +289,10 @@ if __name__ == "__main__":
         # id_entropy = entropy.index(max(entropy))
         # id_disagremment = disagreement.index(max(disagreement))
         # id_ = [id_count, id_entropy, id_disagremment]
+        print("indices")
         print(indices)
         id_ = selLexicase(values=[count, count_w, entropy, disagreement], images=indices, k=1)
-        idx.append(indices.pop(i))
+        idx.append(indices.pop(id_))
         print("--------------------------------------------------------------------------------------------------------------------")
         # id_ = np.unique(id_)
         # id_ = np.sort(id_)[::-1]
