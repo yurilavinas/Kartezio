@@ -1,7 +1,5 @@
 from kartezio.apps.instance_segmentation_mu import create_instance_segmentation_model_mu
-from kartezio.endpoint import EndpointThreshold
 from kartezio.dataset import read_dataset
-from kartezio.training import train_model
 from kartezio.preprocessing import SelectChannels
 import sys
 from kartezio.plot import save_prediction
@@ -12,7 +10,50 @@ from kartezio.callback import CallbackVerbose
 import yaml
 import numpy as np
 import random
-import collections
+
+def selLexicase(values, images, k, maximizing = True):
+    ### heavily based on DEAP's implementation
+    ### https://github.com/DEAP/deap/blob/master/deap/tools/selection.py
+    
+    """
+    Returns an individual that does the best on the fitness cases when considered one at a
+    time in random order.
+    https://push-language.hampshire.edu/uploads/default/original/1X/35c30e47ef6323a0a949402914453f277fb1b5b0.pdf
+    Implemented lambda_epsilon_y implementation.
+
+    :param individuals: A list of individuals to select from.
+    :param k: The number of individuals to select.
+    :returns: A list of selected individuals.
+    """
+    selected_images = []
+    for _ in range(k):
+        candidates = images
+        cases = list(range(len(values)))
+        random.shuffle(cases)
+        
+
+        while len(cases) > 0 and len(candidates) > 1:
+            errors_for_this_case = values[cases[0]]
+            median_val = np.median(errors_for_this_case)
+            median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
+            
+            if maximizing:
+                best_val_for_case = max(errors_for_this_case)
+                min_val_to_survive = best_val_for_case - median_absolute_deviation
+                candidates = [x for x in range(len(candidates)) if values[cases[0]][x] >= min_val_to_survive]
+            else:
+                best_val_for_case = min(errors_for_this_case)
+                max_val_to_survive = best_val_for_case + median_absolute_deviation
+                candidates = [x for x in range(len(candidates)) if values[cases[0]][x] <= max_val_to_survive]
+
+            cases.pop(0)
+
+        if k == 1:
+            selected_images = random.choice(candidates)
+        else:
+            selected_images.append(random.choice(candidates))
+
+    return images[selected_images]
 
 # active learning, uncertanty metrics
 def count_different_pixels_weighted(array1, array2):
@@ -208,6 +249,7 @@ if __name__ == "__main__":
           
         # active learning methods
         count = []
+        count_w = []
         entropy = []
         disagreement = []
         for img in indices:
@@ -221,37 +263,40 @@ if __name__ == "__main__":
             # masks - end
             
             val_count = 0
+            val_count_w = 0
             val_entropy = 0
             val_disagreement = 0
             for i in range(n_models):
                 for j in range(i + 1, n_models):
-                    val_count += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
+                    val_count_w += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
                     val_entropy += models_entropy(masks[i][0]["mask"], masks[j][0]["mask"])
                     val_disagreement += variance_disagreement(masks[i][0]["mask"], masks[j][0]["mask"])
+                    val_count += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
+            count_w.append(val_count_w) 
             count.append(val_count) 
             entropy.append(val_entropy) 
             disagreement.append(val_disagreement) 
         print("--------------------------------------------------------------------------------------------------------------------")
         print("AL")
-        print('count, entropy, variance')
+        # print('count, entropy, variance')
         # print(count, entropy, disagreement)
-        print(indices[count.index(max(count))], indices[entropy.index(max(entropy))], indices[disagreement.index(max(disagreement))])
-        id_count = count.index(max(count))
-        id_entropy = entropy.index(max(entropy))
-        id_disagremment = disagreement.index(max(disagreement))
-        id_ = [id_count, id_entropy, id_disagremment]
-        # import collections
-        # print([indices[item] for item, count in collections.Counter(id_).items() if count > 1])
+        # print(indices[count.index(max(count))], indices[entropy.index(max(entropy))], indices[disagreement.index(max(disagreement))])
+        # id_count = count.index(max(count))
+        # id_entropy = entropy.index(max(entropy))
+        # id_disagremment = disagreement.index(max(disagreement))
+        # id_ = [id_count, id_entropy, id_disagremment]
+        id_ = selLexicase(values=[count, count_w, entropy, disagreement], images=indices, k=1)
+        
         print("--------------------------------------------------------------------------------------------------------------------")
         id_ = np.unique(id_)
         id_ = np.sort(id_)[::-1]
         for i in id_:
             idx.append(indices.pop(i))
             # idx.append(indices[i])  # with rep   
-        if len(idx) > 10:
-            indices = np.arange(0, 89).tolist()
-            random.shuffle(indices)
-            idx = [indices.pop()]
+        # if len(idx) > 10:
+        #     indices = np.arange(0, 89).tolist()
+        #     random.shuffle(indices)
+        #     idx = [indices.pop()]
         # AL - end
         
         count = []

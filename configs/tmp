@@ -6,10 +6,10 @@ framework:
  save_results: tmpdir_5only
 
 variables:
- generations: 100
- _lambda: 10
+ generations: 10
+ _lambda: 5
  frequency: 100
- n_models: 1
+ n_models: 5
  maxeval: 1200000
  indices: [20,12,0]
  method: random
