@@ -29,7 +29,7 @@ def selLexicase(values, images, k, maximizing = True):
     print(images)
     selected_images_id = []
     for _ in range(k):
-        candidates = images
+        candidates = np.arange(0, len(images)).tolist()
         cases = list(range(len(values)))
         random.shuffle(cases)
         
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     _lambda = config["_lambda"]
     _mu = config["_lambda"]
     frequency = config["frequency"]
-    indices = config["indices"]
+    # indices = config["indices"]
     method = config["method"]
     file_ensemble = f"{RESULTS}/raw_test_data.txt"
     maxeval = config["maxeval"]

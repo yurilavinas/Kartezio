@@ -1,7 +1,5 @@
 from kartezio.apps.instance_segmentation import create_instance_segmentation_model
-from kartezio.endpoint import EndpointThreshold
 from kartezio.dataset import read_dataset
-from kartezio.training import train_model
 from kartezio.preprocessing import SelectChannels
 import sys
 from kartezio.plot import save_prediction
@@ -60,7 +58,6 @@ if __name__ == "__main__":
     n_models = config["n_models"]
     _lambda = config["_lambda"]
     frequency = config["frequency"]
-    indices = config["indices"]
     method = config["method"]
     file_ensemble = f"{RESULTS}/raw_test_data.txt"
     maxeval = config["maxeval"]
@@ -100,6 +97,7 @@ if __name__ == "__main__":
     
     # evolution - start
     while eval_cost <= maxeval:
+        print(gen)
         if gen == 0: 
                     
             # init models
