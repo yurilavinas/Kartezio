@@ -150,16 +150,6 @@ if __name__ == "__main__":
                 test_best_ever = test_fits[i]
                 _id = i
         # gathering - end
-        
-        # saving information for future analysis
-        eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals))*gens[i]
-            
-        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
-        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
-        with open(file_ensemble, 'a') as f:
-                writer = csv.writer(f, delimiter = '\t')
-                writer.writerow(data)
-        # saving information - end
                 
         
         if indices: # if indices is not empty    
@@ -184,6 +174,8 @@ if __name__ == "__main__":
                 id_ = uncertainties.index(max(uncertainties))    
                 # idx.append(indices.pop(id_)) # without rep  
                 idx.append(indices[id_])  # with rep  
+                # saving information for future analysis
+                eval_cost += n_models * (len(strategies[0].population.individuals)) * gens[i] * size
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:
@@ -203,10 +195,22 @@ if __name__ == "__main__":
                 id_ = uncertainties.index(max(uncertainties)) 
                 idx.append(indices.pop(id_)) # without rep  
                 # idx.append(indices[id_])  # with rep   
+                # saving information for future analysis
+                eval_cost += n_models * (len(strategies[0].population.individuals)) * gens[i] * size
             elif method == "random":
                 rnd = indices.pop()
                 idx.append(rnd)
+                # saving information for future analysis
+                eval_cost += n_models * (len(idx) - 1) * (len(strategies[0].population.individuals)) * gens[i]
             # AL - end
+        
+        # saving information for future analysis
+        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
+        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
+        with open(file_ensemble, 'a') as f:
+                writer = csv.writer(f, delimiter = '\t')
+                writer.writerow(data)
+        # saving information - end
         
         
         gen += 1
