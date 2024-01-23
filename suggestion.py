@@ -35,6 +35,8 @@ def selLexicase(values, images, k, maximizing = True):
         
 
         while len(cases) > 0 and len(candidates) > 1:
+            print("candidates", candidates)
+            print("values", values[cases[0]])
             errors_for_this_case = values[cases[0]]
             median_val = np.median(errors_for_this_case)
             median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
@@ -42,6 +44,8 @@ def selLexicase(values, images, k, maximizing = True):
             if maximizing:
                 best_val_for_case = max(errors_for_this_case)
                 min_val_to_survive = best_val_for_case - median_absolute_deviation
+                print("min_val_to_survive",min_val_to_survive)
+                
                 candidates = [x for x in range(len(candidates)) if values[cases[0]][x] >= min_val_to_survive]
             else:
                 best_val_for_case = min(errors_for_this_case)
@@ -49,14 +53,12 @@ def selLexicase(values, images, k, maximizing = True):
                 candidates = [x for x in range(len(candidates)) if values[cases[0]][x] <= max_val_to_survive]
 
             cases.pop(0)
-
         if k == 1:
             selected_images_id = random.choice(candidates)
         else:
             selected_images_id.append(random.choice(candidates))
-    print("images, selected_images, images[selected_images]")
-    print("selected_images_id, images[selected_images_id]")
-    print(selected_images_id, images[selected_images_id])
+    print("images[selected_images_id]")
+    print(images[selected_images_id])
     return images[selected_images_id]
 
 # active learning, uncertanty metrics
@@ -166,7 +168,7 @@ if __name__ == "__main__":
     # mkdir - done
     
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 9).tolist()
+    indices = np.arange(0, 89).tolist()
     indices_all = np.arange(0, 89).tolist()
     random.shuffle(indices)
     random.shuffle(indices_all)
@@ -289,10 +291,9 @@ if __name__ == "__main__":
         # id_entropy = entropy.index(max(entropy))
         # id_disagremment = disagreement.index(max(disagreement))
         # id_ = [id_count, id_entropy, id_disagremment]
-        print("indices")
-        print(indices)
         id_ = selLexicase(values=[count, count_w, entropy, disagreement], images=indices, k=1)
-        idx.append(indices.pop(id_))
+        idx.append(id_)
+        indices.remove(id_)
         print("--------------------------------------------------------------------------------------------------------------------")
         # id_ = np.unique(id_)
         # id_ = np.sort(id_)[::-1]

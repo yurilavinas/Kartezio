@@ -174,7 +174,7 @@ if __name__ == "__main__":
                 # idx.append(indices.pop(id_)) # without rep  
                 idx.append(indices[id_])  # with rep  
                 # saving information for future analysis
-                eval_cost += n_models * (len(strategies[0].population.individuals)) * gens[i] * size
+                eval_cost += int(n_models * (len(strategies[0].population.individuals)) * gens[i] * size)
             elif method == "uncertainty":
                 uncertainties = []
                 for img in indices:
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                 idx.append(indices.pop(id_)) # without rep  
                 # idx.append(indices[id_])  # with rep   
                 # saving information for future analysis
-                eval_cost += n_models * (len(strategies[0].population.individuals)) * gens[i] * size
+                eval_cost += int(n_models * (len(strategies[0].population.individuals)) * gens[i] * size)
             elif method == "random":
                 rnd = indices.pop()
                 idx.append(rnd)
