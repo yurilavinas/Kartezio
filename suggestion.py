@@ -25,18 +25,17 @@ def selLexicase(values, images, k, maximizing = True):
     :param k: The number of individuals to select.
     :returns: A list of selected individuals.
     """
-    print("images")
-    print(images)
+    print("values", values)
     selected_images_id = []
     for _ in range(k):
         candidates = np.arange(0, len(images)).tolist()
+        print("candidates",candidates)
         cases = list(range(len(values)))
         random.shuffle(cases)
         
 
         while len(cases) > 0 and len(candidates) > 1:
-            print("candidates", candidates)
-            print("values", values[cases[0]])
+            print("values",values[cases[0]])
             errors_for_this_case = values[cases[0]]
             median_val = np.median(errors_for_this_case)
             median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
@@ -44,8 +43,9 @@ def selLexicase(values, images, k, maximizing = True):
             if maximizing:
                 best_val_for_case = max(errors_for_this_case)
                 min_val_to_survive = best_val_for_case - median_absolute_deviation
-                print("min_val_to_survive",min_val_to_survive)
-                
+                print("best_val_for_case", best_val_for_case        )
+                print("min_val_to_survive", min_val_to_survive)
+                print("candidates", candidates)
                 candidates = [x for x in range(len(candidates)) if values[cases[0]][x] >= min_val_to_survive]
             else:
                 best_val_for_case = min(errors_for_this_case)
@@ -53,6 +53,8 @@ def selLexicase(values, images, k, maximizing = True):
                 candidates = [x for x in range(len(candidates)) if values[cases[0]][x] <= max_val_to_survive]
 
             cases.pop(0)
+        
+        
         if k == 1:
             selected_images_id = random.choice(candidates)
         else:

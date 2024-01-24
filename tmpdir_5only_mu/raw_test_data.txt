@@ -1,2 +1,0 @@
-run	gen	eval_cost	test	train	best_fitness	n_active	used_imgs
--140	1	500	0.7210249155759811	0.3684210777282715	0.8475648072463545	7	[82]
