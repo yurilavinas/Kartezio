@@ -3,12 +3,12 @@ framework:
  DATASET: "../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: tmpdir_5only
+ save_results: tmpdir_lex
 
 variables:
- generations: 2
+ generations: 100
  _lambda: 5
  frequency: 100
- n_models: 2
+ n_models: 5
  maxeval: 1200000
  method: uncertainty
