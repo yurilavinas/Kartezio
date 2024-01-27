@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 1_rnd
+#SBATCH -J rnd
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31
