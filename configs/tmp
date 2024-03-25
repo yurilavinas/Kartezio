@@ -7,8 +7,8 @@ framework:
 
 variables:
  generations: 100
- _lambda: 5
+ _lambda: 10
  frequency: 100
- n_models: 5
- maxeval: 1200000
+ n_models: 10
+ maxeval: 200000
  method: uncertainty

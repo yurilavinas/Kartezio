@@ -1,0 +1,15 @@
+
+framework:
+ DATASET: "../datasets/lymphoma"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ save_results: ../tmpdir_leu_dup
+
+variables:
+ generations: 10
+ _lambda: 5
+ frequency: 100000000000
+ n_models: 15
+ maxeval: 100000000
+ method: uncertainty_weighted
+ max_imgs: all

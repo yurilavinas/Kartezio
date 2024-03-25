@@ -110,6 +110,39 @@ class MuPlusLambda(KartezioES):
                     self.idx[i] = j   
                     
         self.cloning() 
+        
+    def lexicase(self, cases, k):
+        selected_id = []
+        for _ in range(k):
+            candidates = np.arange(0, self.population.size).tolist()
+            # cases = list(range(len(values)))
+            cases = [cases]
+            random.shuffle(cases)
+            
+            while len(cases) > 0 and len(candidates) > 1:
+                
+                y_pred = self.parser.parse_population(self.strategy.population, [cases[0]])
+                values = self.fitness.call(cases[0], y_pred)
+                errors_for_this_case = values
+                median_val = np.median(errors_for_this_case)
+                median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
+                
+                best_val_for_case = max(errors_for_this_case)
+                min_val_to_survive = best_val_for_case - median_absolute_deviation
+                candidates = [x for x in range(len(candidates)) if values[x] >= min_val_to_survive]
+                
+                cases.pop(0)
+            
+            
+            if k == 1:
+                selected_id = random.choice(candidates)
+            else:
+                selected_id.append(random.choice(candidates))
+    
+        return selected_id
+        
+                    
+
 
     def cloning(self):
         for i in range(self.population.size):

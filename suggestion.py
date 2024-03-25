@@ -1,4 +1,4 @@
-from kartezio.apps.instance_segmentation_mu import create_instance_segmentation_model_mu
+from kartezio.apps.instance_segmentation import create_instance_segmentation_model
 from kartezio.dataset import read_dataset
 from kartezio.preprocessing import SelectChannels
 import sys
@@ -25,27 +25,22 @@ def selLexicase(values, images, k, maximizing = True):
     :param k: The number of individuals to select.
     :returns: A list of selected individuals.
     """
-    print("values", values)
+    
     selected_images_id = []
     for _ in range(k):
         candidates = np.arange(0, len(images)).tolist()
-        print("candidates",candidates)
         cases = list(range(len(values)))
         random.shuffle(cases)
         
 
         while len(cases) > 0 and len(candidates) > 1:
-            print("values",values[cases[0]])
-            errors_for_this_case = values[cases[0]]
+            errors_for_this_case = values[cases[0][candidates]]
             median_val = np.median(errors_for_this_case)
             median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
             
             if maximizing:
                 best_val_for_case = max(errors_for_this_case)
                 min_val_to_survive = best_val_for_case - median_absolute_deviation
-                print("best_val_for_case", best_val_for_case        )
-                print("min_val_to_survive", min_val_to_survive)
-                print("candidates", candidates)
                 candidates = [x for x in range(len(candidates)) if values[cases[0]][x] >= min_val_to_survive]
             else:
                 best_val_for_case = min(errors_for_this_case)
@@ -59,8 +54,7 @@ def selLexicase(values, images, k, maximizing = True):
             selected_images_id = random.choice(candidates)
         else:
             selected_images_id.append(random.choice(candidates))
-    print("images[selected_images_id]")
-    print(images[selected_images_id])
+    
     return images[selected_images_id]
 
 # active learning, uncertanty metrics
@@ -140,7 +134,7 @@ if __name__ == "__main__":
             config = cfg["variables"]
 
     DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"] + "_mu"
+    RESULTS = framework["save_results"] 
     generations = config["generations"]
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
@@ -199,8 +193,8 @@ if __name__ == "__main__":
             models = [None]*n_models
             gens = [None]*n_models
             for i in range(n_models):    
-                models[i] = create_instance_segmentation_model_mu(
-                    generations, _mu, _lambda, inputs=2, outputs=2,
+                models[i] = create_instance_segmentation_model(
+                    generations, _lambda, inputs=2, outputs=2,
                 )
                 models[i].clear()
                 verbose = CallbackVerbose(frequency=frequency)

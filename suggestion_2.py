@@ -11,8 +11,60 @@ import yaml
 import numpy as np
 import random
 
+def selLexicase(values, images, k, maximizing = True):
+    ### heavily based on DEAP's implementation
+    ### https://github.com/DEAP/deap/blob/master/deap/tools/selection.py
+    
+    """
+    Returns an individual that does the best on the fitness cases when considered one at a
+    time in random order.
+    https://push-language.hampshire.edu/uploads/default/original/1X/35c30e47ef6323a0a949402914453f277fb1b5b0.pdf
+    Implemented lambda_epsilon_y implementation.
+
+    :param individuals: A list of individuals to select from.
+    :param k: The number of individuals to select.
+    :returns: A list of selected individuals.
+    """
+    selected_images_id = []
+    for _ in range(k):
+        candidates = np.arange(0, len(images)).tolist()
+        cases = list(range(len(values)))
+        random.shuffle(cases)
+        
+
+        while len(cases) > 0 and len(candidates) > 1:
+            print("--------------------------- while ---------------------------")
+            tmp = values[cases[0]]
+            case_vals = [tmp[i] for i in candidates]
+            print("values",case_vals)
+     
+            errors_for_this_case = values[cases[0]]
+            median_val = np.median(errors_for_this_case)
+            median_absolute_deviation = np.median([abs(x - median_val) for x in errors_for_this_case])
+            
+            if maximizing:
+                best_val_for_case = max(case_vals)
+                min_val_to_survive = best_val_for_case - median_absolute_deviation
+                print("1- candidates", candidates)
+                candidates = [x for x in range(len(candidates)) if case_vals[x] >= min_val_to_survive]
+                print("2- candidates", candidates)
+            else:
+                best_val_for_case = min(case_vals)
+                max_val_to_survive = best_val_for_case + median_absolute_deviation
+                candidates = [x for x in range(len(candidates)) if values[cases[0]][x] <= max_val_to_survive]
+
+            cases.pop(0)
+        
+        
+        if k == 1:
+            selected_images_id = random.choice(candidates)
+        else:
+            selected_images_id.append(random.choice(candidates))
+    
+    return images[selected_images_id]
+
 # active learning, uncertanty metrics
-def  count_different_pixels_weighted(array1, array2):
+def count_different_pixels_weighted(array1, array2):
     different_pixels = 0
 
     for i in range(len(array1)):
@@ -25,7 +77,46 @@ def  count_different_pixels_weighted(array1, array2):
 
     return different_pixels/len(array1)/len(array1[0])
 
-def  count_different_pixels(array1, array2):
+def models_disagreement(array1, array2):
+    disagreement = np.sum(array1 != array2) / np.prod(array1.shape)
+    return disagreement
+
+def variance_disagreement(array1, array2):
+    # Calculate the variance of pixel values for each mask
+    variance_array1 = np.var(array1[0])
+    variance_array2 = np.var(array2[0])
+
+    # Calculate the absolute difference in variance
+    disagreement = np.abs(variance_array1 - variance_array2)
+
+    return disagreement
+
+def models_entropy(array1, array2):
+    from scipy.stats import entropy
+    # # Flatten the segmentation masks into 1D arrays
+    # flat_mask1 = array1.flatten()
+    # flat_mask2 = array2.flatten()
+
+    # Compute entropy for each mask
+    if (np.sum(array1)) != 0:
+        entropy_mask1 = entropy(array1[0], base = 2)
+    else:
+        entropy_mask1 = 0
+        
+    if (np.sum(array2)) != 0:
+        entropy_mask2 = entropy(array2[0], base = 2)
+    else:
+        entropy_mask2 = 0
+    
+    # Calculate the absolute difference in entropy
+    disagreement = np.abs(entropy_mask1 - entropy_mask2)
+
+    if np.isnan(disagreement):
+        disagreement = 0 
+
+    return disagreement
+
+def count_different_pixels(array1, array2):
     different_pixels = 0
 
     for i in range(len(array1)):
@@ -47,17 +138,18 @@ if __name__ == "__main__":
             cfg = yaml.safe_load(ymlfile)
             framework = cfg["framework"]
             config = cfg["variables"]
-            
+
     DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"]+"_oneplus"
+    RESULTS = framework["save_results"]
     generations = config["generations"]
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
     run = sys.argv[2] 
-
     n_models = config["n_models"]
     _lambda = config["_lambda"]
+    _mu = config["_lambda"]
     frequency = config["frequency"]
+    # indices = config["indices"]
     method = config["method"]
     file_ensemble = f"{RESULTS}/raw_test_data.txt"
     maxeval = config["maxeval"]
@@ -65,7 +157,7 @@ if __name__ == "__main__":
     train_best_ever = 1
     # load yml - end
     
-    # mkdir for log data
+   # mkdir for log data
     try:
         os.makedirs(RESULTS)
         
@@ -76,10 +168,12 @@ if __name__ == "__main__":
     except:
         print()
     # mkdir - done
-
+    
     # getting info: test data and information from the dataset
     indices = np.arange(0, 89).tolist()
+    indices_all = np.arange(0, 89).tolist()
     random.shuffle(indices)
+    random.shuffle(indices_all)
     dataset = read_dataset(DATASET, indices=None)
     train_x, train_y = dataset.train_xy
     test_x, test_y, test_v = dataset.test_xyv
@@ -92,12 +186,13 @@ if __name__ == "__main__":
     
     # AL
     idx = [indices.pop()]
-    # indices.append(idx[0]) # with rep
+    idx_all = []
     # AL - end
     
-    # evolution - start
+   # evolution - start
     while eval_cost <= maxeval:
-        print(gen)
+        print("\nTraining")
+        print("idx", idx)
         if gen == 0: 
                     
             # init models
@@ -121,9 +216,10 @@ if __name__ == "__main__":
             fitness = [None]*n_models
             test_fits = [None]*n_models
             elites = [None]*n_models
+            count = 0
             # ensemble - end
     
-            
+                
         # load img dataset
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
@@ -141,82 +237,60 @@ if __name__ == "__main__":
         # gathering test values, for analysis
         for i in range(n_models):
             y_hats, _ = models[i].predict(test_x)
-            test_fits[i]  = strategies[i].fitness.compute_one(test_y, y_hats)
+            test_fits[i] = strategies[i].fitness.compute_one(test_y, y_hats)
         
             if fitness[i] <= train_best_ever:
                 train_best_ever = fitness[i]
                 test_best_ever = test_fits[i]
         # gathering - end
-                
-        
-        if indices: # if indices is not empty    
-            # active learning methods
-            if method == "uncertainty_weighted":
-                uncertainties = []
-                for img in indices:
-                    # loading data
-                    dataset = read_dataset(DATASET, indices=[img])
-                    x, y = dataset.train_xy
-                    # getting masks
-                    masks = [None]*n_models
-                    for i in range(n_models):
-                        masks[i], _ = models[i].predict(x)
-                    # masks - end
-                    
-                    val = 0
-                    for i in range(n_models):
-                        for j in range(i + 1, n_models):
-                            val += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
-                    uncertainties.append(val) 
-                id_ = uncertainties.index(max(uncertainties))    
-                idx.append(indices.pop(id_)) # without rep  
-                # idx.append(indices[id_])  # with rep  
-                # saving information for future analysis
-                eval_cost += int(n_models * (len(idx) - 1) * (len(strategies[0].population.individuals)) + len(indices)+1)
-            elif method == "uncertainty":
-                uncertainties = []
-                for img in indices:
-                    # loading data
-                    dataset = read_dataset(DATASET, indices=[img])
-                    x, y = dataset.train_xy
-                    # getting masks
-                    masks = [None]*n_models
-                    for i in range(n_models):
-                        masks[i], _ = models[i].predict(x)
-                    # masks - end
-                    val = 0
-                    for i in range(n_models):
-                        for j in range(i + 1, n_models):
-                            val += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
-                    uncertainties.append(val) 
-                id_ = uncertainties.index(max(uncertainties)) 
-                idx.append(indices.pop(id_)) # without rep  
-                # idx.append(indices[id_])  # with rep   
-                # saving information for future analysis
-                eval_cost += int(n_models * (len(idx) - 1) * (len(strategies[0].population.individuals)) + len(indices)+1)
-            elif method == "random":
-                rnd = indices.pop()
-                idx.append(rnd)
-                # saving information for future analysis
-                eval_cost += int(n_models * (len(idx) - 1) * (len(strategies[0].population.individuals)))
-            # AL - end
-
-            if method == "uncertainty_weighted":
-                eval_cost += int(n_models * (len(idx) - 1) * generations * (len(strategies[0].population.individuals)) + n_models * (len(indices)+1))
-            if method == "uncertainty":
-                eval_cost += int(n_models * (len(idx) - 1) * generations * (len(strategies[0].population.individuals)) + n_models * (len(indices)+1))
-            elif method == "random":
-                eval_cost += int(n_models * (len(idx) - 1) * generations * (len(strategies[0].population.individuals)))
         
         # saving information for future analysis
-        _id = fitness.index(min(fitness))
-        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
+        eval_cost += int(n_models * (len(idx)) * (len(strategies[0].population.individuals)) + len(indices))
+            
+        active_nodes = models[0].parser.parse_to_graphs(elites[np.argmin(fitness)])
         data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
                 writer.writerow(data)
         # saving information - end
-        
+                
+          
+        # active learning methods
+        count = []
+        count_w = []
+        entropy = []
+        disagreement = []
+        for img in indices:
+            # loading data
+            dataset = read_dataset(DATASET, indices=[img])
+            x, y = dataset.train_xy
+            # getting masks
+            masks = [None]*n_models
+            for i in range(n_models):
+                masks[i], _ = models[i].predict(x)
+            # masks - end
+            
+            val_count = 0
+            val_count_w = 0
+            val_entropy = 0
+            val_disagreement = 0
+            for i in range(n_models):
+                for j in range(i + 1, n_models):
+                    val_count_w += count_different_pixels_weighted(masks[i][0]["mask"], masks[j][0]["mask"])
+                    val_entropy += models_entropy(masks[i][0]["mask"], masks[j][0]["mask"])
+                    val_disagreement += variance_disagreement(masks[i][0]["mask"], masks[j][0]["mask"])
+                    val_count += count_different_pixels(masks[i][0]["mask"], masks[j][0]["mask"])
+                    
+            count_w.append(val_count_w) 
+            count.append(val_count) 
+            entropy.append(val_entropy) 
+            disagreement.append(val_disagreement) 
+        print("--------------------------------------------------------------------------------------------------------------------")
+        print("AL")
+        id_ = selLexicase(values=[count, count_w, entropy, disagreement], images=indices, k=1)
+        idx.append(id_)
+        indices.remove(id_)
+        print("--------------------------------------------------------------------------------------------------------------------")
         
         gen += 1
         # evolution - end
