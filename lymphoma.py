@@ -132,6 +132,7 @@ if __name__ == "__main__":
     maxeval = config["maxeval"]
     aug = False
     if aug:
+        num = 0
         AUGSET = f"{DATASET}/aug"
         os.system(f"rm -r {AUGSET}")
         os.makedirs(AUGSET)
@@ -142,9 +143,9 @@ if __name__ == "__main__":
             writer = csv.writer(f)
             header = ["input","label","set"]
             writer.writerow(header)
-    num = 0
+        
+        
     eval_cost = 0
-    e = 0.05
     # load yml - end
     endpoint = EndpointThreshold(threshold=128)
     
@@ -164,8 +165,6 @@ if __name__ == "__main__":
     dataset = read_dataset(DATASET, indices=None)
     train_x, train_y = dataset.train_xy
     test_x, test_y, test_v = dataset.test_xyv
-    # if preprocessing != None:
-    #     test_x = preprocessing.call(test_x)
     indices = np.arange(0, len(train_x)).tolist()
     
     if config["max_imgs"] =='all':
@@ -173,7 +172,6 @@ if __name__ == "__main__":
     else:
         max_imgs = config["max_imgs"]
         
-    old_var = -1
     gen = 0
     # getting info - end
     
@@ -192,6 +190,9 @@ if __name__ == "__main__":
             for i in range(n_models):   
                 models[i] = create_segmentation_model(
                     generations, _lambda, inputs=3, outputs=1,
+                    node_mutation_rate=np.random.random(),
+                    output_mutation_rate=np.random.random(),
+                    nodes=np.random.randint(15,45+1)
                 )
                 models[i].clear()
                 verbose = CallbackVerbose(frequency=frequency)
@@ -245,10 +246,7 @@ if __name__ == "__main__":
         else:
             dataset = read_dataset(DATASET, indices=idx)
             train_x, train_y = dataset.train_xy
-            # if preprocessing != None:
-            #     train_x = preprocessing.call(train_x)
-            # load - end
-        # evolution
+
         y_hats = [None]*n_models
         
         for i, model in enumerate(models):
@@ -256,16 +254,7 @@ if __name__ == "__main__":
             y_hats[i], _ = model.predict(train_x)
             fits[i] = strategies[i].fitness.compute_one(train_y, y_hats[i])
     
-        # new_var = np.var(fits)
-        # print("old, new var", old_var, new_var)
-        # if (abs(old_var - new_var)) <= e:
-        #     generations += 10
-        #     generations = min(generations, 200) 
-        #     e *= 0.1
-        # old_var = new_var
         
-        # evolution - end
-
         bests_id = np.argpartition(1-np.array(fits), -1)[-1:]
         worses_id = np.argpartition(fits, -3)[-3:]
         print("fits", fits)
@@ -279,8 +268,7 @@ if __name__ == "__main__":
         
         
         
-        # if indices: # if indices is not empty
-        if len(idx) < 30:
+        if indices: # if indices is not empty
             random.shuffle(indices)
             # active learning methods
             if method == "uncertainty_weighted":
@@ -326,27 +314,6 @@ if __name__ == "__main__":
                 metric =  [-1,-1]
                 rnd = indices.pop()
                 idx.append(rnd)
-                # saving information for future analysis
-        # print("uncertainty: ", metric)                  
-        # if len(idx) > 10:
-        #     print("entrou, vai duplicar!")
-        #     # idx.pop(0)
-        #     metric1 = []
-        #     for n, img in enumerate(idx):
-        #         # loading data
-        #         dataset = read_dataset(DATASET, indices=[img])
-        #         x, y = dataset.train_xy
-        #         # getting masks
-        #         masks = [None]*n_models
-        #         for i in range(n_models):
-        #             masks[i], _ = models[i].predict(x)
-        #         # masks - end
-        #         val = 0
-        #         for id1 in range(n_models):
-        #             for id2 in range(i + 1, n_models):
-        #                 val += count_different_pixels_weighted(masks[id1][0]["mask"], masks[j][id2]["mask"])
-        #         metric1.append(val) 
-        #     idx.append(metric1.index(min(metric1)))
             
         # AL - end
         if method == "uncertainty_weighted":
