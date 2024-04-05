@@ -3,13 +3,13 @@ framework:
  DATASET: "../datasets/lymphoma"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: ../tmpdir_leu_dup
+ save_results: ../tmp_h
 
 variables:
  generations: 100
  _lambda: 5
- frequency: 100000000000
- n_models: 15
- maxeval: 100000000
- method: uncertainty_weighted
- max_imgs: all
+ frequency: 100
+ n_models: 1
+ maxeval: 20000000
+ indices: [0,5,7,12,20,21,14,17,2,29]
+ method: none

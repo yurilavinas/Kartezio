@@ -153,7 +153,7 @@ if __name__ == "__main__":
     try:
         os.makedirs(RESULTS)
         
-        data = ["run", "gen", "eval_cost", "test", "train", "n_active", "used_imgs", "bests_ids", "worses_ids", "uncertainty", "image"]
+        data = ["run", "gen", "eval_cost", "test", "train", "n_active", "used_imgs", "uncertainty", "image"]
         with open(file_ensemble, 'w') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
@@ -327,10 +327,12 @@ if __name__ == "__main__":
         # saving information for future analysis
         # _id = fitness.index(min(fitness))
         _id = bests_id[0]
-        active_nodes = models[0].parser.parse_to_graphs(elites[_id])
-        # data = [run, (gen+1), eval_cost, np.min(test_fits), fitness, len(active_nodes[0]), idx]
-        data = ["run", "gen", "eval_cost", "test", "train", "n_active", "used_imgs", "bests_ids", "worses_ids", "uncertainty", "image"]
-        data = [run, (gen+1), eval_cost, test_fit, fits, len(active_nodes[0]), idx[0:len(idx)-1], np.argpartition(1-np.array(fits), -3)[-3:], worses_id, max(metric), idx[len(idx)-1]]
+        active_nodes = models[_id].parser.parse_to_graphs(elites[_id])
+        print("idx",idx)
+        print("active_nodes",active_nodes)
+        print("idx[0:len(idx)-1]",idx[0:len(idx)-1])
+        print("idx[len(idx)-1]",idx[len(idx)-1])
+        data = [run, (gen+1), eval_cost, test_fit, fits[bests_id[0]], len(active_nodes[0]), idx[0:len(idx)-1], max(metric), idx[len(idx)-1]]
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
                 writer.writerow(data)

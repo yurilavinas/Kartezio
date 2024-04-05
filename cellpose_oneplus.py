@@ -81,7 +81,8 @@ if __name__ == "__main__":
     # mkdir - done
 
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 89).tolist()
+    if indices == None:
+        indices = np.arange(0, 89).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=None)
     train_x, train_y = dataset.train_xy
@@ -133,7 +134,7 @@ if __name__ == "__main__":
 
         # evolution
         for i in range(n_models):
-            strategies[i], elites[i], gens[i] = models[i].fit(train_x, train_y, elite = elites[i])
+            strategies[i], elites[i], gens[i] = models[i].fit(train_x, train_y, elite = elites[i], gen=generations)
             y_hats, _ = models[i].predict(train_x)
             fitness[i] = strategies[i].fitness.compute_one(train_y, y_hats)
         # evolution - end
@@ -152,7 +153,8 @@ if __name__ == "__main__":
         eval_cost += n_models * len(idx) * (len(strategies[0].population.individuals)) * gens[0]
             
         active_nodes = models[0].parser.parse_to_graphs(elites[np.argmin(fitness)])
-        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx]
+        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), len(active_nodes[0]+active_nodes[1]),test_best_ever, idx]
+
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
                 writer.writerow(data)
