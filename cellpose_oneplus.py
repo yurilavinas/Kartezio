@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
         # evolution
         for i in range(n_models):
-            strategies[i], elites[i], gens[i] = models[i].fit(train_x, train_y, elite = elites[i], gen=generations)
+            strategies[i], elites[i], gens[i] = models[i].fit(train_x, train_y, elite = elites[i])
             y_hats, _ = models[i].predict(train_x)
             fitness[i] = strategies[i].fitness.compute_one(train_y, y_hats)
         # evolution - end
