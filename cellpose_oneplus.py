@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # mkdir - done
 
     # getting info: test data and information from the dataset
-    if indices == None:
+    if indices == "none":
         indices = np.arange(0, 89).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=None)
