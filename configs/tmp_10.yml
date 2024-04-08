@@ -6,10 +6,10 @@ framework:
  save_results: ../tmp_10
 
 variables:
- generations: 100
+ generations: 1
  _lambda: 5
  frequency: 100
  n_models: 1
  maxeval: 20000000
- indices: [53, 7, 69, 33, 9, 75, 0, 74, 27, 64, 37]
+ indices: none
  method: none
