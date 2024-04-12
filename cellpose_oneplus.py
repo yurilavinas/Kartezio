@@ -83,6 +83,8 @@ if __name__ == "__main__":
     # getting info: test data and information from the dataset
     if indices == "None":
         indices = np.arange(0, 89).tolist()
+    elif indices == "10":
+        indices = np.random.choice(np.arange(0, 89), 10).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=None)
     train_x, train_y = dataset.train_xy

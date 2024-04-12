@@ -3,7 +3,7 @@ framework:
  DATASET: "/tmpdir/p21049ly/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/p21049ly/al_cgp_gen_1_nmodels_1_hard
+ save_results: /tmpdir/p21049ly/al_cgp_gen_1_nmodels_1_10
 
 variables:
  generations: 1
@@ -11,7 +11,7 @@ variables:
  frequency: 100
  n_models: 1
  maxeval: 1000000
- indices: [0, 2, 5, 7, 12, 14, 17, 20, 21, 29]
+ indices: 10
  method: none
 
 
