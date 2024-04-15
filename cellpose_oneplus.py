@@ -13,31 +13,6 @@ import yaml
 import numpy as np
 import random
 
-# active learning, uncertanty metrics
-def  count_different_pixels_weighted(array1, array2):
-    different_pixels = 0
-
-    for i in range(len(array1)):
-        for j in range(len(array1[i])): 
-            if array1[i][j] != array2[i][j]:
-                if array1[i][j] == 0 or array2[i][j] == 0:
-                    different_pixels += 2
-                else:
-                    different_pixels += 1
-
-    return different_pixels/len(array1)/len(array1[0])
-
-def  count_different_pixels(array1, array2):
-    different_pixels = 0
-
-    for i in range(len(array1)):
-        for j in range(len(array1[i])): 
-            if array1[i][j] != array2[i][j]:
-                different_pixels += 1
-
-    return different_pixels/len(array1)/len(array1[0])
-# active learning - end
-
 if __name__ == "__main__":
     
     # load data from yml file
@@ -78,12 +53,12 @@ if __name__ == "__main__":
             writer.writerow(data)
     except:
         print()
-    # mkdir - done
+    # mkdir - done,indices)
 
     # getting info: test data and information from the dataset
     if indices == "None":
         indices = np.arange(0, 89).tolist()
-    elif indices == "10":
+    elif indices == 10:
         indices = np.random.choice(np.arange(0, 89), 10).tolist()
     random.shuffle(indices)
     dataset = read_dataset(DATASET, indices=None)
@@ -97,9 +72,10 @@ if __name__ == "__main__":
     # getting info - end
     
     idx = indices
-    
+
     # evolution - start
     while eval_cost <= maxeval:
+        print("idx",idx)
         if gen == 0: 
                     
             # init models
