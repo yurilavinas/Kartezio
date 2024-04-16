@@ -12,3 +12,4 @@ variables:
  n_models: 1
  maxeval: 1000000
  indices: [45, 68, 35, 38, 78, 33, 50, 63, 81, 87]
+ method: none
