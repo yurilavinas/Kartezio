@@ -1,0 +1,14 @@
+
+framework:
+ DATASET: "/tmpdir/p21049ly/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ save_results: /tmpdir/p21049ly/al_cgp_easy
+
+variables:
+ generations: 1
+ _lambda: 5
+ frequency: 100
+ n_models: 1
+ maxeval: 1000000
+ indices: [45, 68, 35, 38, 78, 33, 50, 63, 81, 87]
