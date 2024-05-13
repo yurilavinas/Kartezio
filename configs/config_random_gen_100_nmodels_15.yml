@@ -3,7 +3,7 @@ framework:
  DATASET: "/tmpdir/p21049ly/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: /tmpdir/p21049ly/al_random_gen_100_nmodels_15
+ save_results: /tmpdir/p21049ly/al_random_gen_100_nmodels_15_max
 
 variables:
  generations: 100
