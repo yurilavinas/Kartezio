@@ -130,7 +130,7 @@ if __name__ == "__main__":
             elites = [None]*n_models
             # ensemble - end
     
-        seed = np.seed() 
+        seed = np.random.seed(42) 
         # load img dataset
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
