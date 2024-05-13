@@ -18,4 +18,4 @@ module load python/3.8.18
 module load intelmpi chdb/1.0
 
 # RUN CHDB
-srun chdb --in-type "1 30" --command-line "../scripts/al_random_nmodels_15.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
+srun chdb --in-type "1 30" --command-line "../scripts/al_random_nmodels_15_par.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt

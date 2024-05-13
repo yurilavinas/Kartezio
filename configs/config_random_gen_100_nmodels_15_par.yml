@@ -1,0 +1,15 @@
+
+framework:
+ DATASET: "/tmpdir/p21049ly/cellpose"
+ filename: dataset.csv
+ meta_filename: META_rgb.json
+ save_results: /tmpdir/p21049ly/al_random_gen_100_nmodels_15_par
+
+variables:
+ generations: 100
+ _lambda: 5
+ frequency: 100
+ n_models: 15
+ maxeval: 1000000
+ indices: None
+ method: random

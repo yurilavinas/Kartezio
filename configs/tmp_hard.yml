@@ -1,15 +1,17 @@
-
 framework:
- DATASET: "../datasets/lymphoma"
+ DATASET: "../datasets/cellpose"
  filename: dataset.csv
  meta_filename: META_rgb.json
- save_results: ../tmp_h
+ save_results: tmpdir_rnd10
 
 variables:
- generations: 100
+ generations: 1
  _lambda: 5
  frequency: 100
  n_models: 1
- maxeval: 20000000
- indices: [0,5,7,12,20,21,14,17,2,29]
+ maxeval: 1000000
+ indices: 10
  method: none
+
+
+ 

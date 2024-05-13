@@ -10,6 +10,7 @@ from kartezio.callback import CallbackVerbose
 import yaml
 import numpy as np
 import random
+import time
 
 # active learning, uncertanty metrics
 def  count_different_pixels_weighted(array1, array2):
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     try:
         os.makedirs(RESULTS)
         
-        data = ["run", "gen", "eval_cost", "test", "train", "best_fitness", "n_active", "used_imgs","max_uncertainties"]
+        data = ["run", "gen", "eval_cost", "test", "train", "best_fitness", "n_active", "used_imgs","max_uncertainties", "par_nodes","par_mut_nodes","par_mut_out"]
         with open(file_ensemble, 'w') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
@@ -94,6 +95,7 @@ if __name__ == "__main__":
     idx = [indices.pop()]
     # indices.append(idx[0]) # with rep
     # AL - end
+    np.random.seed(42)
     
     # evolution - start
     while eval_cost <= maxeval:
@@ -103,9 +105,14 @@ if __name__ == "__main__":
             # init models
             models = [None]*n_models
             gens = [None]*n_models
+            
+            nodes = np.random.randint(25,35)
+            mut_node = np.random.random()
+            mut_out = np.random.random()
+            
             for i in range(n_models):    
                 models[i] = create_instance_segmentation_model(
-                    generations, _lambda, inputs=2, outputs=2,
+                    generations, _lambda, inputs=2, outputs=2, nodes=nodes,node_mutation_rate=mut_node, output_mutation_rate=mut_out
                 )
                 models[i].clear()
                 verbose = CallbackVerbose(frequency=frequency)
@@ -123,7 +130,7 @@ if __name__ == "__main__":
             elites = [None]*n_models
             # ensemble - end
     
-            
+        seed = np.seed() 
         # load img dataset
         dataset = read_dataset(DATASET, indices=idx)
         train_x, train_y = dataset.train_xy
@@ -203,7 +210,7 @@ if __name__ == "__main__":
         # saving information for future analysis
         _id = fitness.index(min(fitness))
         active_nodes = models[0].parser.parse_to_graphs(elites[_id])
-        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx, max(uncertainties)]
+        data = [run, (gen+1), eval_cost, np.min(test_fits), np.min(fitness), test_best_ever, len(active_nodes[0]+active_nodes[1]), idx, max(uncertainties), nodes, mut_node, mut_out]
         with open(file_ensemble, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
                 writer.writerow(data)
