@@ -111,9 +111,14 @@ if __name__ == "__main__":
             mut_out = np.random.random()
             
             for i in range(n_models):    
-                models[i] = create_instance_segmentation_model(
-                    generations, _lambda, inputs=2, outputs=2, nodes=nodes,node_mutation_rate=mut_node, output_mutation_rate=mut_out
+                if i == 0:
+                    models[i] = create_instance_segmentation_model(
+                        generations, _lambda, inputs=2, outputs=2
                 )
+                else:
+                    models[i] = create_instance_segmentation_model(
+                        generations, _lambda, inputs=2, outputs=2, nodes=nodes,node_mutation_rate=mut_node, output_mutation_rate=mut_out
+                    )
                 models[i].clear()
                 verbose = CallbackVerbose(frequency=frequency)
                 callbacks = [verbose]
