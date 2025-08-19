@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Dict
 
 import numpy as np
 
@@ -50,7 +49,9 @@ class Population(KartezioComponent, ABC):
         return self.score.raw
 
     def get_score(self):
-        score_list = list(zip(self.get_fitness(), self.get_time()))
+        score_list = list(
+            zip(self.get_fitness(), self.get_time(), strict=False)
+        )
         return np.array(
             score_list, dtype=[("fitness", float), ("time", float)]
         )
@@ -84,7 +85,7 @@ class PopulationHistory:
 @register(Population)
 class PopulationWithElite(Population):
     @classmethod
-    def __from_dict__(cls, dict_infos: Dict) -> "PopulationWithElite":
+    def __from_dict__(cls, dict_infos: dict) -> "PopulationWithElite":
         pass
 
     def __init__(self, n_children):

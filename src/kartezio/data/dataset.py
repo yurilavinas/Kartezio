@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from dataclasses import dataclass, field
-from typing import List, Tuple
 
 import numpy as np
 
@@ -132,7 +131,7 @@ class DatasetReader(Directory):
         [input_sizes.append(len(xi)) for xi in testing.x]
         input_sizes = np.array(input_sizes)
         inputs = int(input_sizes[0])
-        if not np.all((input_sizes == inputs)):
+        if not np.all(input_sizes == inputs):
             """
             raise ValueError(
                 f"Inconsistent size of inputs for this dataset: sizes: {input_sizes}"
@@ -192,8 +191,8 @@ class DatasetReader(Directory):
 
 @dataclass
 class DataItem:
-    datalist: List
-    shape: Tuple
+    datalist: list
+    shape: tuple
     count: int
     visual: np.ndarray = None
 

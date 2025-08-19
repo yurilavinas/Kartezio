@@ -79,7 +79,7 @@ class PythonClassWriter:
                             if edge < self.decoder.adapter.n_inputs
                             else f"{ctype}_{edge}"
                         )
-                        for edge, ctype in zip(edges, c_types)
+                        for edge, ctype in zip(edges, c_types, strict=False)
                     ]
                     c_names = "[" + ", ".join(c_names) + "]"
                     list_of_nodes.append(node)

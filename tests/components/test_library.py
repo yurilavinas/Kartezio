@@ -1,20 +1,17 @@
 import unittest
-from typing import List
 
 import numpy as np
 
-from kartezio.core.components.base import register
-from kartezio.core.components.library import Library
-from kartezio.core.components.primitive import Primitive
-from kartezio.core.types import TypeArray, TypeScalar
+from kartezio.core.components import Library, Primitive, register
+from kartezio.types import Matrix, Scalar
 
 
-@register(Primitive, "add_test")
+@register(Primitive)
 class PrimitiveTest(Primitive):
     def __init__(self):
-        super().__init__([TypeScalar, TypeScalar], TypeScalar, 0)
+        super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return x[0] + x[1]
 
 
@@ -25,7 +22,7 @@ class LibraryTest(Library):
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
-        library = LibraryTest(TypeArray)
+        library = LibraryTest(Matrix)
         self.assertEqual(library.size, 0)
         library.display()
         library.add_primitive(PrimitiveTest())

@@ -1,6 +1,5 @@
-import time
 from abc import ABC
-from typing import Dict, List
+import time
 
 import numpy as np
 
@@ -40,7 +39,7 @@ class Adapter(KartezioComponent):
         n_nodes,
         nb_chromosomes,
         returns,
-        libraries: List[Library],
+        libraries: list[Library],
     ):
         super().__init__()
         self.n_inputs = n_inputs
@@ -64,10 +63,10 @@ class Adapter(KartezioComponent):
         self.prototype = self.create_prototype()
 
     @classmethod
-    def __from_dict__(cls, dict_infos: Dict) -> "Adapter":
+    def __from_dict__(cls, dict_infos: dict) -> "Adapter":
         pass
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "n_inputs": self.n_inputs,
             "n_nodes": self.n_nodes,
@@ -176,7 +175,7 @@ class DecoderCGP(Decoder):
         n_inputs: int,
         n_nodes: int,
         nb_chromosomes: int,
-        libraries: List[Library],
+        libraries: list[Library],
         endpoint: Endpoint,
     ):
         super().__init__()
@@ -191,8 +190,8 @@ class DecoderCGP(Decoder):
         self.endpoint = endpoint
 
     def decode_population(
-        self, population: Population, x: List[np.ndarray]
-    ) -> List:
+        self, population: Population, x: list[np.ndarray]
+    ) -> list:
         y_pred = []
         for i in range(1, population.size):
             y, t = self.decode(population.individuals[i], x)
@@ -200,7 +199,7 @@ class DecoderCGP(Decoder):
             y_pred.append(y)
         return y_pred
 
-    def decode(self, genotype: Genotype, x: List[np.ndarray]):
+    def decode(self, genotype: Genotype, x: list[np.ndarray]):
         all_y_pred = []
         all_times = []
         phenotype = self.parse_to_graphs(genotype)
@@ -218,7 +217,7 @@ class DecoderCGP(Decoder):
         return all_y_pred, whole_time
 
     def _decode_one(
-        self, genotype: Genotype, chromosome: str, phenotype: List, x: List
+        self, genotype: Genotype, chromosome: str, phenotype: list, x: list
     ):
         # fill output_map with inputs
         node_outputs = []
@@ -240,16 +239,16 @@ class DecoderCGP(Decoder):
         self._x_to_output_map(genotype, phenotype, chromosome, x, node_outputs)
         y = [
             node_outputs[self.adapter.types_map[t]][c]
-            for c, t in zip(outputs, self.adapter.returns)
+            for c, t in zip(outputs, self.adapter.returns, strict=False)
         ]
         return y
 
     def _x_to_output_map(
         self,
         genotype: Genotype,
-        phenotype: List,
+        phenotype: list,
         chromosome: str,
-        x: List,
+        x: list,
         node_outputs,
     ):
         for graph in phenotype:
@@ -278,12 +277,12 @@ class DecoderCGP(Decoder):
                     type_index, function_index
                 )
                 inputs = []
-                for c, t in zip(connections, function_input_types):
+                for c, t in zip(
+                    connections, function_input_types, strict=False
+                ):
                     output_type = self.adapter.types_map[t]
                     if c < self.adapter.n_inputs:
-                        if t == Scalar:
-                            inputs.append(np.mean(x[c]))
-                        elif t == Vector:
+                        if t == Scalar or t == Vector:
                             inputs.append(np.mean(x[c]))
                         else:
                             inputs.append(x[c])  # TODO: make it modular
@@ -301,7 +300,9 @@ class DecoderCGP(Decoder):
         for chromosome in genotype._chromosomes.keys():
             outputs = self.adapter.get_outputs(genotype, chromosome)
             graphs_list = []
-            for output, type_output in zip(outputs, self.adapter.returns):
+            for output, type_output in zip(
+                outputs, self.adapter.returns, strict=False
+            ):
                 root = {(output, type_output)}
                 graphs_list.append(
                     self._parse_one_graph(genotype, chromosome, root)
@@ -345,13 +346,15 @@ class DecoderCGP(Decoder):
             next_connections = self.adapter.get_active_edges(
                 genotype, chromosome, next_type_index, node, arity
             )
-            next_connections_to_pop = set(zip(next_connections, types))
+            next_connections_to_pop = set(
+                zip(next_connections, types, strict=False)
+            )
             next_indices = next_indices.union(next_connections_to_pop)
             output_tree = output_tree.union(next_connections_to_pop)
         return sorted(list(output_tree))
 
     @classmethod
-    def __from_dict__(cls, dict_infos: Dict) -> "DecoderCGP":
+    def __from_dict__(cls, dict_infos: dict) -> "DecoderCGP":
         n_inputs = dict_infos["adapter"]["n_inputs"]
         n_nodes = dict_infos["adapter"]["n_nodes"]
         nb_chromosomes = dict_infos["adapter"]["nb_chromosomes"]
@@ -368,7 +371,7 @@ class DecoderCGP(Decoder):
             endpoint=endpoint,
         )
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "adapter": dump_component(self.adapter),
             "libraries": {

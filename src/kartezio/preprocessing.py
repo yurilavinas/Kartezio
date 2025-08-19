@@ -1,5 +1,3 @@
-from typing import Dict, List
-
 import cv2
 import numpy as np
 
@@ -23,7 +21,7 @@ class Normalizer(Preprocessing):
         x = (x * 255).astype(np.uint8)
         return x
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "args": {"pmin": self.pmin, "pmax": self.pmax},
         }
@@ -82,11 +80,10 @@ class PyrScale(Preprocessing):
                                 xij = cv2.resize(
                                     xij, dsize, interpolation=cv2.INTER_NEAREST
                                 )
-                        else:
-                            if self.scale == "down":
-                                xij = cv2.pyrDown(xij.astype(np.uint8))
-                            elif self.scale == "up":
-                                xij = cv2.pyrUp(xij.astype(np.uint8))
+                        elif self.scale == "down":
+                            xij = cv2.pyrDown(xij.astype(np.uint8))
+                        elif self.scale == "up":
+                            xij = cv2.pyrUp(xij.astype(np.uint8))
                 new_xi.append(xij)
             new_x.append(new_xi)
         return new_x
@@ -98,7 +95,7 @@ class ToColorSpace(Preprocessing):
         super().__init__()
         self.color_space = color_space
 
-    def preprocess(self, x: List):
+    def preprocess(self, x: list):
         if self.color_space == "rgb":
             return x
         new_x = []
@@ -111,7 +108,7 @@ class ToColorSpace(Preprocessing):
             new_x.append(transformed)
         return new_x
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "name": "to_color_space",
             "args": {"color_space": self.color_space},
@@ -144,7 +141,7 @@ class AddColorSpace(Preprocessing):
             new_x.append(list(x[i]) + transformed)
         return new_x
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "name": "add_color_space",
             "args": {"color_space": self.color_space},
@@ -228,7 +225,7 @@ class SelectChannels(Preprocessing):
             new_x.append(one_item)
         return new_x
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "name": "select_channels",
             "args": {"channels": self.channels},
@@ -257,13 +254,12 @@ class Format3D(Preprocessing):
                         one_item.append(
                             [x[i][channel][z] for channel in self.channels]
                         )
+            elif self.z_range:
+                for z in self.z_range:
+                    one_item.append([x[i][:][z]])
             else:
-                if self.z_range:
-                    for z in self.z_range:
-                        one_item.append([x[i][:][z]])
-                else:
-                    for z in range(len(x[i])):
-                        one_item.append([x[i][:][z]])
+                for z in range(len(x[i])):
+                    one_item.append([x[i][:][z]])
             new_x.append(one_item)
         return new_x
 
@@ -323,7 +319,7 @@ class Format3DNoChannel(Preprocessing):
             new_x.append(one_item)
         return new_x
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "args": {
                 "z_range": self.z_range,

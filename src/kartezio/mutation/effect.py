@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import Dict
 
 import numpy as np
 
@@ -14,7 +13,7 @@ class MutationEffect(UpdatableComponent, ABC):
         self.max_value = 256
 
     @classmethod
-    def __from_dict__(cls, dict_infos: Dict) -> "MutationEffect":
+    def __from_dict__(cls, dict_infos: dict) -> "MutationEffect":
         pass
 
 

@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 
 from kartezio.core.components import Reducer, register
@@ -19,7 +17,7 @@ class BasicReduction(Reducer):
         self.mode = mode
         self.threshold = threshold
 
-    def reduce(self, x: List):
+    def reduce(self, x: list):
         if self.mode == "mean":
             return np.mean(np.array(x), axis=0).astype(np.uint8)
         elif self.mode == "sum":

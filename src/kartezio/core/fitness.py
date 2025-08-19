@@ -1,5 +1,3 @@
-from typing import Dict
-
 import numpy as np
 
 from kartezio.core.components import Fitness, register
@@ -22,7 +20,7 @@ class AveragePrecision(Fitness):
             return ap + iou
         return ap
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "args": {
                 "reduction": self.reduction,
@@ -61,7 +59,7 @@ class IoU(Fitness):
                 )
         return ious
 
-    def __to_dict__(self) -> Dict:
+    def __to_dict__(self) -> dict:
         return {
             "args": {"reduction": self.reduction, "balance": self.balance},
         }

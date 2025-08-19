@@ -1,5 +1,4 @@
 from math import sqrt
-from typing import List
 
 import cv2
 import numpy as np
@@ -14,7 +13,7 @@ class Const(Primitive):
     def __init__(self):
         super().__init__([], Scalar, 1)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return args[0]
 
 
@@ -23,7 +22,7 @@ class MaxValue(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.max(x[0])
 
 
@@ -32,7 +31,7 @@ class MinValue(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.min(x[0])
 
 
@@ -41,7 +40,7 @@ class MeanValue(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.mean(x[0])
 
 
@@ -50,7 +49,7 @@ class MedianValue(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.median(x[0])
 
 
@@ -59,7 +58,7 @@ class AddValues(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(x[0] + x[1], 255)
 
 
@@ -68,7 +67,7 @@ class SubtractValues(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return max(x[0] - x[1], 0)
 
 
@@ -77,7 +76,7 @@ class MultiplyValues(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(x[0] * x[1], 255)
 
 
@@ -86,7 +85,7 @@ class PowValue(Primitive):
     def __init__(self):
         super().__init__([Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(x[0] ** 2, 255)
 
 
@@ -95,7 +94,7 @@ class SqrtValue(Primitive):
     def __init__(self):
         super().__init__([Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return sqrt(x[0])
 
 
@@ -104,7 +103,7 @@ class MultiplyBy2(Primitive):
     def __init__(self):
         super().__init__([Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(x[0] * 2, 255)
 
 
@@ -113,7 +112,7 @@ class DivideBy2(Primitive):
     def __init__(self):
         super().__init__([Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return x[0] // 2
 
 
@@ -122,7 +121,7 @@ class MinScalars(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(x[0], x[1])
 
 
@@ -131,7 +130,7 @@ class MaxScalars(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return max(x[0], x[1])
 
 
@@ -140,7 +139,7 @@ class MeanScalars(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return (x[0] + x[1]) // 2
 
 
@@ -149,7 +148,7 @@ class LessThan(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         if x[0] < x[1]:
             return 1
         return 0
@@ -160,7 +159,7 @@ class GreaterThan(Primitive):
     def __init__(self):
         super().__init__([Scalar, Scalar], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         if x[0] > x[1]:
             return 1
         return 0
@@ -171,7 +170,7 @@ class Skew(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(max(skew(x[0].reshape(-1)), 0), 255)
 
 
@@ -180,7 +179,7 @@ class Kurtosis(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(max(kurtosis(x[0].reshape(-1)), 0), 255)
 
 
@@ -189,7 +188,7 @@ class MeanAbsDiff(Primitive):
     def __init__(self):
         super().__init__([Matrix] * 2, Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.mean(cv2.absdiff(x[0], x[1]))
 
 
@@ -198,7 +197,7 @@ class Coverage(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return np.count_nonzero(x[0]) / (x[0].shape[0] * x[0].shape[1]) * 255
 
 
@@ -207,7 +206,7 @@ class CountRegions(Primitive):
     def __init__(self):
         super().__init__([Matrix], Scalar, 0)
 
-    def call(self, x: List[np.ndarray], args: List[int]):
+    def call(self, x: list[np.ndarray], args: list[int]):
         return min(
             len(np.unique(cv2.connectedComponents(x[0], connectivity=4)[1])),
             255,

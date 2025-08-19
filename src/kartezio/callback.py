@@ -1,12 +1,11 @@
 from abc import ABC
 from datetime import datetime
 from enum import Enum
-from typing import Dict
 from uuid import uuid4
 
+from codecarbon import EmissionsTracker
 import matplotlib.pyplot as plt
 import numpy as np
-from codecarbon import EmissionsTracker
 
 from kartezio.core.components import dump_component
 from kartezio.helpers import Observer
@@ -30,7 +29,7 @@ def eventid():
 
 class Event:
     def __init__(
-        self, iteration: int, name: str, content: Dict, force: bool = False
+        self, iteration: int, name: str, content: dict, force: bool = False
     ):
         self.iteration = iteration
         self.name = name
@@ -186,13 +185,6 @@ class CallbackSaveElite(Callback):
             "iteration": iteration,
             "dataset": self.dataset,
             "elite": elite.__to_dict__(),
-            #     {"genotype":
-            #     elite.__to_dict__()
-            # # "chromosomes": {
-            # #     chromo_key: {k: v.__to_dict__() for k, v in chromo_val.sequence.items()}
-            # #     for chromo_key, chromo_val in elite._chromosomes.items()
-            # #     }
-            # },
             "preprocessing": self.preprocessing,
             "decoder": self.decoder,
             "fitness": self.fitness,

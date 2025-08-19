@@ -25,7 +25,9 @@ class ReaderTestCase(unittest.TestCase):
             len(item2.datalist),
             "Datalists lengths do not match.",
         )
-        for array1, array2 in zip(item1.datalist, item2.datalist):
+        for array1, array2 in zip(
+            item1.datalist, item2.datalist, strict=False
+        ):
             np.testing.assert_array_equal(
                 array1, array2, "Datalist arrays do not match."
             )

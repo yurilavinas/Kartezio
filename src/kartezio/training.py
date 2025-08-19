@@ -68,8 +68,7 @@ class KartezioTraining:
             preview=preview,
             indices=self.args.indices,
         )
-        if frequency < 1:
-            frequency = 1
+        frequency = max(frequency, 1)
         self.callbacks = [
             CallbackVerbose(frequency=frequency),
             CallbackSave(

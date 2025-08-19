@@ -1,4 +1,5 @@
-from typing import Any, List
+import logging
+from typing import Any
 
 from kartezio.callback import Callback, Event
 from kartezio.core.components import Endpoint, Fitness, Library, Preprocessing
@@ -9,6 +10,8 @@ from kartezio.helpers import Observable
 from kartezio.mutation.behavioral import MutationBehavior
 from kartezio.mutation.decay import MutationDecay
 from kartezio.mutation.handler import MutationHandler
+
+logger = logging.getLogger(__name__)
 
 
 class ObservableModel(Observable):
@@ -101,11 +104,11 @@ class KartezioCGP(ObservableModel):
     def elite(self):
         return self.population.get_elite()
 
-    def evaluation(self, x: List[Any], y: List[Any]):
+    def evaluation(self, x: list[Any], y: list[Any]):
         y_pred = self.decoder.decode_population(self.population, x)
         self.evolver.evaluation(y, y_pred)
 
-    def evolve(self, x: List[Any], y: List[Any]):
+    def evolve(self, x: list[Any], y: list[Any]):
         history = []
         self.evaluation(x, y)
         state = self.evolver.selection()
@@ -149,7 +152,7 @@ class KartezioTrainer:
         self,
         n_inputs: int,
         n_nodes: int,
-        libraries: List[Library],
+        libraries: list[Library],
         endpoint: Endpoint,
         fitness: Fitness,
         preprocessing: Preprocessing = None,
@@ -172,9 +175,9 @@ class KartezioTrainer:
     def fit(
         self,
         n_iterations: int,
-        x: List[Any],
-        y: List[Any],
-        callbacks: List[Callback] = [],
+        x: list[Any],
+        y: list[Any],
+        callbacks: list[Callback] = [],
     ) -> "KartezioTrainer":
         # compile the Kartezio model
         self.model.initialize(n_iterations)
@@ -244,8 +247,8 @@ class KartezioTrainer:
 
     def display_elite(self):
         elite = self.model.elite
-        print(elite[0])
-        print(elite.outputs)
+        logger.info(f"Elite chromosome: {elite[0]}")
+        logger.info(f"Elite outputs: {elite.outputs}")
 
     def summary(self):
         # TODO: implement summary

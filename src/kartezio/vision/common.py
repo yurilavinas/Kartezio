@@ -105,9 +105,9 @@ def contours_find(image, exclude_holes=True):
 def _draw_contours(
     image, contours, color=None, selected: int = None, fill=True, thickness=1
 ):
-    assert (
-        len(image.shape) == 3 or len(image.shape) == 2
-    ), "given image wrong format, shape must be (h, w, c) or (h, w)"
+    assert len(image.shape) == 3 or len(image.shape) == 2, (
+        "given image wrong format, shape must be (h, w, c) or (h, w)"
+    )
     if color is None:
         if len(image.shape) == 3 and image.shape[-1] == 3:
             color = [255, 255, 255]
@@ -198,7 +198,7 @@ def draw_overlay(
 
 
 def fill_polyhedron_as_labels(mask, labels, z_slice, contours):
-    for label, slice, polygon in zip(labels, z_slice, contours):
+    for label, slice, polygon in zip(labels, z_slice, contours, strict=False):
         cv2.fillPoly(mask[slice], pts=np.int32([polygon]), color=label)
     return mask
 

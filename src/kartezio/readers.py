@@ -1,4 +1,4 @@
-import ast
+import re
 
 import cv2
 import numpy as np
@@ -15,6 +15,70 @@ from kartezio.vision.common import (
     image_new,
     image_split,
 )
+
+
+def _parse_numeric_list_from_filename(filename):
+    """
+    Safely parse a numeric list from a filename.
+
+    Expected format: "prefix_[1,2,3]suffix" or just "[1,2,3]"
+
+    Args:
+        filename (str): The filename to parse
+
+    Returns:
+        list: List of numbers parsed from filename
+
+    Raises:
+        ValueError: If filename format is invalid or contains non-numeric values
+
+    Security note: This replaces the vulnerable ast.literal_eval() usage
+    with a safe regex-based parser that only accepts numeric lists.
+    """
+    if not filename:
+        raise ValueError("Empty filename provided")
+
+    # Extract the part that should contain the numeric list
+    # Look for pattern like [1,2,3] or [1, 2, 3]
+    pattern = r"\[([0-9\s,.-]+)\]"
+    match = re.search(pattern, filename)
+
+    if not match:
+        raise ValueError(
+            f"No numeric list pattern found in filename: {filename}"
+        )
+
+    list_content = match.group(1).strip()
+
+    if not list_content:
+        raise ValueError(f"Empty list found in filename: {filename}")
+
+    # Split by comma and parse each number
+    try:
+        # Split by comma, strip whitespace, and convert to float
+        numbers = []
+        for item in list_content.split(","):
+            item = item.strip()
+            if not item:
+                continue  # Skip empty items
+            # Only allow numeric values (including negative and decimal)
+            if not re.match(r"^-?[0-9]+\.?[0-9]*$", item):
+                raise ValueError(f"Non-numeric value found: '{item}'")
+            numbers.append(float(item))
+
+        if not numbers:
+            raise ValueError("No valid numbers found in list")
+
+        return numbers
+
+    except ValueError as e:
+        raise ValueError(
+            f"Failed to parse numeric values from '{list_content}': {e}"
+        )
+    except Exception as e:
+        raise ValueError(
+            f"Unexpected error parsing filename '{filename}': {e}"
+        )
 
 
 class ImageMaskReader(DataReader):
@@ -69,8 +133,19 @@ class RoiPolygonReader(DataReader):
 
 class OneHotVectorReader(DataReader):
     def _read(self, filepath, shape=None):
-        label = np.array(ast.literal_eval(filepath.split("/")[-1]))
-        return DataItem([label], shape, None)
+        # Extract filename from path
+        filename = filepath.split("/")[-1]
+
+        # Safely parse the numeric list from filename
+        try:
+            numbers = _parse_numeric_list_from_filename(filename)
+            label = np.array(numbers)
+            return DataItem([label], shape, None)
+        except ValueError as e:
+            # Provide helpful error message for debugging
+            raise ValueError(
+                f"Failed to parse label from filename '{filename}': {e}"
+            )
 
 
 class ImageChannelsReader(DataReader):
@@ -83,13 +158,11 @@ class ImageChannelsReader(DataReader):
             channels = [image]
             preview = gray2rgb(channels[0])
         if len(image.shape) == 3:
-            # channels: (c, h, w)
             channels = [channel for channel in image]
             preview = cv2.merge(
                 (image_new(channels[0].shape), channels[0], channels[1])
             )
         if len(image.shape) == 4:
-            # stack: (z, c, h, w)
             channels = [image[:, i] for i in range(len(image[0]))]
             preview = cv2.merge(
                 (
@@ -101,7 +174,7 @@ class ImageChannelsReader(DataReader):
         return DataItem(channels, shape, None, visual=preview)
 
 
-### nouveauté a tester
+# New feature - to be tested
 
 
 class RoiPolyhedronReader(DataReader):
@@ -146,13 +219,11 @@ class TiffImageChannelsMask3dReader(DataReader):
             channels = [image]
             previews = gray2rgb(channels[0])
         if len(image.shape) == 3:
-            # channels: (c, h, w)
             channels = [channel for channel in image]
             previews = cv2.merge(
                 (image_new(channels[0].shape), channels[0], channels[1])
             )
         if len(image.shape) == 4:
-            # stack: (z, c, h, w)
             channels = [image[:, i] for i in range(len(image[0]))]
             previews = []
             for z in range(image.shape[0]):
@@ -165,7 +236,6 @@ class TiffImageChannelsMask3dReader(DataReader):
                 )
                 previews.append(preview)
             previews = np.asarray(previews).reshape(shape + (3,))
-            # cv2.imwrite("rgb_image.png", preview)
         return DataItem(channels, shape, None, visual=previews)
 
 
@@ -180,7 +250,6 @@ class TiffImageGray3dReader(DataReader):
             raise ValueError(f"Image must be 8bits! ({filepath})")
         shape = (image.shape[0],) + image.shape[-2:]
         if len(image.shape) == 3:
-            # (z, h, w)
             previews = []
             for z in range(image.shape[0]):
                 preview = (image[z].astype(np.uint8),)
