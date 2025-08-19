@@ -434,7 +434,7 @@ See the [LICENSE](LICENSE) file for complete terms and conditions.
 Kartezio was developed with support from:
 
 - **Research Institutions**: INSERM, CNRS, Université Toulouse Capitole, Université Paul Sabatier, ISAE Supaero
-- **Funding Agencies**: INSERM, EURC  
+- **Funding Agencies**: INSERM, ERC  
 - **Open Source Community**: Contributors and maintainers
 - **Nature Communications**: For publishing our foundational research
 

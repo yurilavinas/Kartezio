@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kartezio"
-version = "1.0.0a2"
+version = "1.1.0"
 description = "Evolutionary design of explainable algorithms for biomedical image segmentation"
 readme = "README.md"
 license = {text = "Proprietary"}

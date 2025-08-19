@@ -10,9 +10,9 @@ import logging
 # Configure default logging
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
-__version__ = "0.0.1a3"
+__version__ = "1.1.0"
 __author__ = "Kevin Cortacero"
-__email__ = "kevin.cortacero@gmail.com"
+__email__ = "kevin.cortacero@pm.me"
 
 # Set up basic logging configuration if no handlers are configured
 if not logging.getLogger().handlers:
