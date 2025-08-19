@@ -243,8 +243,11 @@ cd kartezio
 # Install with development dependencies
 pip install -e .[dev]
 
+# Or with uv (recommended)
+uv sync --extra dev
+
 # Run tests
-python -m pytest tests/
+uv run python tests/test_runner.py --quick
 ```
 
 ### Running Tests
@@ -252,17 +255,20 @@ python -m pytest tests/
 Kartezio includes comprehensive test suites:
 
 ```bash
-# All tests
-python -m pytest
+# Quick tests (recommended for development)
+uv run python tests/test_runner.py --quick
 
 # Security tests
-python -m pytest tests/test_security.py
+uv run python scripts/dev.py security
 
-# Core functionality
-python -m pytest tests/test_core_components.py
+# Core functionality tests
+uv run python -m unittest tests.test_core_components
 
-# Integration tests  
-python -m pytest tests/test_integration.py
+# All tests with our custom runner
+uv run python tests/test_runner.py
+
+# Using pytest (if preferred)
+uv run python -m pytest tests/
 ```
 
 ### Code Quality
@@ -271,13 +277,14 @@ We maintain high code quality standards:
 
 ```bash
 # Format code
-ruff format src/ tests/
+uv run ruff format src/ tests/
 
 # Lint code
-ruff check src/ tests/
+uv run ruff check src/ tests/
 
-# Type checking
-mypy src/
+# Development script (includes all quality checks)
+uv run python scripts/dev.py format
+uv run python scripts/dev.py lint
 ```
 
 ---

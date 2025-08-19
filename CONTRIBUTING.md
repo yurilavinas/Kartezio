@@ -32,14 +32,21 @@ Thank you for your interest in contributing to Kartezio! This document provides 
 Run the test suite before submitting contributions:
 
 ```bash
-# Quick tests (security + core components)
-python -m pytest tests/test_security.py tests/test_core_components.py
+# Quick tests (recommended for development)
+uv run python tests/test_runner.py --quick
 
-# Full test suite  
-python -m pytest
+# Security tests
+uv run python scripts/dev.py security
 
-# With coverage
-python -m pytest --cov=src/kartezio
+# Full test suite with our custom runner
+uv run python tests/test_runner.py
+
+# Individual test suites
+uv run python -m unittest tests.test_core_components
+uv run python -m unittest tests.test_security
+
+# Using pytest (if preferred)
+uv run python -m pytest tests/
 ```
 
 ## 🎨 Code Quality
@@ -48,13 +55,15 @@ We maintain high code quality standards:
 
 ```bash
 # Format code
-ruff format src/ tests/
+uv run ruff format src/ tests/
 
 # Lint and auto-fix
-ruff check --fix src/ tests/
+uv run ruff check --fix src/ tests/
 
-# Type checking (optional)
-mypy src/
+# Use development scripts for comprehensive checks
+uv run python scripts/dev.py format
+uv run python scripts/dev.py lint
+uv run python scripts/dev.py typecheck
 ```
 
 ## 📝 Contribution Types

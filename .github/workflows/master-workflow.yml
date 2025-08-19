@@ -7,34 +7,67 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install Poetry
-      run: |
-        curl -sSL https://install.python-poetry.org | python3 -
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        enable-cache: true
 
     - name: Install dependencies
       run: |
-        poetry install
+        uv sync --extra dev
 
-    - name: Test with pytest
+    - name: Run security tests
       run: |
-        poetry run pytest
+        uv run python scripts/dev.py security
 
-    - name: Check formatting with black
+    - name: Run core component tests  
       run: |
-        poetry run black --check .
+        uv run python -m pytest tests/test_core_components.py -v
 
-    - name: Run type checking with mypy
+    - name: Check code formatting
       run: |
-        poetry run mypy my_package
+        uv run ruff format --check src/ tests/
 
-    - name: Lint with flake8
+    - name: Lint code
       run: |
-        poetry run flake8 my_package
+        uv run ruff check src/ tests/
+
+    - name: Validate package integrity
+      run: |
+        uv run python validate_tests.py --integrity-only
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+
+    - name: Build package
+      run: |
+        uv build
+
+    - name: Verify build
+      run: |
+        ls -la dist/
