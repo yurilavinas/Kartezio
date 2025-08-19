@@ -772,7 +772,7 @@ wheels = [
 
 [[package]]
 name = "kartezio"
-version = "1.0.0a2"
+version = "1.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "codecarbon" },

@@ -9,10 +9,10 @@ description = "Evolutionary design of explainable algorithms for biomedical imag
 readme = "README.md"
 license = {text = "Proprietary"}
 authors = [
-    {name = "Kevin Cortacero", email = "kevin.cortacero@protonmail.com"}
+    {name = "Kevin Cortacero", email = "kevin.cortacero@pm.me"}
 ]
 maintainers = [
-    {name = "Kevin Cortacero", email = "kevin.cortacero@protonmail.com"}
+    {name = "Kevin Cortacero", email = "kevin.cortacero@pm.me"}
 ]
 keywords = [
     "computer-vision", 
@@ -198,7 +198,7 @@ force-sort-within-sections = true
 
 # Black configuration
 [tool.black]
-line-length = 79
+line-length = 100
 target-version = ['py311', 'py312']
 include = '\.pyi?$'
 extend-exclude = '''
@@ -219,7 +219,7 @@ extend-exclude = '''
 # isort configuration (as fallback, but ruff handles it now)
 [tool.isort]
 profile = "black"
-line_length = 79
+line_length = 100
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
