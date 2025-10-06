@@ -2,7 +2,7 @@ framework:
  DATASET: "/tmpdir/lavinas/datasets/cellpose/"
  filename: dataset.csv
  meta_filename: META.json
- save_results: /tmpdir/lavinas/results/typical/
+ save_results: /tmpdir/lavinas/results/cluster/
 
 variables:
  generations: 100
