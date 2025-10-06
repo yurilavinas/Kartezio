@@ -3,7 +3,7 @@ from kartezio.dataset import read_dataset
 from kartezio.preprocessing import SelectChannels
 from kartezio.plot import save_prediction
 import sys
-from kartezio.utils.viewer import KartezioViewer
+# from kartezio.utils.viewer import KartezioViewer
 import csv
 import os
 from kartezio.callback import CallbackVerbose
@@ -21,14 +21,14 @@ def saveElite(model, test_x, run, gen, dataset):
         imgs_name = f"{RESULTS}/elite_image_run_{run}_gen_{gen}_model.png"
         save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
         
-        viewer = KartezioViewer(
-            model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-        )
-        model_graph = viewer.get_graph(
-            elite, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-        )
-        path = f"{RESULTS}/elite_graph_run_{run}_gen_{gen}_model.png"
-        model_graph.draw(path=path)
+        # viewer = KartezioViewer(
+        #     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+        # )
+        # model_graph = viewer.get_graph(
+        #     elite, inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+        # )
+        # path = f"{RESULTS}/elite_graph_run_{run}_gen_{gen}_model.png"
+        # model_graph.draw(path=path)
 
         name = f"{RESULTS}/elite_run_{run}_gen_{gen}.json"
         model.save_elite(name, dataset) 
@@ -57,14 +57,14 @@ def saveNonDom(candidates, run, gen, train_x, train_y, test_v, model, dataset, f
             imgs_name = f"{RESULTS}/pf_image_run_{run}_gen_{gen}_model_{i}.png"
             save_prediction(imgs_name, test_v[0], y_hat[0]["mask"])
             
-            viewer = KartezioViewer(
-                model.parser.shape, model.parser.function_bundle, model.parser.endpoint
-            )
-            model_graph = viewer.get_graph(
-                candidates[i]['model'], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
-            )
-            path = f"{RESULTS}/pf_graph_run_{run}_gen_{gen}_model_{i}.png"
-            model_graph.draw(path=path)
+            # viewer = KartezioViewer(
+            #     model.parser.shape, model.parser.function_bundle, model.parser.endpoint
+            # )
+            # model_graph = viewer.get_graph(
+            #     candidates[i]['model'], inputs=["In_1","In_2"], outputs=["out_1","out_2"]
+            # )
+            # path = f"{RESULTS}/pf_graph_run_{run}_gen_{gen}_model_{i}.png"
+            # model_graph.draw(path=path)
         
             name = f"{RESULTS}/pf_image_run_{run}_gen_{gen}_model_{i}.json"
             model.save_elite(name, dataset) 
