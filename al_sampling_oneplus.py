@@ -365,7 +365,8 @@ if __name__ == "__main__":
     indices = np.arange(0, 89).tolist()
     
 
-    pixels_2d = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
+    # pixels_2d = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
+    pixels_2d = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
     
     if init_idx == 'typical':
         # images = []
