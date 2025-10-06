@@ -420,7 +420,7 @@ if __name__ == "__main__":
             future_models = mutants(elite, n_future, strategy)
             #cost: 0
 
-            diverseIdx = diverseImagesIterative(pixels_2d, pixels_2d[idx], n_diverse)
+            diverseIdx = diverseImagesIterative(pixels, pixels[idx], n_diverse)
             
             #cost: 0
             uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
