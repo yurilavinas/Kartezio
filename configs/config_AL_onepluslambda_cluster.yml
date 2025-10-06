@@ -15,5 +15,5 @@ variables:
  n_future: 99
  n_noise: 100
  n_diverse: 10
- init_idx: typical 
+ init_idx: cluster 
  img_limit: 10

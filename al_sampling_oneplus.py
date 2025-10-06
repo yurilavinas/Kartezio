@@ -16,6 +16,7 @@ from itertools import combinations
 from PIL import Image
 from kartezio.utils import io
 
+
 def saveElite(model, test_x, run, gen, dataset):
         y_hat, _, _  = model.predict(test_x)
         imgs_name = f"{RESULTS}/elite_image_run_{run}_gen_{gen}_model.png"
@@ -365,21 +366,25 @@ if __name__ == "__main__":
     indices = np.arange(0, 89).tolist()
     
 
-    # pixels_2d = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
-    pixels_2d = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
+    # pixels = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
+    pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
     
     if init_idx == 'typical':
-        # images = []
-        # for i in indices:
-        #     img = Image.open(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/train/{i:03d}_img.png")
-        #     images.append(img)
-        init_idx = typicalPoint(pixels_2d, k=10)
-        # init_idx=[65, 34, 51, 20, 17, 56]
-        # init_idx.sort(reverse = True)
-        # idx=[]
-        # for id_ in init_idx: 
-        #     idx.append(indices.pop(id_))
+        init_idx = typicalPoint(pixels, k=10)
         idx = [indices.pop(init_idx)]    
+    elif init_idx == "cluster":
+        from sklearn.cluster import KMeans
+        import pandas as pd
+        labels = [f'{i}' for i in range(89)]
+        df_ = pd.DataFrame(pixels)
+        df_['Label'] = labels # Annotate each point
+        kmeans = KMeans(n_clusters=6).fit(pixels)
+        df_['cluster'] = pd.Categorical(kmeans.labels_)
+        tmp=[int(np.random.choice(np.asarray(df_.iloc[kmeans.labels_==l,:]['Label']),1)[0]) for l in np.unique(kmeans.labels_)]
+        tmp.sort(reverse = True)
+        idx=[]
+        for id_ in tmp: 
+            idx.append(indices.pop(id_))
     elif init_idx == 'rnd':
         random.shuffle(indices)
         idx = [indices.pop()]

@@ -366,6 +366,9 @@ if __name__ == "__main__":
     
 
     pixels_2d = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
+
+
+
     
     if init_idx == 'typical':
         # images = []
