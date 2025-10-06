@@ -1,5 +1,5 @@
 framework:
- DATASET: "/tmpdir/lavinas/datasts/cellpose/"
+ DATASET: "/tmpdir/lavinas/datasets/cellpose/"
  filename: dataset.csv
  meta_filename: META.json
  save_results: /tmpdir/lavinas/results/typical/
