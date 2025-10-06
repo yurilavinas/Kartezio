@@ -1,0 +1,19 @@
+framework:
+ DATASET: "../datasets/cellpose/"
+ filename: dataset.csv
+ meta_filename: META.json
+ save_results: results/test
+
+variables:
+ generations: 100
+ _lambda: 4
+ frequency: 50
+ n_mutations: 1
+ maxeval: 200000
+ indices: None
+ method: uncertainty_weighted
+ n_future: 99
+ n_noise: 100
+ n_diverse: 10
+ init_idx: typical 
+ img_limit: 10

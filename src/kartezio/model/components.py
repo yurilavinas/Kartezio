@@ -9,13 +9,58 @@ from abc import ABC, abstractmethod
 from builtins import print
 from dataclasses import dataclass, field
 from typing import List
-
+import os
 import numpy as np
-from numena.io.json import Serializable
+# from numena.io.json import Serializable
 
 from kartezio.model.helpers import Factory, Observer, Prototype
 from kartezio.model.registry import registry
 
+
+import simplejson
+
+
+class Serializable(ABC):
+    """Python Interface to export Python objects to JSON format.
+
+    The child class must implement 'dumps' property.
+    """
+
+    @abstractmethod
+    def dumps(self) -> dict:
+        """Property to generate the JSON formatted data of the current instance."""
+        pass
+
+
+def json_read(filepath) -> dict:
+    """Read the JSON file with the given filepath.
+
+    Parameters
+    ----------
+    filepath :
+
+    Returns
+    -------
+    dict
+        The JSON data of the given file as a dict or list.
+
+    """
+    with open(filepath, "rb") as json_file:
+        json_data = simplejson.load(json_file)
+        return json_data
+
+
+def json_write(filepath, json_data, indent=4):
+    """Write the given json_data to the JSON file with the given filepath.
+
+    Parameters
+    ----------
+    filepath :
+    json_data :
+    indent :
+    """
+    with open(filepath, "w") as json_file:
+        simplejson.dump(json_data, json_file, indent=indent)
 
 class KartezioComponent(Serializable, ABC):
     pass
@@ -318,6 +363,7 @@ class KartezioParser(GenomeReader):
         super().__init__(shape)
         self.function_bundle = function_bundle
         self.endpoint = endpoint
+        self.start_time = time.time()
 
     def to_series_parser(self, stacker):
         return ParserChain(self.shape, self.function_bundle, stacker, self.endpoint)
@@ -537,8 +583,9 @@ class KartezioParser(GenomeReader):
     def parse_population(self, population, x):
         y_pred = []
         for i in range(len(population.individuals)):
-            y, t = self.parse(population.individuals[i], x)
+            y, s, t = self.parse(population.individuals[i], x)
             population.set_time(i, t)
+            population.set_size_active(i, s)
             y_pred.append(y)
         return y_pred
 
@@ -565,7 +612,8 @@ class KartezioParser(GenomeReader):
             all_times.append(time.time() - start_time)
             all_y_pred.append(y_pred)
         whole_time = np.mean(np.array(all_times))
-        return all_y_pred, whole_time
+        # return all_y_pred, whole_time
+        return all_y_pred, len(graphs[0]+graphs[1]), whole_time
 
 
 class ParserSequential(KartezioParser):
@@ -591,7 +639,7 @@ class ParserChain(KartezioParser):
         all_times = []
         graphs = self.parse_to_graphs(genome)
         for series in x:
-            start_time = time.time()
+            # start_time = time.time()
             y_pred_series = []
             # for each image
 
@@ -601,7 +649,7 @@ class ParserChain(KartezioParser):
 
             y_pred = self.endpoint.call(self.stacker.call(y_pred_series))
 
-            all_times.append(time.time() - start_time)
+            all_times.append(time.time() - self.start_time)
             all_y_pred.append(y_pred)
 
         whole_time = np.mean(np.array(all_times))

@@ -323,7 +323,7 @@ if __name__ == "__main__":
     frequency = config["frequency"]
     method = config["method"]
     file_raw_data = f"{RESULTS}/raw_test_data.txt"
-    file_nondoms = f"{RESULTS}/nondoms_{run}/nondoms.txt"
+    file_nondoms = f"{RESULTS}/nondoms.txt"
     maxeval = config["maxeval"]
     n_future = config["n_future"]
     n_noise = config["n_noise"]

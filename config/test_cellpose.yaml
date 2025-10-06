@@ -1,0 +1,16 @@
+framework:
+ DATASET: "../datasets/cellpose/"
+ filename: dataset.csv
+ meta_filename: META.json
+ save_results: results/dataSampling_1plus
+
+variables:
+ generations: 100
+ _lambda: 4
+ frequency: 1000
+ n_mutations: 1
+ maxeval: 100000
+ indices: None
+ method: uncertainty_weighted
+ n_future: 14
+ n_noise: 1

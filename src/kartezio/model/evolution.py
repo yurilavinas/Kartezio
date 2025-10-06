@@ -128,7 +128,7 @@ class KartezioPopulation(KartezioComponent, ABC):
     def __init__(self, size):
         self.size = size
         self.individuals = [None] * self.size
-        self._fitness = {"fitness": np.zeros(self.size), "time": np.zeros(self.size)}
+        self._fitness = {"fitness": np.zeros(self.size),"size_active": np.zeros(self.size), "time": np.zeros(self.size)}
 
     def dumps(self) -> dict:
         return {}
@@ -146,6 +146,9 @@ class KartezioPopulation(KartezioComponent, ABC):
     def set_time(self, individual, value):
         self._fitness["time"][individual] = value
 
+    def set_size_active(self, individual, value):
+        self._fitness["size_active"][individual] = value
+
     def set_fitness(self, fitness):
         self._fitness["fitness"] = fitness
 
@@ -159,11 +162,15 @@ class KartezioPopulation(KartezioComponent, ABC):
     @property
     def time(self):
         return self._fitness["time"]
+    
+    @property
+    def size_active(self):
+        return self._fitness["size_active"]
 
     @property
     def score(self):
-        score_list = list(zip(self.fitness, self.time))
-        return np.array(score_list, dtype=[("fitness", float), ("time", float)])
+        score_list = list(zip(self.fitness, self.size_active, self.time))
+        return np.array(score_list, dtype=[("fitness", float), ("size_active", float), ("time", float)])
 
 
 class KartezioES(ABC):
