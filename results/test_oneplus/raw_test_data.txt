@@ -1,1 +1,0 @@
-"init_idx 	 run	 gen	 eval	 lambda	 train	 test	 size	 idx	 uncertainty	 sharpness	 updatedElite	time"

@@ -338,14 +338,16 @@ if __name__ == "__main__":
         
         data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\t size\t idx\t uncertainty\t sharpness\t updatedElite\ttime"]
         with open(file_raw_data, 'w') as f:
-            writer = csv.writer(f, delimiter = '\t')
-            writer.writerow(data)
+            # writer = csv.writer(f, delimiter = '\t')
+            # writer.writerow(data)
+            f.writelines(item + "\t" for item in data)
 
-
-        data = ["run, gen, non_dominated"]
+        os.makedirs(f"{RESULTS}/nondoms_{run}/")
+        data = ["run\t gen\tnon_dominated"]
         with open(file_nondoms, 'w') as f:
-            writer = csv.writer(f, delimiter = '\t')
-            writer.writerow(data)
+            # writer = csv.writer(f, delimiter = '\t')
+            # writer.writerow(data)
+            f.writelines(item + "\t" for item in data)
     except:
         print()
     # mkdir - done
