@@ -11,7 +11,7 @@ variables:
  n_mutations: 1
  maxeval: 1000000
  indices: None
- method: uncertainty_weighted
+ method: rnd
  n_future: 14
  n_noise: 100
  n_diverse: -99999999999
