@@ -1,0 +1,11 @@
+[Kartezio - INFO] -  42 nodes registered.
+[Kartezio - INFO] -  5 metrics registered.
+[Kartezio - INFO] -  7 fitness registered.
+[Kartezio - INFO] -  7 endpoints registered.
+[Kartezio - INFO] -  5 stackers registered.
+Traceback (most recent call last):
+  File "../cellpose_oneplus.py", line 8, in <module>
+    from kartezio.utils.viewer import KartezioViewer
+  File "/olympe2/p24042/lavinas/Kartezio/src/kartezio/utils/viewer.py", line 4, in <module>
+    import pygraphviz as pgv
+ModuleNotFoundError: No module named 'pygraphviz'
