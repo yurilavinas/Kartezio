@@ -336,7 +336,7 @@ if __name__ == "__main__":
     try:
         os.makedirs(RESULTS)
         
-        data = ["init_idx, run, gen, eval, lambda, train, test, size, idx, uncertainty, sharpness, updatedElite, time"]
+        data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\t size\t idx\t uncertainty\t sharpness\t updatedElite\ttime"]
         with open(file_raw_data, 'w') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
