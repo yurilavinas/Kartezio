@@ -331,11 +331,12 @@ if __name__ == "__main__":
     n_diverse = config["n_diverse"]
     init_idx = config["init_idx"]
     img_limit = config["img_limit"]
+    diverseSET = config["diverseSET"]
     # mkdir for log data
     try:
         os.makedirs(RESULTS)
         
-        data = ["init_idx, run, gen, eval, lambda, train, test, size, idx, uncertainty, sharpness, updatedElite"]
+        data = ["init_idx, run, gen, eval, lambda, train, test, size, idx, uncertainty, sharpness, updatedElite, time"]
         with open(file_raw_data, 'w') as f:
             writer = csv.writer(f, delimiter = '\t')
             writer.writerow(data)
@@ -366,8 +367,8 @@ if __name__ == "__main__":
     indices = np.arange(0, 89).tolist()
     
 
-    # pixels = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
-    pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
+    pixels = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
+    # pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
     
     if init_idx == 'typical':
         init_idx = typicalPoint(pixels, k=10)
@@ -420,12 +421,15 @@ if __name__ == "__main__":
             future_models = mutants(elite, n_future, strategy)
             #cost: 0
 
-            diverseIdx = diverseImagesIterative(pixels, pixels[idx], n_diverse)
+            if diverseSET:
+                diverseIdx = diverseImagesIterative(pixels, pixels[idx], n_diverse)
+            else:
+                diverseIdx = indices
+                n_diverse = len(indices)
             
             #cost: 0
             uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
             #cost: future_models*len(diverseIdx) 
-        
             idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
             #cost: 0
             dataset = read_dataset(DATASET, indices=idx)
@@ -439,7 +443,7 @@ if __name__ == "__main__":
                 model.strategy.population.set_elite(elite)
             #cost: future_models*len(idx)
     
-        y_hats, _ , _ = model.predict(train_x)
+        y_hats,  active_nodes, time = model.predict(train_x)
         sharpness = sharpness_out(n_noise,y_hats, train_y)
         
         eval += eval_cost(method, idx, _lambda, n_future, gens, n_diverse)
@@ -447,9 +451,9 @@ if __name__ == "__main__":
         solution = {'model':elite,'sharpness':sharpness,'fitness':fitness, 'test_fitness': test_fits}
         candidates.append(solution)
         
-        active_nodes = model.parser.parse_to_graphs(elite)
+        # active_nodes = model.parser.parse_to_graphs(elite)
         gen += 1
-        data = [init_idx, run, gen, eval, _lambda, fitness, test_fits, len(active_nodes[0]+active_nodes[1]), idx, np.max(uncertainties), sharpness, updatedElite]
+        data = [init_idx, run, gen, eval, _lambda, fitness, test_fits, active_nodes, idx, np.max(uncertainties), sharpness, updatedElite, time]
         with open(file_raw_data, 'a') as f:
                 writer = csv.writer(f, delimiter = '\t')
                 writer.writerow(data)

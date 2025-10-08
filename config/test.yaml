@@ -5,15 +5,16 @@ framework:
  save_results: results/test
 
 variables:
- generations: 100
+ generations: 10
  _lambda: 4
  frequency: 50
  n_mutations: 1
  maxeval: 200000
  indices: None
  method: uncertainty_weighted
- n_future: 99
+ n_future: 9
  n_noise: 100
- n_diverse: 10
+ n_diverse: O
  init_idx: typical 
  img_limit: 10
+ diverseSET: False

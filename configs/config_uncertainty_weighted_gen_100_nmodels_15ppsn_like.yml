@@ -2,7 +2,7 @@ framework:
  DATASET: "/tmpdir/lavinas/datasets/cellpose/"
  filename: dataset.csv
  meta_filename: META.json
- save_results: /tmpdir/lavinas/results/rnd/
+ save_results: /tmpdir/lavinas/results/ppsn_like/
 
 variables:
  generations: 100
@@ -12,9 +12,9 @@ variables:
  maxeval: 1000000
  indices: None
  method: uncertainty_weighted
- n_future: 99
+ n_future: 14
  n_noise: 100
  n_diverse: 10
  init_idx: rnd 
  img_limit: 10
- diverseSET: True
+ diverseSET: False
