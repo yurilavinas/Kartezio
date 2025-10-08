@@ -7,7 +7,7 @@ library(viridis)
 getCloser = function(df,target){
   which.min(abs(df$V4 - target))
 }
-closest_rows <- function(df, target, error = 500) {
+closest_rows <- function(df, target, error = 200) {
   diffs <- abs(df$V4 - target)
   min_diff <- min(diffs, na.rm = TRUE)
   df = df[abs(diffs - min_diff) <= error, ]
@@ -30,9 +30,10 @@ changeCloset = function(df,targetList){
 
 
 
-targetList = c(4100,50000,100000, 500000,1000000)
-targetList = seq(0,1000000,by=25000)
-
+targetList = c(4100,25000, 50000,100000, 500000,1000000)
+targetList = seq(0,1000000,by=20000)
+targetList[1]=4100
+targetList[length(targetList)]=1000000
 cluster = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t', header = F,skip = 1)
 two = read.csv('Documents/MCF/results/typical/_oneplus/raw_test_data.txt', sep = '\t', header = F,skip = 1)
 rnd = two[which(two$V1=='rnd'),]
@@ -79,3 +80,4 @@ ggplot(data, aes(x = factor(V4), y = V6, fill = V1)) +
 
 tmp = data[which(data$V4==max(data$V4)),]
 aggregate(data$V6, FUN=mean, by=list( data$V1))
+  

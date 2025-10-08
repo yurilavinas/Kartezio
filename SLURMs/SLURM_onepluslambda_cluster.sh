@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J 1_cgp
+#SBATCH -J CLUSTER
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31

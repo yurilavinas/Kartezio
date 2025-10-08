@@ -14,7 +14,7 @@ variables:
  method: uncertainty_weighted
  n_future: 14
  n_noise: 100
- n_diverse: 10
+ n_diverse: -99999999999
  init_idx: rnd 
  img_limit: 10
  diverseSET: False
