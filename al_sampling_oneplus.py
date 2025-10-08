@@ -113,7 +113,7 @@ def calcUncertainties(method, DATASET, model, future_models, diverseIdx, preproc
             )
             uncertainties[i] = val
 
-    elif method == "random":
+    elif method == "rnd":
         uncertainties = np.zeros(len(indices))
 
     return uncertainties
@@ -265,7 +265,7 @@ def eval_cost(method, idx, _lambda, n_future, gens, n_diverse):
             eval = (len(idx) - 1)*gens*(_lambda) + (n_future+1)*n_diverse  + (n_future+1)*len(idx)
         else:
             eval = (len(idx) - 1)*gens*(_lambda)  
-    elif method == "random":
+    elif method == "rnd":
         eval = (len(idx) - 1) * gens * (_lambda)
     return eval
         
