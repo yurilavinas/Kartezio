@@ -18,7 +18,4 @@ module load python/3.8.18
 module load intelmpi chdb/1.0
 
 # RUN CHDB
-srun chdb --in-type "1 10" --command-line "../scripts/al_cgp_nmodels_ppsnlike.sh %name% 5 >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
-srun chdb --in-type "11 20" --command-line "../scripts/al_cgp_nmodels_ppsnlike.sh %name% 10  >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
-srun chdb --in-type "21 30" --command-line "../scripts/al_cgp_nmodels_ppsnlike.sh %name% 50 >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
-
+srun chdb --in-type "1 30" --command-line "../scripts/al_cgp_nmodels_ppsnlike.sh %name% >%out-dir%/loggs.out 2>&1" --out-dir output-${SLURM_JOB_ID} --report report.txt
