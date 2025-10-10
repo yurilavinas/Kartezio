@@ -338,8 +338,7 @@ if __name__ == "__main__":
 
     DATASET = framework["DATASET"]  
     RESULTS = framework["save_results"]+"_oneplus_nMut_"+str(n_mutations)+"_nDiv_"+str(n_diverse)
-    print(RESULTS)
-    e()
+
     generations = config["generations"]
     
     CHANNELS = [1, 2]
