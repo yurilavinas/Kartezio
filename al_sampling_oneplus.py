@@ -330,21 +330,25 @@ if __name__ == "__main__":
             cfg = yaml.safe_load(ymlfile)
             framework = cfg["framework"]
             config = cfg["variables"]
-            
-    DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"]+"_oneplus"
-    generations = config["generations"]
-    CHANNELS = [1, 2]
-    preprocessing = SelectChannels(CHANNELS)
+    
     run = sys.argv[2] 
     n_mutations = int(sys.argv[3])
     n_diverse = int(sys.argv[4])
+
+
+    DATASET = framework["DATASET"]  
+    RESULTS = framework["save_results"]+"_oneplus_nMut_"+n_mutations+"_nDiv_"+n_diverse
+    generations = config["generations"]
+    
+    CHANNELS = [1, 2]
+    preprocessing = SelectChannels(CHANNELS)
+    
 
     _lambda = config["_lambda"]
     # n_mutations = config["n_mutations"]
     frequency = config["frequency"]
     method = config["method"]
-    file_raw_data = f"{RESULTS}_nMut_{n_mutations}_nDiv_{n_diverse}/raw_test_data.txt"
+    file_raw_data = f"{RESULTS}/raw_test_data.txt"
     file_nondoms = f"{RESULTS}/nondoms_{run}/nondoms.txt"
     maxeval = config["maxeval"]
     n_future = config["n_future"]
