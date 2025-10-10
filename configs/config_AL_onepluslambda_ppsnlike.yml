@@ -6,7 +6,7 @@ framework:
 
 variables:
  generations: 100
- _lambda: 5
+ _lambda: 4
  frequency: 50
  n_mutations: 1
  maxeval: 1000000
