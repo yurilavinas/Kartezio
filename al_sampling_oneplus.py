@@ -344,7 +344,7 @@ if __name__ == "__main__":
     # n_mutations = config["n_mutations"]
     frequency = config["frequency"]
     method = config["method"]
-    file_raw_data = f"{RESULTS}_nMut_{n_mutations}/raw_test_data.txt"
+    file_raw_data = f"{RESULTS}_nMut_{n_mutations}_nDiv_{n_diverse}/raw_test_data.txt"
     file_nondoms = f"{RESULTS}/nondoms_{run}/nondoms.txt"
     maxeval = config["maxeval"]
     n_future = config["n_future"]
