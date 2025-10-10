@@ -613,7 +613,7 @@ class KartezioParser(GenomeReader):
             all_y_pred.append(y_pred)
         whole_time = np.mean(np.array(all_times))
         # return all_y_pred, whole_time
-        return all_y_pred, whole_time, len(graphs[0]+graphs[1])
+        return all_y_pred, len(graphs[0]+graphs[1]), whole_time
 
 
 class ParserSequential(KartezioParser):

@@ -6,14 +6,14 @@ framework:
 
 variables:
  generations: 100
- _lambda: 4
+ _lambda: 5
  frequency: 50
  n_mutations: 1
  maxeval: 1000000
  indices: None
  method: rnd
  n_future: 14
- n_noise: 100
+ n_noise: 5
  n_diverse: -99999999999
  init_idx: rnd 
  img_limit: 10

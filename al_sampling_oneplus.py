@@ -112,6 +112,25 @@ def calcUncertainties(method, DATASET, model, future_models, diverseIdx, preproc
                 for m1, m2 in combinations(masks, 2)
             )
             uncertainties[i] = val
+    elif method == "uncertainty":
+        uncertainties = np.zeros(len(diverseIdx))
+        for i, img in enumerate(diverseIdx):
+            # Load dataset once per image
+            dataset = read_dataset(DATASET, indices=[diverseIdx[i]])
+            x, _ = dataset.train_xy
+            if preprocessing != None:
+                x = preprocessing.call(x)
+            # Precompute all masks for this image
+            masks = []
+            for fm in future_models:
+                mask, _, _ = model.parser.parse(fm, x)
+                masks.append(mask[0]["mask"])
+            # Compute disagreement using itertools.combinations (no nested loops)
+            val = sum(
+                count_different_pixels(m1, m2)
+                for m1, m2 in combinations(masks, 2)
+            )
+            uncertainties[i] = val
 
     elif method == "rnd":
         uncertainties = np.zeros(len(indices))
@@ -260,13 +279,13 @@ def mutants(elite, n_future, strategy):
     return future_models
 
 def eval_cost(method, idx, _lambda, n_future, gens, n_diverse):
-    if method == "uncertainty_weighted":
+    if method == "rnd":
+        eval = (len(idx) - 1) * gens * (_lambda)
+    else:
         if len(idx)<10:
             eval = (len(idx) - 1)*gens*(_lambda) + (n_future+1)*n_diverse  + (n_future+1)*len(idx)
         else:
-            eval = (len(idx) - 1)*gens*(_lambda)  
-    elif method == "rnd":
-        eval = (len(idx) - 1) * gens * (_lambda)
+            eval = (len(idx) - 1)*gens*(_lambda) 
     return eval
         
 def getFit(model, x, y):
@@ -304,7 +323,7 @@ if __name__ == "__main__":
     
     # load data from yml file
     if len(sys.argv) < 2:
-        print("Use\n: python train_model_ative_learning_interactive.py (config, yml file) config.yml (run, int) run")
+        print("Use\n: python train_model_ative_learning_interactive.py (config, yml file) config.yml (run, int) run v")
         sys.exit()
     else:       
         with open(sys.argv[1], "r") as ymlfile:
@@ -318,12 +337,14 @@ if __name__ == "__main__":
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
     run = sys.argv[2] 
+    n_mutations = int(sys.argv[3])
+    n_diverse = int(sys.argv[4])
 
     _lambda = config["_lambda"]
-    n_mutations = config["n_mutations"]
+    # n_mutations = config["n_mutations"]
     frequency = config["frequency"]
     method = config["method"]
-    file_raw_data = f"{RESULTS}/raw_test_data.txt"
+    file_raw_data = f"{RESULTS}_nMut_{n_mutations}/raw_test_data.txt"
     file_nondoms = f"{RESULTS}/nondoms_{run}/nondoms.txt"
     maxeval = config["maxeval"]
     n_future = config["n_future"]
@@ -336,18 +357,15 @@ if __name__ == "__main__":
     try:
         os.makedirs(RESULTS)
         
-        data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\t size\t idx\t uncertainty\t sharpness\t updatedElite\ttime"]
+        data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\ttime \t idx\t uncertainty\t sharpness\t updatedElite\tsize"]
         with open(file_raw_data, 'w') as f:
-            # writer = csv.writer(f, delimiter = '\t')
-            # writer.writerow(data)
             f.writelines(item + "\t" for item in data)
-
-        os.makedirs(f"{RESULTS}/nondoms_{run}/")
+            f.write("\n")
+        os.makedirs(f"{RESULTS}/nondoms/")
         data = ["run\t gen\tnon_dominated"]
         with open(file_nondoms, 'w') as f:
-            # writer = csv.writer(f, delimiter = '\t')
-            # writer.writerow(data)
             f.writelines(item + "\t" for item in data)
+            f.write("\n")
     except:
         print()
     # mkdir - done

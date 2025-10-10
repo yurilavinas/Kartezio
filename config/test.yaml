@@ -2,7 +2,7 @@ framework:
  DATASET: "../datasets/cellpose/"
  filename: dataset.csv
  meta_filename: META.json
- save_results: results/test
+ save_results: results/test_big
 
 variables:
  generations: 10
@@ -13,8 +13,8 @@ variables:
  indices: None
  method: uncertainty_weighted
  n_future: 9
- n_noise: 100
- n_diverse: O
- init_idx: typical 
+ n_noise: 10
+ n_diverse: 20
+ init_idx: cluster 
  img_limit: 10
- diverseSET: False
+ diverseSET: True

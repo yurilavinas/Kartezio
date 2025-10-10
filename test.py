@@ -341,6 +341,7 @@ if __name__ == "__main__":
             # writer = csv.writer(f, delimiter = '\t')
             # writer.writerow(data)
             f.writelines(item + "\t" for item in data)
+            f.write("\n")
 
         os.makedirs(f"{RESULTS}/nondoms_{run}/")
         data = ["run\t gen\tnon_dominated"]
@@ -373,7 +374,7 @@ if __name__ == "__main__":
     # pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
     
     if init_idx == 'typical':
-        init_idx = typicalPoint(pixels, k=10)
+        init_idx = typicalPoint(pixels, k=n_diverse)
         idx = [indices.pop(init_idx)]    
     elif init_idx == "cluster":
         from sklearn.cluster import KMeans
@@ -388,6 +389,7 @@ if __name__ == "__main__":
         idx=[]
         for id_ in tmp: 
             idx.append(indices.pop(id_))
+        oldFitness=np.zeros(img_limit) - 1e10
     elif init_idx == 'rnd':
         random.shuffle(indices)
         idx = [indices.pop()]
@@ -407,7 +409,8 @@ if __name__ == "__main__":
     eval = 0
     uncertainties = 0
     sharpness = 0
-    print(idx)
+    fitness=0
+
     while eval <= maxeval:
         print("==================")
         print("generation: ",gen+1)
@@ -432,6 +435,7 @@ if __name__ == "__main__":
             #cost: 0
             uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
             #cost: future_models*len(diverseIdx) 
+
             idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
             #cost: 0
             dataset = read_dataset(DATASET, indices=idx)
@@ -452,7 +456,20 @@ if __name__ == "__main__":
         
         solution = {'model':elite,'sharpness':sharpness,'fitness':fitness, 'test_fitness': test_fits}
         candidates.append(solution)
-        
+
+        if init_idx == "cluster":
+            if fitness == oldFitness[gen%img_limit]:
+                oldFitness=np.zeros(img_limit) - 1e10
+                indices = np.arange(0, 89).tolist()
+                tmp=[int(np.random.choice(np.asarray(df_.iloc[kmeans.labels_==l,:]['Label']),1)[0]) for l in np.unique(kmeans.labels_)]
+                tmp.sort(reverse = True)
+                print(idx)
+                idx=[]
+                for id_ in tmp: 
+                    idx.append(indices.pop(id_))
+                print(idx)  
+            oldFitness[gen%img_limit] = fitness
+
         # active_nodes = model.parser.parse_to_graphs(elite)
         gen += 1
         data = [init_idx, run, gen, eval, _lambda, fitness, test_fits, active_nodes, idx, np.max(uncertainties), sharpness, updatedElite, time]

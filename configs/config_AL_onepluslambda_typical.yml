@@ -6,14 +6,14 @@ framework:
 
 variables:
  generations: 100
- _lambda: 4
+ _lambda: 5
  frequency: 50
  n_mutations: 1
  maxeval: 1000000
  indices: None
  method: uncertainty_weighted
  n_future: 99
- n_noise: 100
+ n_noise: 5
  n_diverse: 20
  init_idx: typical 
  img_limit: 10

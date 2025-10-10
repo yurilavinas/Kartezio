@@ -4,73 +4,156 @@ library(viridis)
 
 
 
-getCloser = function(df,target){
-  which.min(abs(df$V4 - target))
-}
 closest_rows <- function(df, target, error = 200) {
-  diffs <- abs(df$V4 - target)
+  df = df[which(df$eval <= target),]
+  diffs <- abs(df$eval - target)
   min_diff <- min(diffs, na.rm = TRUE)
   df = df[abs(diffs - min_diff) <= error, ]
-  df$V4= target
+  df$eval= target
   return (df)
 }
 changeCloset = function(df,targetList){
   tmp = data.frame(col1 = character(),
                    col2 = numeric(),
                    col3 = numeric(),
+                   col4 = numeric(),
+                   col5 = numeric(),
+                   col6 = numeric(),
+                   col7 = numeric(),
+                   col8 = numeric(),
                    stringsAsFactors = FALSE)
   colnames(tmp)=colnames(df)
   for (i in 1:length(targetList)){
-    # id = closest_rows(df, targetList[i])
-    # df[id]$V4=targetList[i]
     tmp=rbind(tmp,closest_rows(df, targetList[i]))
   }
   return (tmp)
 }
 
 
+cluster = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t')
+typical = read.csv('Documents/MCF/results/typical/_oneplus/raw_test_data.txt', sep = '\t')
+rnd  = read.csv('Documents/MCF/results/rnd/_oneplus/raw_test_data.txt', sep = '\t')
+ppsnlike  = read.csv('Documents/MCF/results/ppsn_like/_oneplus/raw_test_data.txt', sep = '\t')
 
-targetList = c(4100,25000, 50000,100000, 500000,1000000)
-targetList = seq(0,1000000,by=20000)
-targetList[1]=4100
-targetList[length(targetList)]=1000000
-cluster = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t', header = F,skip = 1)
-two = read.csv('Documents/MCF/results/typical/_oneplus/raw_test_data.txt', sep = '\t', header = F,skip = 1)
-rnd = two[which(two$V1=='rnd'),]
-typical = two[which(two$V1=='52'),]
+minVal=5100
+maxVal=1000000
+targetList = c(minVal,18000)
+targetList = seq(0,maxVal,by=as.integer(maxVal/10))
+targetList[1]=minVal
+targetList[length(targetList)]=maxVal
+
+tmp=cluster$size
+cluster$size = cluster$time
+cluster$time=tmp
+
+tmp=typical$size
+typical$size = typical$time
+typical$time=tmp
+typical$init_idx="Typical"
+
+tmp=rnd$size
+rnd$size = rnd$time
+rnd$time=tmp
+
+tmp=ppsnlike$size
+ppsnlike$size = ppsnlike$time
+ppsnlike$time=tmp
 
 
-
-cluster = cluster[,c(1,4,6)]
-rnd = rnd[,c(1,4,6)]
-typical = typical[,c(1,4,6)]
+idx=c(1,4,6,7,8,11,12,13)
+cluster = cluster[,idx]
+rnd = rnd[,idx]
+typical = typical[,idx]
+ppsnlike = ppsnlike[,idx]
+ppsnlike$init_idx="ppsnlike"
 
 cluster = changeCloset(cluster, targetList)
 rnd = changeCloset(rnd, targetList)
 typical = changeCloset(typical, targetList)
+ppsnlike = changeCloset(ppsnlike, targetList)
 
 
 
 data = rbind(
   cluster,
   rnd,
+  ppsnlike,
   typical
 )
 data = data.frame(data)
-data$V6 = 1 - data$V6
+data$test = 1 - data$test
+data$train = 1 - data$train
 
 
-
-ggplot(data, aes(x = factor(V4), y = V6, fill = V1)) +
+ggplot(data, aes(x = factor(eval), y = size, fill = eval)) +
   geom_boxplot(position = position_dodge(width = 0.8)) +
-  facet_wrap(~ V1, scales = "free_x") +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 25),           # y-axis range
+    breaks = seq(0, 25, by = 1)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    title = "Active nodes over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  )+ 
+  geom_hline(yintercept = 8, color = "red", linewidth = 1)
+
+
+ggplot(data, aes(x = factor(eval), y = sharpness, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
   scale_y_continuous(
     limits = c(0, 1),           # y-axis range
     breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
   ) +
   labs(
-    title = "Boxplot of Values Over Time per Group",
-    x = "Timestamp",
+    title = "Sharpness over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  )+ 
+  geom_hline(yintercept = 0.1, color = "red", linewidth = 1)
+
+
+ggplot(data, aes(x = factor(eval), y = time, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 0.2),           # y-axis range
+    breaks = seq(0, 0.2, by = 0.05)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    title = "Time over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  )+ 
+  geom_hline(yintercept = 0.05, color = "red", linewidth = 1)
+
+
+
+
+ggplot(data, aes(x = factor(eval), y = updatedElite, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  # scale_y_continuous(
+  #   limits = c(0, 1),           # y-axis range
+  #   breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+  # ) +
+  labs(
+    title = "Updated Elites over images",
+    x = "Images",
     y = "Value"
   ) +
   theme_minimal() +
@@ -78,6 +161,68 @@ ggplot(data, aes(x = factor(V4), y = V6, fill = V1)) +
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
   )
 
-tmp = data[which(data$V4==max(data$V4)),]
-aggregate(data$V6, FUN=mean, by=list( data$V1))
-  
+ggplot(data, aes(x = factor(eval), y = test, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 1),           # y-axis range
+    breaks = seq(0, 1, by = 0.2)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    title = "IOU (test) over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) + 
+  geom_hline(yintercept = 0.84, color = "red", linewidth = 1)
+
+ggplot(data, aes(x = factor(eval), y = train, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 1),           # y-axis range
+    breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    title = "IOU (train) over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) + 
+  geom_hline(yintercept = 0.95, color = "red", linewidth = 1)
+
+data$generalization=data$test-data$train
+ggplot(data, aes(x = factor(eval), y = generalization, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  # scale_y_continuous(
+  #   limits = c(0, 1),           # y-axis range
+  #   breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+  # ) +
+  labs(
+    title = "Generalization over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) + 
+  geom_hline(yintercept = 0., color = "red", linewidth = 1)
+
+
+tmp = data[which(data$eval==maxVal),]
+aggregate(data$test, FUN=mean, by=list( data$init_idx))
+aggregate(data$test, FUN=sd, by=list( data$init_idx))
+# tmp = data[which(data$eval==maxVal),]
+# aggregate(data$train, FUN=mean, by=list( data$init_idx))
+# aggregate(data$train, FUN=sd, by=list( data$init_idx))
+
+# print(tmp)
+# nrow(tmp[which(tmp$init_idx=="cluster"),])
