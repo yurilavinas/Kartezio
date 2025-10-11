@@ -1,16 +1,20 @@
 framework:
- DATASET: "../datasets/cellpose/"
+ DATASET: "/Users/yurilavinas/Downloads/datasets/processed/Breast"
  filename: dataset.csv
  meta_filename: META.json
- save_results: results/dataSampling_1plus
+ save_results: results/
 
 variables:
  generations: 100
  _lambda: 4
- frequency: 1000
+ frequency: 50
  n_mutations: 1
- maxeval: 100000
+ maxeval: 1000000
  indices: None
- method: uncertainty_weighted
+ method: rnd
  n_future: 14
- n_noise: 1
+ n_noise: 5
+ n_diverse: -99999999999
+ init_idx: rnd 
+ img_limit: 10
+ diverseSET: False

@@ -1,4 +1,5 @@
 from kartezio.apps.instance_segmentation import create_instance_segmentation_model
+from kartezio.apps.segmentation import create_segmentation_model
 from kartezio.dataset import read_dataset
 from kartezio.preprocessing import SelectChannels
 from kartezio.plot import save_prediction
@@ -112,8 +113,27 @@ def calcUncertainties(method, DATASET, model, future_models, diverseIdx, preproc
                 for m1, m2 in combinations(masks, 2)
             )
             uncertainties[i] = val
+    elif method == "uncertainty":
+        uncertainties = np.zeros(len(diverseIdx))
+        for i, img in enumerate(diverseIdx):
+            # Load dataset once per image
+            dataset = read_dataset(DATASET, indices=[diverseIdx[i]])
+            x, _ = dataset.train_xy
+            if preprocessing != None:
+                x = preprocessing.call(x)
+            # Precompute all masks for this image
+            masks = []
+            for fm in future_models:
+                mask, _, _ = model.parser.parse(fm, x)
+                masks.append(mask[0]["mask"])
+            # Compute disagreement using itertools.combinations (no nested loops)
+            val = sum(
+                count_different_pixels(m1, m2)
+                for m1, m2 in combinations(masks, 2)
+            )
+            uncertainties[i] = val
 
-    elif method == "random":
+    elif method == "rnd":
         uncertainties = np.zeros(len(indices))
 
     return uncertainties
@@ -126,7 +146,10 @@ def getIDx(idx, indices, uncertainties, diverseIdx):
     id_ = int(np.argmax(uncertainties))
     # indices = indices.tolist()
     idx.append(diverseIdx[id_])
+    print(len(indices),indices)
     indices.pop(idx[-1])
+    print(idx, len(indices),indices)
+    e()
     return idx, indices
 
 def find_non_dominated_solutions(solutions):
@@ -260,13 +283,13 @@ def mutants(elite, n_future, strategy):
     return future_models
 
 def eval_cost(method, idx, _lambda, n_future, gens, n_diverse):
-    if method == "uncertainty_weighted":
+    if method == "rnd":
+        eval = (len(idx) - 1) * gens * (_lambda)
+    else:
         if len(idx)<10:
             eval = (len(idx) - 1)*gens*(_lambda) + (n_future+1)*n_diverse  + (n_future+1)*len(idx)
         else:
-            eval = (len(idx) - 1)*gens*(_lambda)  
-    elif method == "random":
-        eval = (len(idx) - 1) * gens * (_lambda)
+            eval = (len(idx) - 1)*gens*(_lambda) 
     return eval
         
 def getFit(model, x, y):
@@ -304,23 +327,30 @@ if __name__ == "__main__":
     
     # load data from yml file
     if len(sys.argv) < 2:
-        print("Use\n: python train_model_ative_learning_interactive.py (config, yml file) config.yml (run, int) run")
+        print("Use\n: python train_model_ative_learning_interactive.py (config, yml file) config.yml (run, int) run v")
         sys.exit()
     else:       
         with open(sys.argv[1], "r") as ymlfile:
             cfg = yaml.safe_load(ymlfile)
             framework = cfg["framework"]
             config = cfg["variables"]
-            
+    
+    run = sys.argv[2] 
+    n_mutations = int(sys.argv[3])
+    n_diverse = int(sys.argv[4])
+
+
     DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"]+"_oneplus"
+    RESULTS = framework["save_results"]+"_oneplus_nMut_"+str(n_mutations)+"_nDiv_"+str(n_diverse)
+
     generations = config["generations"]
+    
     CHANNELS = [1, 2]
     preprocessing = SelectChannels(CHANNELS)
-    run = sys.argv[2] 
+    
 
     _lambda = config["_lambda"]
-    n_mutations = config["n_mutations"]
+    # n_mutations = config["n_mutations"]
     frequency = config["frequency"]
     method = config["method"]
     file_raw_data = f"{RESULTS}/raw_test_data.txt"
@@ -336,27 +366,26 @@ if __name__ == "__main__":
     try:
         os.makedirs(RESULTS)
         
-        data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\t size\t idx\t uncertainty\t sharpness\t updatedElite\ttime"]
+        data = ["init_idx \t run\t gen\t eval\t lambda\t train\t test\ttime \t idx\t uncertainty\t sharpness\t updatedElite\tsize"]
         with open(file_raw_data, 'w') as f:
-            # writer = csv.writer(f, delimiter = '\t')
-            # writer.writerow(data)
             f.writelines(item + "\t" for item in data)
             f.write("\n")
-
-        os.makedirs(f"{RESULTS}/nondoms_{run}/")
+        os.makedirs(f"{RESULTS}/nondoms/")
         data = ["run\t gen\tnon_dominated"]
         with open(file_nondoms, 'w') as f:
-            # writer = csv.writer(f, delimiter = '\t')
-            # writer.writerow(data)
             f.writelines(item + "\t" for item in data)
+            f.write("\n")
     except:
         print()
     # mkdir - done
 
-
-    model = create_instance_segmentation_model(
-                generations, _lambda, inputs=2, outputs=2,
+    create_segmentation_model
+    model = create_segmentation_model(
+                generations, _lambda, inputs=1, outputs=1,
             )
+    # model = create_instance_segmentation_model(
+    #             generations, _lambda, inputs=2, outputs=2,
+    #         )
     model.clear()
     verbose = CallbackVerbose(frequency=frequency)
     callbacks = [verbose]
@@ -370,11 +399,10 @@ if __name__ == "__main__":
     indices = np.arange(0, 89).tolist()
     
 
-    pixels = np.loadtxt(f"/Users/yurilavinas/Documents/MCF/datasets/cellpose/features.txt")
     # pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
     
     if init_idx == 'typical':
-        init_idx = typicalPoint(pixels, k=n_diverse)
+        init_idx = typicalPoint(pixels, k=10)
         idx = [indices.pop(init_idx)]    
     elif init_idx == "cluster":
         from sklearn.cluster import KMeans
@@ -389,7 +417,6 @@ if __name__ == "__main__":
         idx=[]
         for id_ in tmp: 
             idx.append(indices.pop(id_))
-        oldFitness=np.zeros(img_limit) - 1e10
     elif init_idx == 'rnd':
         random.shuffle(indices)
         idx = [indices.pop()]
@@ -409,11 +436,10 @@ if __name__ == "__main__":
     eval = 0
     uncertainties = 0
     sharpness = 0
-    fitness=0
 
     while eval <= maxeval:
         print("==================")
-        print("generation: ",gen+1)
+        print("generation: ",gen+1, idx)
         print("------------------")
                     
         strategy, gens = model.fit(train_x, train_y, elite = elite, gen = generations)
@@ -428,15 +454,15 @@ if __name__ == "__main__":
 
             if diverseSET:
                 diverseIdx = diverseImagesIterative(pixels, pixels[idx], n_diverse)
+                #cost: 0
+                uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
+                #cost: future_models*len(diverseIdx)
+                idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
             else:
+                idx.append(indices.pop())
                 diverseIdx = indices
                 n_diverse = len(indices)
             
-            #cost: 0
-            uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
-            #cost: future_models*len(diverseIdx) 
-
-            idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
             #cost: 0
             dataset = read_dataset(DATASET, indices=idx)
             train_x, train_y = dataset.train_xy
@@ -456,20 +482,7 @@ if __name__ == "__main__":
         
         solution = {'model':elite,'sharpness':sharpness,'fitness':fitness, 'test_fitness': test_fits}
         candidates.append(solution)
-
-        if init_idx == "cluster":
-            if fitness == oldFitness[gen%img_limit]:
-                oldFitness=np.zeros(img_limit) - 1e10
-                indices = np.arange(0, 89).tolist()
-                tmp=[int(np.random.choice(np.asarray(df_.iloc[kmeans.labels_==l,:]['Label']),1)[0]) for l in np.unique(kmeans.labels_)]
-                tmp.sort(reverse = True)
-                print(idx)
-                idx=[]
-                for id_ in tmp: 
-                    idx.append(indices.pop(id_))
-                print(idx)  
-            oldFitness[gen%img_limit] = fitness
-
+        
         # active_nodes = model.parser.parse_to_graphs(elite)
         gen += 1
         data = [init_idx, run, gen, eval, _lambda, fitness, test_fits, active_nodes, idx, np.max(uncertainties), sharpness, updatedElite, time]

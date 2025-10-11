@@ -4,7 +4,7 @@ library(viridis)
 
 
 
-closest_rows <- function(df, target, error = 0) {
+closest_rows <- function(df, target, error = 200) {
   df = df[which(df$eval <= target),]
   diffs <- abs(df$eval - target)
   min_diff <- min(diffs, na.rm = TRUE)
@@ -30,10 +30,15 @@ changeCloset = function(df,targetList){
 }
 
 
-cluster = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t')
-typical = read.csv('Documents/MCF/results/typical/_oneplus/raw_test_data.txt', sep = '\t')
-rnd  = read.csv('Documents/MCF/results/rnd/_oneplus/raw_test_data.txt', sep = '\t')
-ppsnlike  = read.csv('Documents/MCF/results/ppsn_like/_oneplus/raw_test_data.txt', sep = '\t')
+diverse_10 = read.csv('Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_10/raw_test_data.txt', sep = '\t')
+diverse_10$init_idx="diverse_10"
+diverse_20  = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t')
+diverse_20$init_idx="diverse_20"
+diverse_30 = read.csv('Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_30/raw_test_data.txt', sep = '\t')
+diverse_30$init_idx="diverse_30"
+# diverse_40  = read.csv('Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_40/raw_test_data.txt', sep = '\t')
+# diverse_40$init_idx="diverse_40"
+
 
 minVal=5100
 maxVal=1000000
@@ -42,43 +47,35 @@ targetList = seq(0,maxVal,by=as.integer(maxVal/20))
 targetList[1]=minVal
 targetList[length(targetList)]=maxVal
 
-tmp=cluster$size
-cluster$size = cluster$time
-cluster$time=tmp
+tmp=diverse_10$size
+diverse_10$size = diverse_10$time
+diverse_10$time=tmp
 
-tmp=typical$size
-typical$size = typical$time
-typical$time=tmp
-typical$init_idx="Typical"
 
-tmp=rnd$size
-rnd$size = rnd$time
-rnd$time=tmp
+tmp=diverse_20$size
+diverse_20$size = diverse_20$time
+diverse_20$time=tmp
 
-tmp=ppsnlike$size
-ppsnlike$size = ppsnlike$time
-ppsnlike$time=tmp
+
+tmp=diverse_30$size
+diverse_30$size = diverse_30$time
+diverse_30$time=tmp
+
 
 
 idx=c(1,4,6,7,8,11,12,13)
-cluster = cluster[,idx]
-rnd = rnd[,idx]
-typical = typical[,idx]
-ppsnlike = ppsnlike[,idx]
-ppsnlike$init_idx="ppsnlike"
+diverse_10 = diverse_10[,idx]
+diverse_20 = diverse_20[,idx]
+diverse_30 = diverse_30[,idx]
 
-cluster = changeCloset(cluster, targetList)
-rnd = changeCloset(rnd, targetList)
-typical = changeCloset(typical, targetList)
-ppsnlike = changeCloset(ppsnlike, targetList)
-
-
+diverse_10 = changeCloset(diverse_10, targetList)
+diverse_20 = changeCloset(diverse_20, targetList)
+diverse_30 = changeCloset(diverse_30, targetList)
 
 data = rbind(
-  cluster,
-  rnd,
-  ppsnlike,
-  typical
+  diverse_10,
+  diverse_20,
+  diverse_30
 )
 data = data.frame(data)
 data$test = 1 - data$test

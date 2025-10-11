@@ -447,14 +447,15 @@ if __name__ == "__main__":
 
             if diverseSET:
                 diverseIdx = diverseImagesIterative(pixels, pixels[idx], n_diverse)
+                #cost: 0
+                uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
+                #cost: future_models*len(diverseIdx)
+                idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
             else:
+                idx.append(indices.pop())
                 diverseIdx = indices
                 n_diverse = len(indices)
-            
-            #cost: 0
-            uncertainties = calcUncertainties(method, DATASET, model, future_models, diverseIdx, preprocessing)
-            #cost: future_models*len(diverseIdx) 
-            idx, indices = getIDx(idx, indices, uncertainties, diverseIdx)
+                
             #cost: 0
             dataset = read_dataset(DATASET, indices=idx)
             train_x, train_y = dataset.train_xy

@@ -4,7 +4,7 @@ library(viridis)
 
 
 
-closest_rows <- function(df, target, error = 0) {
+closest_rows <- function(df, target, error = 200) {
   df = df[which(df$eval <= target),]
   diffs <- abs(df$eval - target)
   min_diff <- min(diffs, na.rm = TRUE)
@@ -30,10 +30,15 @@ changeCloset = function(df,targetList){
 }
 
 
-cluster = read.csv('Documents/MCF/results/cluster/_oneplus/raw_test_data.txt', sep = '\t')
-typical = read.csv('Documents/MCF/results/typical/_oneplus/raw_test_data.txt', sep = '\t')
-rnd  = read.csv('Documents/MCF/results/rnd/_oneplus/raw_test_data.txt', sep = '\t')
-ppsnlike  = read.csv('Documents/MCF/results/ppsn_like/_oneplus/raw_test_data.txt', sep = '\t')
+nmut1  = read.csv('Documents/MCF/results/ppsn_like/_oneplus/raw_test_data.txt', sep = '\t')
+nmut1$init_idx="mut_1"
+nmut5 = read.csv('Documents/MCF/results/ppsn_like/_oneplus_nMut_5_nDiv_99999/raw_test_data.txt', sep = '\t')
+nmut5$init_idx="mut_5"
+nmut10 = read.csv('Documents/MCF/results/ppsn_like/_oneplus_nMut_10_nDiv_99999/raw_test_data.txt', sep = '\t')
+nmut10$init_idx="mut_10"
+nmut50 = read.csv('Documents/MCF/results/ppsn_like/_oneplus_nMut_50_nDiv_99999/raw_test_data.txt', sep = '\t')
+nmut50$init_idx="mut_50"
+
 
 minVal=5100
 maxVal=1000000
@@ -42,43 +47,35 @@ targetList = seq(0,maxVal,by=as.integer(maxVal/20))
 targetList[1]=minVal
 targetList[length(targetList)]=maxVal
 
-tmp=cluster$size
-cluster$size = cluster$time
-cluster$time=tmp
+tmp=nmut1$size
+nmut1$size = nmut1$time
+nmut1$time=tmp
 
-tmp=typical$size
-typical$size = typical$time
-typical$time=tmp
-typical$init_idx="Typical"
+tmp=nmut5$size
+nmut5$size = nmut5$time
+nmut5$time=tmp
 
-tmp=rnd$size
-rnd$size = rnd$time
-rnd$time=tmp
+tmp=nmut10$size
+nmut10$size = nmut10$time
+nmut10$time=tmp
 
-tmp=ppsnlike$size
-ppsnlike$size = ppsnlike$time
-ppsnlike$time=tmp
 
 
 idx=c(1,4,6,7,8,11,12,13)
-cluster = cluster[,idx]
-rnd = rnd[,idx]
-typical = typical[,idx]
-ppsnlike = ppsnlike[,idx]
-ppsnlike$init_idx="ppsnlike"
+nmut1 = nmut1[,idx]
+nmut5 = nmut5[,idx]
+nmut10 = nmut10[,idx]
 
-cluster = changeCloset(cluster, targetList)
-rnd = changeCloset(rnd, targetList)
-typical = changeCloset(typical, targetList)
-ppsnlike = changeCloset(ppsnlike, targetList)
+nmut1 = changeCloset(nmut1, targetList)
+nmut5 = changeCloset(nmut5, targetList)
+nmut10 = changeCloset(nmut10, targetList)
 
 
 
 data = rbind(
-  cluster,
-  rnd,
-  ppsnlike,
-  typical
+  nmut1,
+  nmut5,
+  nmut10
 )
 data = data.frame(data)
 data$test = 1 - data$test
