@@ -344,7 +344,7 @@ if __name__ == "__main__":
     
 
     _lambda = config["_lambda"]
-    # n_mutations = config["n_mutations"]
+    total_images = config["total_images"]
     frequency = config["frequency"]
     method = config["method"]
     file_raw_data = f"{RESULTS}/raw_test_data.txt"
@@ -387,7 +387,7 @@ if __name__ == "__main__":
     
 
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 89).tolist()
+    indices = np.arange(0, total_images).tolist()
     
 
     pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
