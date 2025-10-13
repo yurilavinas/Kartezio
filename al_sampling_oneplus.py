@@ -414,6 +414,12 @@ if __name__ == "__main__":
         idx = [indices.pop()]
     else:
         idx=None
+    dataset = read_dataset(DATASET, indices=idx)
+    train_x, train_y = dataset.train_xy
+    test_x, test_y, test_v = dataset.test_xyv
+    if preprocessing != None:
+        train_x = preprocessing.call(train_x)
+        test_x = preprocessing.call(test_x)
 
     candidates = []
     elite = None
@@ -425,7 +431,7 @@ if __name__ == "__main__":
     print(idx)
     while eval <= maxeval:
         print("==================")
-        print("generation: ",gen+1)
+        print("generation: ",gen+1, idx)
         print("------------------")
                     
         strategy, gens = model.fit(train_x, train_y, elite = elite, gen = generations)
@@ -448,7 +454,7 @@ if __name__ == "__main__":
                 idx.append(indices.pop())
                 diverseIdx = indices
                 n_diverse = len(indices)
-                
+            
             #cost: 0
             dataset = read_dataset(DATASET, indices=idx)
             train_x, train_y = dataset.train_xy
@@ -478,8 +484,8 @@ if __name__ == "__main__":
 
         
 
-    print("saving non dominated...")
-    saveNonDom(candidates, run, gen, train_x, train_y, test_v, model, dataset, file_nondoms)
+    # print("saving non dominated...")
+    # saveNonDom(candidates, run, gen, train_x, train_y, test_v, model, dataset, file_nondoms)
     print("saving elite...")
     saveElite(model, test_x, run, gen, dataset)
 
