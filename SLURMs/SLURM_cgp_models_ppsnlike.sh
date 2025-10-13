@@ -4,7 +4,7 @@
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31
 #SBATCH --ntasks-per-core=1
-#SBATCH --time=96:00:00
+#SBATCH --time=120:00:00
 #SBATCH --mail-user=yclavinas@gmail.com
 #SBATCH --mail-type=ALL
 
