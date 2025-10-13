@@ -1,5 +1,5 @@
 #https://github.com/Mr-TalhaIlyas/Prerpcessing-PanNuke-Nuclei-Instance-Segmentation-Dataset?tab=readme-ov-file
-# 
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -9,6 +9,15 @@ import os, glob
 from tqdm import trange, tqdm
 import matplotlib as mpl
 mpl.rcParams['figure.dpi'] = 300
+
+
+def datasetwrite(tissue_type, i, k, filename):
+    with open(filename, 'a', encoding='UTF8') as f:
+        # create the csv writer
+        writer = csv.writer(f, quoting=csv.QUOTE_NONE)
+        data = ['images/img_{}_{}_{:05d}.png'.format(tissue_type, i, k),
+                'sem_masks/sem_{}_{}_{:05d}.png'.format(tissue_type, i, k),np.random.choice(['training', 'testing'],p=[0.7,0.3])]
+        writer.writerow(data)
 
 data_dir = "/Users/yurilavinas/Downloads/datasets/data/" # location to extracted folds
 output_dir = '/Users/yurilavinas/Downloads/datasets/processed/' # location to save op data 
@@ -52,6 +61,16 @@ for i in range(len(names)):
             os.mkdir(output_dir + d + '/images')
             os.mkdir(output_dir + d + '/sem_masks')
             os.mkdir(output_dir + d + '/inst_masks')
+
+            # dataset = f'{output_dir}/{d}/dataset.csv'
+            # os.makedirs(dataset)
+            cmd = f'cp "/Users/yurilavinas/Downloads/datasets/META.json" "{output_dir}/{d}/META.json"'
+            os.system(cmd)
+            with open(f'{output_dir}/{d}/dataset.csv', 'w', encoding='UTF8') as f:
+                # create the csv writer
+                writer = csv.writer(f)
+                header = ["input","label","set"]
+                writer.writerow(header)
         except FileExistsError:
             pass
         
@@ -79,11 +98,10 @@ for i in range(len(names)):
         Image.fromarray(sem_mask).save(output_dir + '/{}/sem_masks/sem_{}_{}_{:05d}.png'.format(tissue_type, tissue_type, i+1, k)) 
         Image.fromarray(instances).save(output_dir +'/{}/inst_masks/inst_{}_{}_{:05d}.png'.format(tissue_type, tissue_type, i+1, k)) 
         Image.fromarray(raw_image).save(output_dir +'/{}/images/img_{}_{}_{:05d}.png'.format(tissue_type, tissue_type, i+1, k)) 
-    
-    
-    
-    
-    
+
+        datasetwrite(tissue_type, i+1, k, f'{output_dir}/{tissue_type}/dataset.csv')
+        
+
     
     
     

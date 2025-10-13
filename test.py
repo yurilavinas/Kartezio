@@ -1,5 +1,4 @@
 from kartezio.apps.instance_segmentation import create_instance_segmentation_model
-from kartezio.apps.segmentation import create_segmentation_model
 from kartezio.dataset import read_dataset
 from kartezio.preprocessing import SelectChannels
 from kartezio.plot import save_prediction
@@ -141,15 +140,14 @@ def calcUncertainties(method, DATASET, model, future_models, diverseIdx, preproc
 def getIDx(idx, indices, uncertainties, diverseIdx):
     # if not indices:
     #     return idx, indices
-
+    print("idx, indices, uncertainties, diverseIdx")
+    print(idx, indices, uncertainties, diverseIdx)
     # Select the index with the highest uncertainty
     id_ = int(np.argmax(uncertainties))
     # indices = indices.tolist()
     idx.append(diverseIdx[id_])
-    print(len(indices),indices)
-    indices.pop(idx[-1])
-    print(idx, len(indices),indices)
-    e()
+    print(len(indices),indices, idx, idx[-1])
+    indices.remove(idx[-1])
     return idx, indices
 
 def find_non_dominated_solutions(solutions):
@@ -350,7 +348,7 @@ if __name__ == "__main__":
     
 
     _lambda = config["_lambda"]
-    # n_mutations = config["n_mutations"]
+    total_images = config["total_images"]
     frequency = config["frequency"]
     method = config["method"]
     file_raw_data = f"{RESULTS}/raw_test_data.txt"
@@ -378,14 +376,10 @@ if __name__ == "__main__":
     except:
         print()
     # mkdir - done
-
-    create_segmentation_model
-    model = create_segmentation_model(
-                generations, _lambda, inputs=1, outputs=1,
+    
+    model = create_instance_segmentation_model(
+                generations, _lambda, inputs=2, outputs=2,
             )
-    # model = create_instance_segmentation_model(
-    #             generations, _lambda, inputs=2, outputs=2,
-    #         )
     model.clear()
     verbose = CallbackVerbose(frequency=frequency)
     callbacks = [verbose]
@@ -396,27 +390,28 @@ if __name__ == "__main__":
     
 
     # getting info: test data and information from the dataset
-    indices = np.arange(0, 89).tolist()
-    
+    indices = np.arange(0, total_images).tolist()
 
-    # pixels = np.loadtxt(f"/tmpdir/lavinas/datasets/cellpose/features.txt")
+
+    pixels = np.loadtxt(f"/Users/yurilavinas/Downloads/datasets/processed/Breast/features.txt")
     
     if init_idx == 'typical':
         init_idx = typicalPoint(pixels, k=10)
-        idx = [indices.pop(init_idx)]    
+        indices.remove(init_idx)
+        idx = [init_idx]
     elif init_idx == "cluster":
         from sklearn.cluster import KMeans
         import pandas as pd
-        labels = [f'{i}' for i in range(89)]
+        labels = [f'{i}' for i in range(total_images)]
         df_ = pd.DataFrame(pixels)
         df_['Label'] = labels # Annotate each point
-        kmeans = KMeans(n_clusters=6).fit(pixels)
+        kmeans = KMeans(n_clusters=6, n_init="auto").fit(pixels)
         df_['cluster'] = pd.Categorical(kmeans.labels_)
         tmp=[int(np.random.choice(np.asarray(df_.iloc[kmeans.labels_==l,:]['Label']),1)[0]) for l in np.unique(kmeans.labels_)]
+        idx = tmp
         tmp.sort(reverse = True)
-        idx=[]
         for id_ in tmp: 
-            idx.append(indices.pop(id_))
+            indices.remove(id_)
     elif init_idx == 'rnd':
         random.shuffle(indices)
         idx = [indices.pop()]
@@ -492,8 +487,8 @@ if __name__ == "__main__":
 
         
 
-    print("saving non dominated...")
-    saveNonDom(candidates, run, gen, train_x, train_y, test_v, model, dataset, file_nondoms)
+    # print("saving non dominated...")
+    # saveNonDom(candidates, run, gen, train_x, train_y, test_v, model, dataset, file_nondoms)
     print("saving elite...")
     saveElite(model, test_x, run, gen, dataset)
 

@@ -1,0 +1,20 @@
+framework:
+ DATASET: "/Users/yurilavinas/Downloads/datasets/processed/Breast"
+ filename: dataset.csv
+ meta_filename: META.json
+ save_results: results/ppsnlike/
+
+variables:
+ generations: 100
+ _lambda: 4
+ frequency: 50
+ total_images: 1659
+ maxeval: 10000000
+ indices: None
+ method: rnd
+ n_future: 14
+ n_noise: 5
+ n_diverse: -99999999999
+ init_idx: rnd 
+ img_limit: 165
+ diverseSET: False

@@ -2,19 +2,19 @@ framework:
  DATASET: "/Users/yurilavinas/Downloads/datasets/processed/Breast"
  filename: dataset.csv
  meta_filename: META.json
- save_results: results/
+ save_results: results/cluster/
 
 variables:
  generations: 100
  _lambda: 4
  frequency: 50
- n_mutations: 1
- maxeval: 1000000
+ total_images: 1659
+ maxeval: 10000000
  indices: None
- method: rnd
- n_future: 14
+ method: uncertainty_weighted
+ n_future: 5
  n_noise: 5
- n_diverse: -99999999999
- init_idx: rnd 
- img_limit: 10
- diverseSET: False
+ n_diverse: 10
+ init_idx: cluster 
+ img_limit: 16
+ diverseSET: True

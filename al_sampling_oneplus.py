@@ -137,15 +137,13 @@ def calcUncertainties(method, DATASET, model, future_models, diverseIdx, preproc
 
     return uncertainties
 
-def getIDx(idx, indices, uncertainties, diverseIdx):
-    # if not indices:
-    #     return idx, indices
 
+def getIDx(idx, indices, uncertainties, diverseIdx):
     # Select the index with the highest uncertainty
     id_ = int(np.argmax(uncertainties))
     # indices = indices.tolist()
     idx.append(diverseIdx[id_])
-    indices.pop(idx[-1])
+    indices.remove(idx[-1])
     return idx, indices
 
 def find_non_dominated_solutions(solutions):
@@ -396,31 +394,26 @@ if __name__ == "__main__":
     
     if init_idx == 'typical':
         init_idx = typicalPoint(pixels, k=10)
-        idx = [indices.pop(init_idx)]    
+        indices.remove(init_idx)
+        idx = [init_idx]
     elif init_idx == "cluster":
         from sklearn.cluster import KMeans
         import pandas as pd
-        labels = [f'{i}' for i in range(89)]
+        labels = [f'{i}' for i in range(total_images)]
         df_ = pd.DataFrame(pixels)
         df_['Label'] = labels # Annotate each point
-        kmeans = KMeans(n_clusters=6).fit(pixels)
+        kmeans = KMeans(n_clusters=6, n_init="auto").fit(pixels)
         df_['cluster'] = pd.Categorical(kmeans.labels_)
         tmp=[int(np.random.choice(np.asarray(df_.iloc[kmeans.labels_==l,:]['Label']),1)[0]) for l in np.unique(kmeans.labels_)]
+        idx = tmp
         tmp.sort(reverse = True)
-        idx=[]
         for id_ in tmp: 
-            idx.append(indices.pop(id_))
+            indices.remove(id_)
     elif init_idx == 'rnd':
         random.shuffle(indices)
         idx = [indices.pop()]
     else:
         idx=None
-    dataset = read_dataset(DATASET, indices=idx)
-    train_x, train_y = dataset.train_xy
-    test_x, test_y, test_v = dataset.test_xyv
-    if preprocessing != None:
-        train_x = preprocessing.call(train_x)
-        test_x = preprocessing.call(test_x)
 
     candidates = []
     elite = None
