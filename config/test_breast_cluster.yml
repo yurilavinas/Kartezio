@@ -12,9 +12,9 @@ variables:
  maxeval: 10000000
  indices: None
  method: uncertainty_weighted
- n_future: 5
+ n_future: 99
  n_noise: 5
- n_diverse: 10
+ n_diverse: 165
  init_idx: cluster 
- img_limit: 16
+ img_limit: 165
  diverseSET: True

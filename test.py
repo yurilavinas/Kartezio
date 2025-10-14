@@ -465,7 +465,7 @@ if __name__ == "__main__":
                 train_x = preprocessing.call(train_x)
             
             newElite, fitness = getNewElite(future_models, model, train_x, train_y)
-            if newElite!=elite:
+            if newElite != elite:
                 updatedElite += 1
                 model.strategy.population.set_elite(elite)
             #cost: future_models*len(idx)

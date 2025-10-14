@@ -42,7 +42,6 @@ nmut50$init_idx="mut_50"
 
 minVal=5100
 maxVal=1000000
-targetList = c(minVal,18000)
 targetList = seq(0,maxVal,by=as.integer(maxVal/20))
 targetList[1]=minVal
 targetList[length(targetList)]=maxVal

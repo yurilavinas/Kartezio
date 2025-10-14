@@ -4,7 +4,7 @@ library(viridis)
 
 
 
-closest_rows <- function(df, target, error = 0) {
+closest_rows <- function(df, target, error = 3200) {
   df = df[which(df$eval <= target),]
   diffs <- abs(df$eval - target)
   min_diff <- min(diffs, na.rm = TRUE)
@@ -37,7 +37,6 @@ ppsnlike  = read.csv('Documents/MCF/results/ppsn_like/_oneplus/raw_test_data.txt
 
 minVal=5100
 maxVal=1000000
-targetList = c(minVal,18000)
 targetList = seq(0,maxVal,by=as.integer(maxVal/20))
 targetList[1]=minVal
 targetList[length(targetList)]=maxVal
@@ -85,7 +84,7 @@ data$test = 1 - data$test
 data$train = 1 - data$train
 
 
-ggplot(data, aes(x = factor(eval), y = size, fill = eval)) +
+v=ggplot(data, aes(x = factor(eval), y = size, fill = eval)) +
   geom_boxplot(position = position_dodge(width = 0.8)) +
   facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
   scale_y_continuous(
@@ -93,66 +92,7 @@ ggplot(data, aes(x = factor(eval), y = size, fill = eval)) +
     breaks = seq(0, 25, by = 1)  # y-axis ticks every 0.1
   ) +
   labs(
-    title = "Active nodes over images",
-    x = "Images",
-    y = "Value"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  )+ 
-  geom_hline(yintercept = 8, color = "red", linewidth = 1)
-
-
-ggplot(data, aes(x = factor(eval), y = sharpness, fill = eval)) +
-  geom_boxplot(position = position_dodge(width = 0.8)) +
-  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
-  scale_y_continuous(
-    limits = c(0, 1),           # y-axis range
-    breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
-  ) +
-  labs(
-    title = "Sharpness over images",
-    x = "Images",
-    y = "Value"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  )+ 
-  geom_hline(yintercept = 0.1, color = "red", linewidth = 1)
-
-
-ggplot(data, aes(x = factor(eval), y = time, fill = eval)) +
-  geom_boxplot(position = position_dodge(width = 0.8)) +
-  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
-  scale_y_continuous(
-    limits = c(0, 0.2),           # y-axis range
-    breaks = seq(0, 0.2, by = 0.05)  # y-axis ticks every 0.1
-  ) +
-  labs(
-    title = "Time over images",
-    x = "Images",
-    y = "Value"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  )+ 
-  geom_hline(yintercept = 0.05, color = "red", linewidth = 1)
-
-
-
-
-ggplot(data, aes(x = factor(eval), y = updatedElite, fill = eval)) +
-  geom_boxplot(position = position_dodge(width = 0.8)) +
-  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
-  # scale_y_continuous(
-  #   limits = c(0, 1),           # y-axis range
-  #   breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
-  # ) +
-  labs(
-    title = "Updated Elites over images",
+    # title = "Active nodes over images",
     x = "Images",
     y = "Value"
   ) +
@@ -160,45 +100,53 @@ ggplot(data, aes(x = factor(eval), y = updatedElite, fill = eval)) +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
   )
+# + geom_hline(yintercept = 8, color = "red", linewidth = 1)
+ggsave('~/Desktop/Active_nodes.pdf',plot = v, units='px', dpi = 150,width = 960, height = 480)
 
-ggplot(data, aes(x = factor(eval), y = test, fill = eval)) +
+
+# v=ggplot(data, aes(x = factor(eval), y = sharpness, fill = eval)) +
+#   geom_boxplot(position = position_dodge(width = 0.8)) +
+#   facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+#   scale_y_continuous(
+#     limits = c(0, 1),           # y-axis range
+#     breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+#   ) +
+#   labs(
+#     title = "Sharpness over images",
+#     x = "Images",
+#     y = "Value"
+#   ) +
+#   theme_minimal() +
+#   theme(
+#     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+#   )
+# # +   geom_hline(yintercept = 0.1, color = "red", linewidth = 1)
+# ggsave('~/Desktop/train.pdf',plot = v, dpi = 150,width = 960, height = 480)
+
+
+v=ggplot(data, aes(x = factor(eval), y = time, fill = eval)) +
   geom_boxplot(position = position_dodge(width = 0.8)) +
   facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
   scale_y_continuous(
-    limits = c(0, 1),           # y-axis range
-    breaks = seq(0, 1, by = 0.2)  # y-axis ticks every 0.1
+    limits = c(0, 0.2),           # y-axis range
+    breaks = seq(0, 0.2, by = 0.05)  # y-axis ticks every 0.1
   ) +
   labs(
-    title = "IOU (test) over images",
+    # title = "Time over images",
     x = "Images",
     y = "Value"
   ) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  ) + 
-  geom_hline(yintercept = 0.84, color = "red", linewidth = 1)
+  )
+# + geom_hline(yintercept = 0.05, color = "red", linewidth = 1)
+ggsave('~/Desktop/exec_time.pdf',plot = v, units='px',dpi = 150,width = 960, height = 480)
 
-ggplot(data, aes(x = factor(eval), y = train, fill = eval)) +
-  geom_boxplot(position = position_dodge(width = 0.8)) +
-  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
-  scale_y_continuous(
-    limits = c(0, 1),           # y-axis range
-    breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
-  ) +
-  labs(
-    title = "IOU (train) over images",
-    x = "Images",
-    y = "Value"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  ) + 
-  geom_hline(yintercept = 0.95, color = "red", linewidth = 1)
 
-data$generalization=data$test-data$train
-ggplot(data, aes(x = factor(eval), y = generalization, fill = eval)) +
+
+
+v=ggplot(data, aes(x = factor(eval), y = updatedElite, fill = eval)) +
   geom_boxplot(position = position_dodge(width = 0.8)) +
   facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
   # scale_y_continuous(
@@ -206,21 +154,82 @@ ggplot(data, aes(x = factor(eval), y = generalization, fill = eval)) +
   #   breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
   # ) +
   labs(
-    title = "Generalization over images",
+    # title = "Updated Elites over images",
     x = "Images",
     y = "Value"
   ) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
-  ) + 
-  geom_hline(yintercept = 0., color = "red", linewidth = 1)
+  )
+ggsave('~/Desktop/eliteUpdated_after_AL.pdf',units='px',plot = v, dpi = 150,width = 960, height = 480)
 
+
+v=ggplot(data, aes(x = factor(eval), y = test, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 1),           # y-axis range
+    breaks = seq(0, 1, by = 0.2)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    # title = "IOU (test) over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) 
+# +  geom_hline(yintercept = 0.84, color = "red", linewidth = 1)
+ggsave('~/Desktop/test.pdf',plot = v, units='px',dpi = 150,width = 960, height = 480)
+
+v=ggplot(data, aes(x = factor(eval), y = train, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  scale_y_continuous(
+    limits = c(0, 1),           # y-axis range
+    breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+  ) +
+  labs(
+    # title = "IOU (train) over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) 
+# + geom_hline(yintercept = 0.95, color = "red", linewidth = 1)
+ggsave('~/Desktop/train.pdf',plot = v, units='px',dpi = 150,width = 960, height = 480)
+
+data$generalization=data$test-data$train
+v = ggplot(data, aes(x = factor(eval), y = generalization, fill = eval)) +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  facet_wrap(~ init_idx, scales = "free_x", nrow = 1) +
+  # scale_y_continuous(
+  #   limits = c(0, 1),           # y-axis range
+  #   breaks = seq(0, 1, by = 0.05)  # y-axis ticks every 0.1
+  # ) +
+  labs(
+    # title = "Generalization over images",
+    x = "Images",
+    y = "Value"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)  # vertical labels
+  ) 
+# + geom_hline(yintercept = 0., color = "red", linewidth = 1)
+
+ggsave('~/Desktop/generalization.pdf',units='px',plot = v, dpi = 150,width = 960, height = 480)
 
 tmp = data[which(data$eval==maxVal),]
 aggregate(tmp$test, FUN=mean, by=list( tmp$init_idx))
 aggregate(tmp$test, FUN=sd, by=list( tmp$init_idx))
 
 
-
-
+for (i in unique(tmp$init_idx)){
+  print(i)
+  print(sum(tmp$init_idx==i))
+}
