@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J CLUSTER
+#SBATCH -J CLUSTER_nmut
 #SBATCH --nodes 1
 #SBATCH --ntasks 31
 #SBATCH --ntasks-per-node=31

@@ -62,7 +62,7 @@ for (maxi in maxis) {
   
   
   
-  rnd = load_al(filename = "Documents/MCF/results/rnd/_oneplus_nMut_1_nDiv_20/raw_test_data.txt",
+  rnd = load_al(filename = "Documents/MCF/results/rnd/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
                     name="random",
                     maxi = maxi)
   rnd = rnd[rnd$Images_used ==

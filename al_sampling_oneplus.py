@@ -333,6 +333,7 @@ if __name__ == "__main__":
     run = sys.argv[2] 
     n_mutations = int(sys.argv[3])
     n_diverse = int(sys.argv[4])
+    n_future = int(sys.argv[5])
 
 
     DATASET = framework["DATASET"]  
@@ -351,7 +352,7 @@ if __name__ == "__main__":
     file_raw_data = f"{RESULTS}/raw_test_data.txt"
     file_nondoms = f"{RESULTS}/nondoms_{run}/nondoms.txt"
     maxeval = config["maxeval"]
-    n_future = config["n_future"]
+    # n_future = config["n_future"]
     n_noise = config["n_noise"]
     # n_diverse = config["n_diverse"]
     init_idx = config["init_idx"]
