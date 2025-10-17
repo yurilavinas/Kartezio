@@ -268,11 +268,12 @@ def getNewElite(future_models, model, train_x, train_y):
     elite = future_models[np.argmin(fits)]
     return elite, fitness
 
-def mutants(elite, n_future, strategy):
+def mutants(elite, n_future, strategy, n_mutations):
     future_models = [None]*n_future
     for i in range(n_future):
         future_models[i] = elite.clone()
-        future_models[i] = strategy.mutation_method.mutate(future_models[i])
+        for _ in n_mutations:
+            future_models[i] = strategy.mutation_method.mutate(future_models[i])
     future_models.append(elite)
     return future_models
 
@@ -441,7 +442,7 @@ if __name__ == "__main__":
         test_fits = getFit(model, test_x, test_y)
         
         if len(idx) < img_limit:
-            future_models = mutants(elite, n_future, strategy)
+            future_models = mutants(elite, n_future, strategy, n_mutations)
             #cost: 0
 
             if diverseSET:
