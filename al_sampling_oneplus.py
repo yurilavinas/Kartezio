@@ -364,11 +364,11 @@ if __name__ == "__main__":
         with open(file_raw_data, 'w') as f:
             f.writelines(item + "\t" for item in data)
             f.write("\n")
-        os.makedirs(f"{RESULTS}/nondoms/")
-        data = ["run\t gen\tnon_dominated"]
-        with open(file_nondoms, 'w') as f:
-            f.writelines(item + "\t" for item in data)
-            f.write("\n")
+        # os.makedirs(f"{RESULTS}/nondoms/")
+        # data = ["run\t gen\tnon_dominated"]
+        # with open(file_nondoms, 'w') as f:
+        #     f.writelines(item + "\t" for item in data)
+        #     f.write("\n")
     except:
         print()
     # mkdir - done
