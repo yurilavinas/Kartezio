@@ -272,7 +272,7 @@ def mutants(elite, n_future, strategy, n_mutations):
     future_models = [None]*n_future
     for i in range(n_future):
         future_models[i] = elite.clone()
-        for _ in n_mutations:
+        for _ in range(n_mutations):
             future_models[i] = strategy.mutation_method.mutate(future_models[i])
     future_models.append(elite)
     return future_models
