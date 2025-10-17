@@ -337,7 +337,7 @@ if __name__ == "__main__":
 
 
     DATASET = framework["DATASET"]  
-    RESULTS = framework["save_results"]+"_oneplus_nMut_"+str(n_mutations)+"_nDiv_"+str(n_diverse)
+    RESULTS = framework["save_results"]+"_oneplus_nMut_"+str(n_mutations)+"_nDiv_"+str(n_diverse)+"_n_future_"+str(n_future)
 
     generations = config["generations"]
     
