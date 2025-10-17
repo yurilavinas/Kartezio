@@ -352,7 +352,7 @@ if __name__ == "__main__":
     maxeval = config["maxeval"]
     n_future = config["n_future"]
     n_noise = config["n_noise"]
-    n_diverse = config["n_diverse"]
+    # n_diverse = config["n_diverse"]
     init_idx = config["init_idx"]
     img_limit = config["img_limit"]
     diverseSET = config["diverseSET"]
