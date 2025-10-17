@@ -41,7 +41,7 @@ maxis[19] = maximum
 data = c()
 
 for (maxi in maxis) {
-  cluster = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_20/raw_test_data.txt",
+  cluster = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
                     name="cluster",
                     maxi = maxi)
   cluster = cluster[cluster$Images_used ==
