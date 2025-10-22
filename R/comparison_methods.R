@@ -2,7 +2,7 @@
 rm(list = ls(all = TRUE))
 
 # Libraries
-library(ggstatsplot)
+# library(ggstatsplot)
 library(viridis)
 library(ggplot2)
 library(plyr)
@@ -13,11 +13,11 @@ options(scipen = 10000)
 
 source("~/Documents/MCF/Kartezio/R/funcs.R")
 
-maximum = 1000000
+maximum = 1000200
 maxis = seq(from = 0,
             to = maximum,
             length.out = 20)
-maxis[1] = 5100
+maxis[1] = 10000
 maxis[2] = 100000
 maxis[3] = 150000
 maxis[4] = 200000
@@ -36,19 +36,18 @@ maxis[16] = 800000
 maxis[17] = 850000
 maxis[18] = 900000
 maxis[19] = 950000
-maxis[19] = maximum
-
+maxis[20] = maximum
 data = c()
 
 for (maxi in maxis) {
-  cluster = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
+  cluster = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_20/raw_test_data.txt",
                     name="cluster",
                     maxi = maxi)
   cluster = cluster[cluster$Images_used ==
                       max(cluster$Images_used), ]
   
   
-  ppsnlike = load_al(filename = "Documents/MCF/results/ppsn_like/_oneplus_nMut_1_nDiv_99999/raw_test_data.txt",
+  ppsnlike = load_al(filename = "Documents/MCF/results/ppsn_like/_oneplus_nMut_1_nDiv_99999_n_future_99/raw_test_data.txt",
                      name="ppsnlike",
                      maxi = maxi)
   ppsnlike = ppsnlike[ppsnlike$Images_used ==
@@ -62,7 +61,7 @@ for (maxi in maxis) {
   
   
   
-  rnd = load_al(filename = "Documents/MCF/results/rnd/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
+  rnd = load_al(filename = "Documents/MCF/results/rnd/_oneplus_nMut_1_nDiv_20/raw_test_data.txt",
                     name="random",
                     maxi = maxi)
   rnd = rnd[rnd$Images_used ==
@@ -78,10 +77,8 @@ for (maxi in maxis) {
   data = rbind(data, train_data)
 }
 
-tmp = data[which(data$Images_used==max(data$Images_used)),]
-for (algo in unique(tmp$algorithm)){
-  cat(algo,":",mean(tmp[tmp$algorithm==algo,]$test),sd(tmp[tmp$algorithm==algo,]$test),'\n')
-}
+maxImg_data = data[which(data$Images_used==maximum),]
+
 
 data$Images_used = as.factor(data$Images_used)
 
@@ -116,7 +113,7 @@ ggsave("~/Desktop/test_iou.pdf",plot = p, dpi = 150,width = 1920, height = 700,u
 
 p <- ggplot(data = data, aes(x = Images_used, y = train, fill = Images_used)) +
   geom_boxplot() +
-  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0.1, 1, 0.2), limits = c(0, 0.95)) +
   facet_wrap(
     ~ algorithm,
     strip.position = "bottom",
@@ -145,7 +142,7 @@ ggsave("~/Desktop/train_iou.pdf",plot = p, dpi = 150,width = 1920, height = 700,
 
 p <- ggplot(data = data, aes(x = Images_used, y = time, fill = Images_used)) +
   geom_boxplot() +
-  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 0.9)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.01), limits = c(0, 0.2)) +
   facet_wrap(
     ~ algorithm,
     strip.position = "bottom",
@@ -229,4 +226,12 @@ p <- ggplot(data = data, aes(x = Images_used, y = test-train, fill = Images_used
   )
 
 ggsave("~/Desktop/Generalization.pdf",plot = p, dpi = 150,width = 1920, height = 700,units = 'px')
+
+
+for (algo in unique(maxImg_data$algorithm)){
+  cat(algo,":",mean(maxImg_data[maxImg_data$algorithm==algo,]$test),sd(maxImg_data[maxImg_data$algorithm==algo,]$test),'\n')
+}
+b=boxplot(test ~ algorithm, data = maxImg_data)
+print(b$n)
+pairwise.wilcox.test(maxImg_data$test, maxImg_data$algorithm, p.adjust.method = "bonf", paired = F)
 

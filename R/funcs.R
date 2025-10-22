@@ -1,6 +1,4 @@
 load_al = function(filename, name, maxi) {
-  # filename = paste0("../data/",folder,"/", name, "/raw_test_data.txt")
-  # print(filename)
   data = read.csv(filename,
                   sep = "\t",
                   header = T,
@@ -19,8 +17,7 @@ load_al = function(filename, name, maxi) {
     "time")
   data$algorithm=name
   data = data[data$Images_used <= maxi,]
-  val = max(data$Images_used)
-  data[which(data$Images_used==val),]$Images_used = maxi
+  data[which(data$Images_used==max(data$Images_used)),]$Images_used = maxi
   data$train = 1 - data$train
   data$test = 1 - data$test
   data
