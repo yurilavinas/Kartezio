@@ -53,7 +53,7 @@ for (maxi in maxis) {
   ppsnlike = ppsnlike[ppsnlike$Images_used ==
                         max(ppsnlike$Images_used), ]
   
-  typical = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
+  typical = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_20_n_future_99/raw_test_data.txt",
                     name="typical",
                     maxi = maxi)
   typical = typical[typical$Images_used ==

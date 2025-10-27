@@ -41,27 +41,27 @@ maxis[20] = maximum
 data = c()
 
 for (maxi in maxis) {
-  nDiv_10 = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
+  nDiv_10 = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_10/raw_test_data.txt",
                    name="10",
                    maxi = maxi)
   nDiv_10 = nDiv_10[nDiv_10$Images_used ==
                     max(nDiv_10$Images_used), ]
   
   
-  nDiv_20 = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_20_n_future_99/raw_test_data.txt",
+  nDiv_20 = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_20_n_future_99/raw_test_data.txt",
                    name="20",
                    maxi = maxi)
   nDiv_20 = nDiv_20[nDiv_20$Images_used ==
                     max(nDiv_20$Images_used), ]
   
-  nDiv_30 = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_30_n_future_99/raw_test_data.txt",
+  nDiv_30 = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_30_n_future_99/raw_test_data.txt",
                    name="30",
                    maxi = maxi)
   nDiv_30 = nDiv_30[nDiv_30$Images_used ==
                     max(nDiv_30$Images_used), ]
   
   
-  nDiv_40 = load_al(filename = "Documents/MCF/results/cluster/_oneplus_nMut_1_nDiv_40_n_future_99/raw_test_data.txt",
+  nDiv_40 = load_al(filename = "Documents/MCF/results/typical/_oneplus_nMut_1_nDiv_40_n_future_99/raw_test_data.txt",
                     name="40",
                     maxi = maxi)
   nDiv_40 = nDiv_40[nDiv_40$Images_used ==
